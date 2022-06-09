@@ -48,13 +48,15 @@
     "generate": "npm run generate:client:web && npm run generate:client:mobile && npm run lint && npm run format",
     "build": "shx rm -rf dist && tsc -b",
     "prepack": "npm run build",
-    "lint": "eslint . --ext .ts --fix",
-    "format": "prettier --write .",
+    "lint": "eslint . --ext .ts",
     "prepare": "husky install",
     "test": "true"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown",
-    "**/*.ts": "eslint --fix"
+    "**/*.{md,json,yml,js,cjs}": "prettier --write",
+    "**/*.ts": [
+      "eslint",
+      "prettier --write"
+    ]
   }
 }
