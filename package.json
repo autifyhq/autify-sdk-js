@@ -1,0 +1,60 @@
+{
+  "name": "@autifyhq/autify-sdk",
+  "version": "0.1.0-beta.2",
+  "description": "Autify SDK for JavaScript",
+  "author": "Autify",
+  "homepage": "https://github.com/autifyhq/autify-sdk-js",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": "autifyhq/autify-sdk-js",
+  "bugs": "https://github.com/autifyhq/autify-sdk-js/issues",
+  "files": [
+    "/dist"
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "axios-logger": "^2.6.1",
+    "debug": "^4.3.4",
+    "form-data": "^4.0.0",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.5.1",
+    "@types/debug": "^4.1.7",
+    "@types/node": "^16.11.39",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.1",
+    "prettier": "^2.6.2",
+    "shx": "^0.3.4",
+    "ts-morph": "^14.0.0",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3"
+  },
+  "scripts": {
+    "generate:openapi-client:web": "openapi-generator-cli generate -i ./swagger-web.yml -g typescript-axios -o src/generated/web/openapi --additional-properties withNodeImports=true,multipartFormData=true",
+    "generate:openapi-client:mobile": "openapi-generator-cli generate -i ./swagger-mobile.yml -g typescript-axios -o src/generated/mobile/openapi --additional-properties withNodeImports=true,multipartFormData=true",
+    "generate:sdk-client": "ts-node scripts/generate.ts",
+    "generate:client:web": "npm run generate:openapi-client:web && npm run generate:sdk-client web",
+    "generate:client:mobile": "npm run generate:openapi-client:mobile && npm run generate:sdk-client mobile",
+    "generate": "npm run generate:client:web && npm run generate:client:mobile && npm run lint && npm run format",
+    "build": "shx rm -rf dist && tsc -b",
+    "prepack": "npm run build",
+    "lint": "eslint . --ext .ts --fix",
+    "format": "prettier --write .",
+    "prepare": "husky install",
+    "test": "true"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown",
+    "**/*.ts": "eslint --fix"
+  }
+}
