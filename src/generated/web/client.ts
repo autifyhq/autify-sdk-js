@@ -59,7 +59,7 @@ import {
   UrlReplacementApi,
 } from "./openapi";
 
-export { BASE_PATH } from "./openapi/base";
+export { BASE_PATH as WEB_BASE_PATH } from "./openapi/base";
 
 class CustomFormData extends FormData {
   append(key: string, filename: any) {
@@ -73,11 +73,15 @@ type Options = Readonly<{
   userAgent?: string;
 }>;
 
-export class Client {
+export class WebClient {
+  readonly version: string;
+
   constructor(accessToken: string, { basePath, userAgent }: Options = {}) {
     if (!accessToken) {
       throw new Error("accessToken is required.");
     }
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    this.version = require("../../../package.json").version;
     const baseOptions = {
       ...(userAgent && {
         headers: {

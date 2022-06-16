@@ -9,12 +9,14 @@ import {
 const project = new Project({});
 
 const camelize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
+const pascallize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 const writeClientSource = (
   service: string,
   apiClass: ClassDeclaration,
   apiMethod: MethodDeclaration
 ) => {
+  const clientClassName = `${pascallize(service)}Client`;
   const clientSource =
     project.getSourceFile(`./src/generated/${service}/client.ts`) ??
     project.createSourceFile(
@@ -24,7 +26,7 @@ import {AxiosRequestConfig} from 'axios'
 import FormData from 'form-data'
 import {readFileSync} from 'fs';
 
-export {BASE_PATH} from './openapi/base'
+export {BASE_PATH as ${service.toUpperCase()}_BASE_PATH} from './openapi/base'
 
 class CustomFormData extends FormData {
   append(key: string, filename: any) {
@@ -38,11 +40,15 @@ type Options = Readonly<{
   userAgent?: string
 }>
 
-export class Client {
+export class ${clientClassName} {
+  readonly version: string
+
   constructor(accessToken: string, { basePath, userAgent }: Options = {}) {
     if (!accessToken) {
       throw new Error("accessToken is required.")
     }
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    this.version = require("../../../package.json").version
     const baseOptions = {
       ...(userAgent && {
         headers: {
@@ -68,7 +74,7 @@ export class Client {
     });
   }
 
-  const clientClass = clientSource.getClassOrThrow("Client");
+  const clientClass = clientSource.getClassOrThrow(clientClassName);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const apiClassProperty = camelize(apiClass.getName()!);
   if (!clientClass.getProperty(apiClassProperty)) {
