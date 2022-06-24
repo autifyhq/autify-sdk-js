@@ -5,19 +5,54 @@ import { join } from "path";
 
 const mock = new MockAdaptor(axios, { onNoMatch: "throwException" });
 const mockResponse = {};
-const client = new MobileClient("token");
+const token = "token";
+const userAgent = "userAgent";
+const client = new MobileClient(token, { userAgent });
+const headersMatcher = expect.objectContaining({
+  Authorization: `Bearer ${token}`,
+  "User-Agent": userAgent,
+});
 
 describe.each([
   {
     desc: "uploadBuild",
     api: () => client.uploadBuild("id", join(__dirname, "mock.file")),
-    mockOn: () => mock.onPost(MOBILE_BASE_PATH + "/projects/id/builds"),
+    mockOn: () =>
+      mock.onPost(
+        MOBILE_BASE_PATH + "/projects/id/builds",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "runTestPlan",
     api: () => client.runTestPlan("id", {}),
     mockOn: () =>
-      mock.onPost(MOBILE_BASE_PATH + "/test_plans/id/test_plan_results"),
+      mock.onPost(
+        MOBILE_BASE_PATH + "/test_plans/id/test_plan_results",
+        undefined,
+        headersMatcher
+      ),
+  },
+  {
+    desc: "describeTestResult",
+    api: () => client.describeTestResult("id", "id2"),
+    mockOn: () =>
+      mock.onGet(
+        MOBILE_BASE_PATH + "/projects/id/results/id2",
+        undefined,
+        headersMatcher
+      ),
+  },
+  {
+    desc: "listTestResults",
+    api: () => client.listTestResults("id"),
+    mockOn: () =>
+      mock.onGet(
+        MOBILE_BASE_PATH + "/projects/id/results",
+        undefined,
+        headersMatcher
+      ),
   },
 ])("$desc", ({ api, mockOn }) => {
   test("success", async () => {

@@ -48,6 +48,291 @@ import {
 /**
  *
  * @export
+ * @interface DescribeTestResult200Response
+ */
+export interface DescribeTestResult200Response {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200Response
+   */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200Response
+   */
+  status?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof DescribeTestResult200Response
+   */
+  duration?: number | null;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200Response
+   */
+  started_at?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200Response
+   */
+  finished_at?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200Response
+   */
+  created_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200Response
+   */
+  updated_at?: string;
+  /**
+   *
+   * @type {ListTestResults200ResponseDataInnerTestPlan}
+   * @memberof DescribeTestResult200Response
+   */
+  test_plan?: ListTestResults200ResponseDataInnerTestPlan;
+  /**
+   *
+   * @type {Array<DescribeTestResult200ResponseTestCaseResultsInner>}
+   * @memberof DescribeTestResult200Response
+   */
+  test_case_results?: Array<DescribeTestResult200ResponseTestCaseResultsInner>;
+}
+/**
+ *
+ * @export
+ * @interface DescribeTestResult200ResponseTestCaseResultsInner
+ */
+export interface DescribeTestResult200ResponseTestCaseResultsInner {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInner
+   */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInner
+   */
+  status?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInner
+   */
+  duration?: number | null;
+  /**
+   *
+   * @type {DescribeTestResult200ResponseTestCaseResultsInnerTestCase}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInner
+   */
+  test_case?: DescribeTestResult200ResponseTestCaseResultsInnerTestCase;
+}
+/**
+ *
+ * @export
+ * @interface DescribeTestResult200ResponseTestCaseResultsInnerTestCase
+ */
+export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCase {
+  /**
+   *
+   * @type {Array<DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner>}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCase
+   */
+  environment_variables?: Array<DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner>;
+  /**
+   *
+   * @type {DescribeTestResult200ResponseTestCaseResultsInnerTestCaseBuild}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCase
+   */
+  build?: DescribeTestResult200ResponseTestCaseResultsInnerTestCaseBuild;
+  /**
+   *
+   * @type {DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCase
+   */
+  capability?: DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability;
+}
+/**
+ *
+ * @export
+ * @interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseBuild
+ */
+export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseBuild {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseBuild
+   */
+  id?: string;
+}
+/**
+ *
+ * @export
+ * @interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability
+ */
+export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability
+   */
+  os?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability
+   */
+  os_version?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability
+   */
+  device?: string;
+}
+/**
+ *
+ * @export
+ * @interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner
+ */
+export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner
+   */
+  key?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner
+   */
+  value?: string;
+}
+/**
+ *
+ * @export
+ * @interface ListTestResults200Response
+ */
+export interface ListTestResults200Response {
+  /**
+   *
+   * @type {number}
+   * @memberof ListTestResults200Response
+   */
+  total?: number;
+  /**
+   *
+   * @type {Array<ListTestResults200ResponseDataInner>}
+   * @memberof ListTestResults200Response
+   */
+  data?: Array<ListTestResults200ResponseDataInner>;
+}
+/**
+ *
+ * @export
+ * @interface ListTestResults200ResponseDataInner
+ */
+export interface ListTestResults200ResponseDataInner {
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInner
+   */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInner
+   */
+  status?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof ListTestResults200ResponseDataInner
+   */
+  duration?: number | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInner
+   */
+  started_at?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInner
+   */
+  finished_at?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInner
+   */
+  created_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInner
+   */
+  updated_at?: string;
+  /**
+   *
+   * @type {ListTestResults200ResponseDataInnerTestPlan}
+   * @memberof ListTestResults200ResponseDataInner
+   */
+  test_plan?: ListTestResults200ResponseDataInnerTestPlan;
+}
+/**
+ *
+ * @export
+ * @interface ListTestResults200ResponseDataInnerTestPlan
+ */
+export interface ListTestResults200ResponseDataInnerTestPlan {
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInnerTestPlan
+   */
+  id?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInnerTestPlan
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInnerTestPlan
+   */
+  created_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ListTestResults200ResponseDataInnerTestPlan
+   */
+  updated_at?: string;
+}
+/**
+ *
+ * @export
  * @interface RunTestPlan201Response
  */
 export interface RunTestPlan201Response {
@@ -568,6 +853,318 @@ export class TestPlansApi extends BaseAPI {
   ) {
     return TestPlansApiFp(this.configuration)
       .runTestPlan(testPlanId, runTestPlanRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * TestResultsApi - axios parameter creator
+ * @export
+ */
+export const TestResultsApiAxiosParamCreator = function (
+  configuration?: Configuration
+) {
+  return {
+    /**
+     * Get a test result.
+     * @summary Get a test result
+     * @param {string} projectId ID of the project from which the test results will be obtained.
+     * @param {string} id Test Result ID.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    describeTestResult: async (
+      projectId: string,
+      id: string,
+      options: AxiosRequestConfig = {}
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("describeTestResult", "projectId", projectId);
+      // verify required parameter 'id' is not null or undefined
+      assertParamExists("describeTestResult", "id", id);
+      const localVarPath = `/projects/{project_id}/results/{id}`
+        .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+        .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List test results.
+     * @summary List test results
+     * @param {string} projectId ID of the project from which the list of test results will be retrieved.
+     * @param {number} [page] Page number to be retrieved.
+     * @param {number} [perPage] Number of test results per page.
+     * @param {string} [testPlanId] ID of the test plan.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listTestResults: async (
+      projectId: string,
+      page?: number,
+      perPage?: number,
+      testPlanId?: string,
+      options: AxiosRequestConfig = {}
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("listTestResults", "projectId", projectId);
+      const localVarPath = `/projects/{project_id}/results`.replace(
+        `{${"project_id"}}`,
+        encodeURIComponent(String(projectId))
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      if (testPlanId !== undefined) {
+        localVarQueryParameter["test_plan_id"] = testPlanId;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * TestResultsApi - functional programming interface
+ * @export
+ */
+export const TestResultsApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator =
+    TestResultsApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Get a test result.
+     * @summary Get a test result
+     * @param {string} projectId ID of the project from which the test results will be obtained.
+     * @param {string} id Test Result ID.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async describeTestResult(
+      projectId: string,
+      id: string,
+      options?: AxiosRequestConfig
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string
+      ) => AxiosPromise<DescribeTestResult200Response>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.describeTestResult(
+          projectId,
+          id,
+          options
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration
+      );
+    },
+    /**
+     * List test results.
+     * @summary List test results
+     * @param {string} projectId ID of the project from which the list of test results will be retrieved.
+     * @param {number} [page] Page number to be retrieved.
+     * @param {number} [perPage] Number of test results per page.
+     * @param {string} [testPlanId] ID of the test plan.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listTestResults(
+      projectId: string,
+      page?: number,
+      perPage?: number,
+      testPlanId?: string,
+      options?: AxiosRequestConfig
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string
+      ) => AxiosPromise<ListTestResults200Response>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.listTestResults(
+        projectId,
+        page,
+        perPage,
+        testPlanId,
+        options
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration
+      );
+    },
+  };
+};
+
+/**
+ * TestResultsApi - factory interface
+ * @export
+ */
+export const TestResultsApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance
+) {
+  const localVarFp = TestResultsApiFp(configuration);
+  return {
+    /**
+     * Get a test result.
+     * @summary Get a test result
+     * @param {string} projectId ID of the project from which the test results will be obtained.
+     * @param {string} id Test Result ID.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    describeTestResult(
+      projectId: string,
+      id: string,
+      options?: any
+    ): AxiosPromise<DescribeTestResult200Response> {
+      return localVarFp
+        .describeTestResult(projectId, id, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List test results.
+     * @summary List test results
+     * @param {string} projectId ID of the project from which the list of test results will be retrieved.
+     * @param {number} [page] Page number to be retrieved.
+     * @param {number} [perPage] Number of test results per page.
+     * @param {string} [testPlanId] ID of the test plan.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listTestResults(
+      projectId: string,
+      page?: number,
+      perPage?: number,
+      testPlanId?: string,
+      options?: any
+    ): AxiosPromise<ListTestResults200Response> {
+      return localVarFp
+        .listTestResults(projectId, page, perPage, testPlanId, options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * TestResultsApi - object-oriented interface
+ * @export
+ * @class TestResultsApi
+ * @extends {BaseAPI}
+ */
+export class TestResultsApi extends BaseAPI {
+  /**
+   * Get a test result.
+   * @summary Get a test result
+   * @param {string} projectId ID of the project from which the test results will be obtained.
+   * @param {string} id Test Result ID.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestResultsApi
+   */
+  public describeTestResult(
+    projectId: string,
+    id: string,
+    options?: AxiosRequestConfig
+  ) {
+    return TestResultsApiFp(this.configuration)
+      .describeTestResult(projectId, id, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List test results.
+   * @summary List test results
+   * @param {string} projectId ID of the project from which the list of test results will be retrieved.
+   * @param {number} [page] Page number to be retrieved.
+   * @param {number} [perPage] Number of test results per page.
+   * @param {string} [testPlanId] ID of the test plan.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestResultsApi
+   */
+  public listTestResults(
+    projectId: string,
+    page?: number,
+    perPage?: number,
+    testPlanId?: string,
+    options?: AxiosRequestConfig
+  ) {
+    return TestResultsApiFp(this.configuration)
+      .listTestResults(projectId, page, perPage, testPlanId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
