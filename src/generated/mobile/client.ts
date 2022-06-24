@@ -3,6 +3,15 @@ import FormData from "form-data";
 import { readFileSync } from "fs";
 import {
   Configuration,
+  DescribeTestResult200Response,
+  DescribeTestResult200ResponseTestCaseResultsInner,
+  DescribeTestResult200ResponseTestCaseResultsInnerTestCase,
+  DescribeTestResult200ResponseTestCaseResultsInnerTestCaseBuild,
+  DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability,
+  DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner,
+  ListTestResults200Response,
+  ListTestResults200ResponseDataInner,
+  ListTestResults200ResponseDataInnerTestPlan,
   RunTestPlan201Response,
   RunTestPlan201ResponseTestPlan,
   RunTestPlan201ResponseTestPlanBuild,
@@ -19,6 +28,10 @@ import {
   TestPlansApiFp,
   TestPlansApiFactory,
   TestPlansApi,
+  TestResultsApiAxiosParamCreator,
+  TestResultsApiFp,
+  TestResultsApiFactory,
+  TestResultsApi,
 } from "./openapi";
 
 export { BASE_PATH as MOBILE_BASE_PATH } from "./openapi/base";
@@ -59,6 +72,7 @@ export class MobileClient {
     });
     this.buildsApi = new BuildsApi(configuration);
     this.testPlansApi = new TestPlansApi(configuration);
+    this.testResultsApi = new TestResultsApi(configuration);
   }
 
   private readonly buildsApi;
@@ -95,6 +109,52 @@ export class MobileClient {
     return this.testPlansApi.runTestPlan(
       testPlanId,
       runTestPlanRequest,
+      options
+    );
+  }
+
+  private readonly testResultsApi;
+
+  /**
+   * Get a test result.
+   * @summary Get a test result
+   * @param {string} projectId ID of the project from which the test results will be obtained.
+   * @param {string} id Test Result ID.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestResultsApi
+   */
+  describeTestResult(
+    projectId: string,
+    id: string,
+    options?: AxiosRequestConfig
+  ) {
+    return this.testResultsApi.describeTestResult(projectId, id, options);
+  }
+
+  /**
+   * List test results.
+   * @summary List test results
+   * @param {string} projectId ID of the project from which the list of test results will be retrieved.
+   * @param {number} [page] Page number to be retrieved.
+   * @param {number} [perPage] Number of test results per page.
+   * @param {string} [testPlanId] ID of the test plan.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestResultsApi
+   */
+  listTestResults(
+    projectId: string,
+    page?: number,
+    perPage?: number,
+    testPlanId?: string,
+    options?: AxiosRequestConfig
+  ) {
+    return this.testResultsApi.listTestResults(
+      projectId,
+      page,
+      perPage,
+      testPlanId,
       options
     );
   }

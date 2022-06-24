@@ -63,6 +63,250 @@ paths:
                           example: Error message.
         "401":
           description: bad credentials
+  "/projects/{project_id}/results":
+    get:
+      summary: List test results
+      tags:
+        - Test results
+      description: List test results.
+      operationId: listTestResults
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description:
+            ID of the project from which the list of test results will be
+            retrieved.
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          description: Page number to be retrieved.
+          schema:
+            type: number
+        - name: per_page
+          in: query
+          required: false
+          description: Number of test results per page.
+          schema:
+            type: number
+        - name: test_plan_id
+          in: query
+          required: false
+          description: ID of the test plan.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List test results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: number
+                    example: "120"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: jx8tyj
+                        status:
+                          type: string
+                          example: passed
+                        duration:
+                          type: number
+                          nullable: true
+                          example: "10"
+                        started_at:
+                          type: string
+                          nullable: true
+                          example: "2022-06-13T17:06:19.487+09:00"
+                        finished_at:
+                          type: string
+                          nullable: true
+                          example: "2022-06-13T17:06:19.487+09:00"
+                        created_at:
+                          type: string
+                          example: "2022-06-13T17:06:19.487+09:00"
+                        updated_at:
+                          type: string
+                          example: "2022-06-13T17:06:19.487+09:00"
+                        test_plan:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: jx8tyj
+                            name:
+                              type: string
+                              example: E2E Test
+                            created_at:
+                              type: string
+                              example: "2022-06-13T17:06:19.487+09:00"
+                            updated_at:
+                              type: string
+                              example: "2022-06-13T17:06:19.487+09:00"
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: Error message.
+        "401":
+          description: bad credentials
+  "/projects/{project_id}/results/{id}":
+    get:
+      summary: Get a test result
+      tags:
+        - Test results
+      description: Get a test result.
+      operationId: describeTestResult
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: ID of the project from which the test results will be obtained.
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: Test Result ID.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Get a test result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: jx8tyj
+                  status:
+                    type: string
+                    example: passed
+                  duration:
+                    type: number
+                    nullable: true
+                    example: "10"
+                  started_at:
+                    type: string
+                    nullable: true
+                    example: "2022-06-13T17:06:19.487+09:00"
+                  finished_at:
+                    type: string
+                    nullable: true
+                    example: "2022-06-13T17:06:19.487+09:00"
+                  created_at:
+                    type: string
+                    example: "2022-06-13T17:06:19.487+09:00"
+                  updated_at:
+                    type: string
+                    example: "2022-06-13T17:06:19.487+09:00"
+                  test_plan:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: jx8tyj
+                      name:
+                        type: string
+                        example: E2E Test
+                      created_at:
+                        type: string
+                        example: "2022-06-13T17:06:19.487+09:00"
+                      updated_at:
+                        type: string
+                        example: "2022-06-13T17:06:19.487+09:00"
+                  test_case_results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: jx8tyj
+                        status:
+                          type: string
+                          example: passed
+                        duration:
+                          type: number
+                          nullable: true
+                          example: "10"
+                        test_case:
+                          type: object
+                          properties:
+                            environment_variables:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  key:
+                                    type: string
+                                    example: key
+                                  name:
+                                    type: string
+                                    example: name
+                                  value:
+                                    type: string
+                                    example: value
+                            build:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  example: jx8tyj
+                            capability:
+                              type: object
+                              properties:
+                                os:
+                                  type: string
+                                  example: iOS
+                                os_version:
+                                  type: string
+                                  example: "14.4"
+                                device:
+                                  type: string
+                                  example: iPhone 12 Pro
+        "401":
+          description: bad credentials
+        "404":
+          description: not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: Error message.
   "/test_plans/{test_plan_id}/test_plan_results":
     post:
       summary: Run a test plan

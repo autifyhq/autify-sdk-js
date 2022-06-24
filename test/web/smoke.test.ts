@@ -4,28 +4,54 @@ import MockAdaptor from "axios-mock-adapter";
 
 const mock = new MockAdaptor(axios, { onNoMatch: "throwException" });
 const mockResponse = {};
-const client = new WebClient("token");
+const token = "token";
+const userAgent = "userAgent";
+const client = new WebClient(token, { userAgent });
+const headersMatcher = expect.objectContaining({
+  Authorization: `Bearer ${token}`,
+  "User-Agent": userAgent,
+});
 
 describe.each([
   {
     desc: "listCapabilities",
     api: () => client.listCapabilities(1),
-    mockOn: () => mock.onGet(WEB_BASE_PATH + "/projects/1/capabilities"),
+    mockOn: () =>
+      mock.onGet(
+        WEB_BASE_PATH + "/projects/1/capabilities",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "describeResult",
     api: () => client.describeResult(1, 2),
-    mockOn: () => mock.onGet(WEB_BASE_PATH + "/projects/1/results/2"),
+    mockOn: () =>
+      mock.onGet(
+        WEB_BASE_PATH + "/projects/1/results/2",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "listResults",
     api: () => client.listResults(1),
-    mockOn: () => mock.onGet(WEB_BASE_PATH + "/projects/1/results"),
+    mockOn: () =>
+      mock.onGet(
+        WEB_BASE_PATH + "/projects/1/results",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "describeScenario",
     api: () => client.describeScenario(1, 2),
-    mockOn: () => mock.onGet(WEB_BASE_PATH + "/projects/1/scenarios/2"),
+    mockOn: () =>
+      mock.onGet(
+        WEB_BASE_PATH + "/projects/1/scenarios/2",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "executeScenarios",
@@ -34,17 +60,28 @@ describe.each([
         capabilities: [],
         scenarios: [],
       }),
-    mockOn: () => mock.onPost(WEB_BASE_PATH + "/projects/1/execute_scenarios"),
+    mockOn: () =>
+      mock.onPost(
+        WEB_BASE_PATH + "/projects/1/execute_scenarios",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "listScenarios",
     api: () => client.listScenarios(1),
-    mockOn: () => mock.onGet(WEB_BASE_PATH + "/projects/1/scenarios"),
+    mockOn: () =>
+      mock.onGet(
+        WEB_BASE_PATH + "/projects/1/scenarios",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "executeSchedule",
     api: () => client.executeSchedule(1),
-    mockOn: () => mock.onPost(WEB_BASE_PATH + "/schedules/1"),
+    mockOn: () =>
+      mock.onPost(WEB_BASE_PATH + "/schedules/1", undefined, headersMatcher),
   },
   {
     desc: "createUrlReplacement",
@@ -53,18 +90,32 @@ describe.each([
         pattern_url: "",
         replacement_url: "",
       }),
-    mockOn: () => mock.onPost(WEB_BASE_PATH + "/test_plans/1/url_replacements"),
+    mockOn: () =>
+      mock.onPost(
+        WEB_BASE_PATH + "/test_plans/1/url_replacements",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "deleteUrlReplacement",
     api: () => client.deleteUrlReplacement(1, 2),
     mockOn: () =>
-      mock.onDelete(WEB_BASE_PATH + "/test_plans/1/url_replacements/2"),
+      mock.onDelete(
+        WEB_BASE_PATH + "/test_plans/1/url_replacements/2",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "listUrlReplacements",
     api: () => client.listUrlReplacements(1),
-    mockOn: () => mock.onGet(WEB_BASE_PATH + "/test_plans/1/url_replacements"),
+    mockOn: () =>
+      mock.onGet(
+        WEB_BASE_PATH + "/test_plans/1/url_replacements",
+        undefined,
+        headersMatcher
+      ),
   },
   {
     desc: "updateUrlReplacement",
