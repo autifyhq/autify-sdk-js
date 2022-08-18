@@ -243,6 +243,7 @@ export const DescribeResult200ResponseStatusEnum = {
   Passed: "passed",
   Failed: "failed",
   Skipped: "skipped",
+  InternalError: "internal_error",
 } as const;
 
 export type DescribeResult200ResponseStatusEnum =
@@ -404,6 +405,12 @@ export interface ExecuteScenariosRequest {
    * @memberof ExecuteScenariosRequest
    */
   scenarios: Array<ExecuteScenariosRequestScenariosInner>;
+  /**
+   *
+   * @type {ExecuteScenariosRequestAutifyConnect}
+   * @memberof ExecuteScenariosRequest
+   */
+  autify_connect?: ExecuteScenariosRequestAutifyConnect;
 }
 
 export const ExecuteScenariosRequestExecutionTypeEnum = {
@@ -414,6 +421,19 @@ export const ExecuteScenariosRequestExecutionTypeEnum = {
 export type ExecuteScenariosRequestExecutionTypeEnum =
   typeof ExecuteScenariosRequestExecutionTypeEnum[keyof typeof ExecuteScenariosRequestExecutionTypeEnum];
 
+/**
+ *
+ * @export
+ * @interface ExecuteScenariosRequestAutifyConnect
+ */
+export interface ExecuteScenariosRequestAutifyConnect {
+  /**
+   *
+   * @type {string}
+   * @memberof ExecuteScenariosRequestAutifyConnect
+   */
+  name: string;
+}
 /**
  *
  * @export
@@ -626,37 +646,37 @@ export interface Label {
 /**
  *
  * @export
- * @interface Story
+ * @interface Scenario
  */
-export interface Story {
+export interface Scenario {
   /**
    *
    * @type {number}
-   * @memberof Story
+   * @memberof Scenario
    */
   id?: number;
   /**
    *
    * @type {string}
-   * @memberof Story
+   * @memberof Scenario
    */
   name?: string;
   /**
    *
    * @type {string}
-   * @memberof Story
+   * @memberof Scenario
    */
   created_at?: string;
   /**
    *
    * @type {string}
-   * @memberof Story
+   * @memberof Scenario
    */
   updated_at?: string;
   /**
    *
    * @type {Array<Label>}
-   * @memberof Story
+   * @memberof Scenario
    */
   labels?: Array<Label>;
 }
@@ -734,6 +754,7 @@ export const TestCaseResultStatusEnum = {
   Passed: "passed",
   Failed: "failed",
   Skipped: "skipped",
+  InternalError: "internal_error",
 } as const;
 
 export type TestCaseResultStatusEnum =
@@ -814,6 +835,7 @@ export const TestPlanCapabilityResultStatusEnum = {
   Passed: "passed",
   Failed: "failed",
   Skipped: "skipped",
+  InternalError: "internal_error",
 } as const;
 
 export type TestPlanCapabilityResultStatusEnum =
@@ -881,6 +903,7 @@ export const TestPlanResultStatusEnum = {
   Passed: "passed",
   Failed: "failed",
   Skipped: "skipped",
+  InternalError: "internal_error",
 } as const;
 
 export type TestPlanResultStatusEnum =
@@ -1641,7 +1664,7 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
       scenarioId: number,
       options?: AxiosRequestConfig
     ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Story>
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Scenario>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.describeScenario(
@@ -1698,7 +1721,10 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
       page?: number,
       options?: AxiosRequestConfig
     ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Story>>
+      (
+        axios?: AxiosInstance,
+        basePath?: string
+      ) => AxiosPromise<Array<Scenario>>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.listScenarios(
         projectId,
@@ -1737,7 +1763,7 @@ export const ScenarioApiFactory = function (
       projectId: number,
       scenarioId: number,
       options?: any
-    ): AxiosPromise<Story> {
+    ): AxiosPromise<Scenario> {
       return localVarFp
         .describeScenario(projectId, scenarioId, options)
         .then((request) => request(axios, basePath));
@@ -1769,7 +1795,7 @@ export const ScenarioApiFactory = function (
       projectId: number,
       page?: number,
       options?: any
-    ): AxiosPromise<Array<Story>> {
+    ): AxiosPromise<Array<Scenario>> {
       return localVarFp
         .listScenarios(projectId, page, options)
         .then((request) => request(axios, basePath));
