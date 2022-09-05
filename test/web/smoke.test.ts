@@ -14,6 +14,26 @@ const headersMatcher = expect.objectContaining({
 
 describe.each([
   {
+    desc: "createAccessPoint",
+    api: () => client.createAccessPoint(1, { name: "foo" }),
+    mockOn: () =>
+      mock.onPost(
+        WEB_BASE_PATH + "/projects/1/autify_connect/access_points",
+        undefined,
+        headersMatcher
+      ),
+  },
+  {
+    desc: "deleteAccessPoint",
+    api: () => client.deleteAccessPoint(1, { name: "foo" }),
+    mockOn: () =>
+      mock.onDelete(
+        WEB_BASE_PATH + "/projects/1/autify_connect/access_points",
+        undefined,
+        headersMatcher
+      ),
+  },
+  {
     desc: "listCapabilities",
     api: () => client.listCapabilities(1),
     mockOn: () =>
@@ -121,7 +141,11 @@ describe.each([
     desc: "updateUrlReplacement",
     api: () => client.updateUrlReplacement(1, 2, {}),
     mockOn: () =>
-      mock.onPut(WEB_BASE_PATH + "/test_plans/1/url_replacements/2"),
+      mock.onPut(
+        WEB_BASE_PATH + "/test_plans/1/url_replacements/2",
+        undefined,
+        headersMatcher
+      ),
   },
 ])("$desc", ({ api, mockOn }) => {
   test("success", async () => {
