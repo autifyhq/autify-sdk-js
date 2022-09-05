@@ -158,6 +158,94 @@ export interface CapabilityOption {
 /**
  *
  * @export
+ * @interface CreateAccessPoint400Response
+ */
+export interface CreateAccessPoint400Response {
+  /**
+   *
+   * @type {Array<CreateAccessPoint400ResponseErrorsInner>}
+   * @memberof CreateAccessPoint400Response
+   */
+  errors?: Array<CreateAccessPoint400ResponseErrorsInner>;
+}
+/**
+ *
+ * @export
+ * @interface CreateAccessPoint400ResponseErrorsInner
+ */
+export interface CreateAccessPoint400ResponseErrorsInner {
+  /**
+   *
+   * @type {number}
+   * @memberof CreateAccessPoint400ResponseErrorsInner
+   */
+  code?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateAccessPoint400ResponseErrorsInner
+   */
+  message?: string;
+}
+/**
+ *
+ * @export
+ * @interface CreateAccessPointRequest
+ */
+export interface CreateAccessPointRequest {
+  /**
+   * Name of the access point to be created
+   * @type {string}
+   * @memberof CreateAccessPointRequest
+   */
+  name: string;
+}
+/**
+ *
+ * @export
+ * @interface CreateAccessPointResult
+ */
+export interface CreateAccessPointResult {
+  /**
+   *
+   * @type {string}
+   * @memberof CreateAccessPointResult
+   */
+  name: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateAccessPointResult
+   */
+  key: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateAccessPointResult
+   */
+  creator: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateAccessPointResult
+   */
+  last_use?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateAccessPointResult
+   */
+  created_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateAccessPointResult
+   */
+  updated_at?: string;
+}
+/**
+ *
+ * @export
  * @interface CreateUrlReplacementRequest
  */
 export interface CreateUrlReplacementRequest {
@@ -173,6 +261,51 @@ export interface CreateUrlReplacementRequest {
    * @memberof CreateUrlReplacementRequest
    */
   replacement_url: string;
+}
+/**
+ *
+ * @export
+ * @interface DeleteAccessPoint404Response
+ */
+export interface DeleteAccessPoint404Response {
+  /**
+   *
+   * @type {Array<DeleteAccessPoint404ResponseErrorsInner>}
+   * @memberof DeleteAccessPoint404Response
+   */
+  errors?: Array<DeleteAccessPoint404ResponseErrorsInner>;
+}
+/**
+ *
+ * @export
+ * @interface DeleteAccessPoint404ResponseErrorsInner
+ */
+export interface DeleteAccessPoint404ResponseErrorsInner {
+  /**
+   *
+   * @type {number}
+   * @memberof DeleteAccessPoint404ResponseErrorsInner
+   */
+  code?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof DeleteAccessPoint404ResponseErrorsInner
+   */
+  message?: string;
+}
+/**
+ *
+ * @export
+ * @interface DeleteAccessPointRequest
+ */
+export interface DeleteAccessPointRequest {
+  /**
+   * Name of the access point to be deleted
+   * @type {string}
+   * @memberof DeleteAccessPointRequest
+   */
+  name: string;
 }
 /**
  *
@@ -970,6 +1103,305 @@ export interface UrlReplacement {
    * @memberof UrlReplacement
    */
   updated_at: string;
+}
+
+/**
+ * AutifyConnectApi - axios parameter creator
+ * @export
+ */
+export const AutifyConnectApiAxiosParamCreator = function (
+  configuration?: Configuration
+) {
+  return {
+    /**
+     * You can generate a new access point by passing in its name.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {CreateAccessPointRequest} createAccessPointRequest The name of the access point to be created
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createAccessPoint: async (
+      projectId: number,
+      createAccessPointRequest: CreateAccessPointRequest,
+      options: AxiosRequestConfig = {}
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("createAccessPoint", "projectId", projectId);
+      // verify required parameter 'createAccessPointRequest' is not null or undefined
+      assertParamExists(
+        "createAccessPoint",
+        "createAccessPointRequest",
+        createAccessPointRequest
+      );
+      const localVarPath =
+        `/projects/{project_id}/autify_connect/access_points`.replace(
+          `{${"project_id"}}`,
+          encodeURIComponent(String(projectId))
+        );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        createAccessPointRequest,
+        localVarRequestOptions,
+        configuration
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * You can delete an access point by passing in its name.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {DeleteAccessPointRequest} deleteAccessPointRequest The name of the access point to be deleted
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteAccessPoint: async (
+      projectId: number,
+      deleteAccessPointRequest: DeleteAccessPointRequest,
+      options: AxiosRequestConfig = {}
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("deleteAccessPoint", "projectId", projectId);
+      // verify required parameter 'deleteAccessPointRequest' is not null or undefined
+      assertParamExists(
+        "deleteAccessPoint",
+        "deleteAccessPointRequest",
+        deleteAccessPointRequest
+      );
+      const localVarPath =
+        `/projects/{project_id}/autify_connect/access_points`.replace(
+          `{${"project_id"}}`,
+          encodeURIComponent(String(projectId))
+        );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "DELETE",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        deleteAccessPointRequest,
+        localVarRequestOptions,
+        configuration
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * AutifyConnectApi - functional programming interface
+ * @export
+ */
+export const AutifyConnectApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator =
+    AutifyConnectApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * You can generate a new access point by passing in its name.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {CreateAccessPointRequest} createAccessPointRequest The name of the access point to be created
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async createAccessPoint(
+      projectId: number,
+      createAccessPointRequest: CreateAccessPointRequest,
+      options?: AxiosRequestConfig
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string
+      ) => AxiosPromise<CreateAccessPointResult>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.createAccessPoint(
+          projectId,
+          createAccessPointRequest,
+          options
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration
+      );
+    },
+    /**
+     * You can delete an access point by passing in its name.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {DeleteAccessPointRequest} deleteAccessPointRequest The name of the access point to be deleted
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async deleteAccessPoint(
+      projectId: number,
+      deleteAccessPointRequest: DeleteAccessPointRequest,
+      options?: AxiosRequestConfig
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.deleteAccessPoint(
+          projectId,
+          deleteAccessPointRequest,
+          options
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration
+      );
+    },
+  };
+};
+
+/**
+ * AutifyConnectApi - factory interface
+ * @export
+ */
+export const AutifyConnectApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance
+) {
+  const localVarFp = AutifyConnectApiFp(configuration);
+  return {
+    /**
+     * You can generate a new access point by passing in its name.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {CreateAccessPointRequest} createAccessPointRequest The name of the access point to be created
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createAccessPoint(
+      projectId: number,
+      createAccessPointRequest: CreateAccessPointRequest,
+      options?: any
+    ): AxiosPromise<CreateAccessPointResult> {
+      return localVarFp
+        .createAccessPoint(projectId, createAccessPointRequest, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * You can delete an access point by passing in its name.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {DeleteAccessPointRequest} deleteAccessPointRequest The name of the access point to be deleted
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteAccessPoint(
+      projectId: number,
+      deleteAccessPointRequest: DeleteAccessPointRequest,
+      options?: any
+    ): AxiosPromise<object> {
+      return localVarFp
+        .deleteAccessPoint(projectId, deleteAccessPointRequest, options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * AutifyConnectApi - object-oriented interface
+ * @export
+ * @class AutifyConnectApi
+ * @extends {BaseAPI}
+ */
+export class AutifyConnectApi extends BaseAPI {
+  /**
+   * You can generate a new access point by passing in its name.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {CreateAccessPointRequest} createAccessPointRequest The name of the access point to be created
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AutifyConnectApi
+   */
+  public createAccessPoint(
+    projectId: number,
+    createAccessPointRequest: CreateAccessPointRequest,
+    options?: AxiosRequestConfig
+  ) {
+    return AutifyConnectApiFp(this.configuration)
+      .createAccessPoint(projectId, createAccessPointRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * You can delete an access point by passing in its name.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {DeleteAccessPointRequest} deleteAccessPointRequest The name of the access point to be deleted
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AutifyConnectApi
+   */
+  public deleteAccessPoint(
+    projectId: number,
+    deleteAccessPointRequest: DeleteAccessPointRequest,
+    options?: AxiosRequestConfig
+  ) {
+    return AutifyConnectApiFp(this.configuration)
+      .deleteAccessPoint(projectId, deleteAccessPointRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
 }
 
 /**

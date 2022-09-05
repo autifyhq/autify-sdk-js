@@ -5,7 +5,14 @@ import {
   Configuration,
   Capability,
   CapabilityOption,
+  CreateAccessPoint400Response,
+  CreateAccessPoint400ResponseErrorsInner,
+  CreateAccessPointRequest,
+  CreateAccessPointResult,
   CreateUrlReplacementRequest,
+  DeleteAccessPoint404Response,
+  DeleteAccessPoint404ResponseErrorsInner,
+  DeleteAccessPointRequest,
   DescribeResult200Response,
   DescribeResult200ResponseStatusEnum,
   DescribeResult200ResponseTestPlan,
@@ -38,6 +45,10 @@ import {
   TestPlanResultStatusEnum,
   UpdateUrlReplacementRequest,
   UrlReplacement,
+  AutifyConnectApiAxiosParamCreator,
+  AutifyConnectApiFp,
+  AutifyConnectApiFactory,
+  AutifyConnectApi,
   CapabilityApiAxiosParamCreator,
   CapabilityApiFp,
   CapabilityApiFactory,
@@ -96,11 +107,54 @@ export class WebClient {
       formDataCtor: CustomFormData,
       baseOptions,
     });
+    this.autifyConnectApi = new AutifyConnectApi(configuration);
     this.capabilityApi = new CapabilityApi(configuration);
     this.resultApi = new ResultApi(configuration);
     this.scenarioApi = new ScenarioApi(configuration);
     this.scheduleApi = new ScheduleApi(configuration);
     this.urlReplacementApi = new UrlReplacementApi(configuration);
+  }
+
+  private readonly autifyConnectApi;
+
+  /**
+   * You can generate a new access point by passing in its name.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {CreateAccessPointRequest} createAccessPointRequest The name of the access point to be created
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AutifyConnectApi
+   */
+  createAccessPoint(
+    projectId: number,
+    createAccessPointRequest: CreateAccessPointRequest,
+    options?: AxiosRequestConfig
+  ) {
+    return this.autifyConnectApi.createAccessPoint(
+      projectId,
+      createAccessPointRequest,
+      options
+    );
+  }
+
+  /**
+   * You can delete an access point by passing in its name.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {DeleteAccessPointRequest} deleteAccessPointRequest The name of the access point to be deleted
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AutifyConnectApi
+   */
+  deleteAccessPoint(
+    projectId: number,
+    deleteAccessPointRequest: DeleteAccessPointRequest,
+    options?: AxiosRequestConfig
+  ) {
+    return this.autifyConnectApi.deleteAccessPoint(
+      projectId,
+      deleteAccessPointRequest,
+      options
+    );
   }
 
   private readonly capabilityApi;
