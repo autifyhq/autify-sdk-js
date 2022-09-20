@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import FormData from "form-data";
-import { readFileSync } from "fs";
+import { createReadStream } from "fs";
 import {
   Configuration,
   Capability,
@@ -75,8 +75,8 @@ export { BASE_PATH as WEB_BASE_PATH } from "./openapi/base";
 
 class CustomFormData extends FormData {
   append(key: string, filename: any) {
-    const blob = readFileSync(filename);
-    super.append(key, blob, { filename });
+    const stream = createReadStream(filename);
+    super.append(key, stream, { filename });
   }
 }
 
@@ -100,6 +100,8 @@ export class WebClient {
           "User-Agent": userAgent,
         },
       }),
+      maxBodyLength: Number.POSITIVE_INFINITY,
+      maxContentLength: Number.POSITIVE_INFINITY,
     };
     const configuration = new Configuration({
       accessToken,
