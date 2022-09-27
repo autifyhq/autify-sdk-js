@@ -34,6 +34,16 @@ describe.each([
       ),
   },
   {
+    desc: "listAccessPoint",
+    api: () => client.listAccessPoints(1),
+    mockOn: () =>
+      mock.onGet(
+        WEB_BASE_PATH + "/projects/1/autify_connect/access_points",
+        undefined,
+        headersMatcher
+      ),
+  },
+  {
     desc: "listCapabilities",
     api: () => client.listCapabilities(1),
     mockOn: () =>

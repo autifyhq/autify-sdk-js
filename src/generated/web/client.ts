@@ -3,6 +3,7 @@ import FormData from "form-data";
 import { createReadStream } from "fs";
 import {
   Configuration,
+  AccessPoint,
   Capability,
   CapabilityOption,
   CreateAccessPoint400Response,
@@ -34,6 +35,8 @@ import {
   ExecuteSchedule401ResponseErrorsInner,
   ExecuteSchedule404Response,
   ExecuteSchedule404ResponseErrorsInner,
+  ExecuteScheduleRequest,
+  ExecuteScheduleRequestAutifyConnect,
   Label,
   Scenario,
   TestCaseResult,
@@ -157,6 +160,22 @@ export class WebClient {
       deleteAccessPointRequest,
       options
     );
+  }
+
+  /**
+   * List access points for the project.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {number} [page] The number of page returns.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AutifyConnectApi
+   */
+  listAccessPoints(
+    projectId: number,
+    page?: number,
+    options?: AxiosRequestConfig
+  ) {
+    return this.autifyConnectApi.listAccessPoints(projectId, page, options);
   }
 
   private readonly capabilityApi;
@@ -290,12 +309,21 @@ export class WebClient {
   /**
    * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
    * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
+   * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof ScheduleApi
    */
-  executeSchedule(scheduleId: number, options?: AxiosRequestConfig) {
-    return this.scheduleApi.executeSchedule(scheduleId, options);
+  executeSchedule(
+    scheduleId: number,
+    executeScheduleRequest?: ExecuteScheduleRequest,
+    options?: AxiosRequestConfig
+  ) {
+    return this.scheduleApi.executeSchedule(
+      scheduleId,
+      executeScheduleRequest,
+      options
+    );
   }
 
   private readonly urlReplacementApi;

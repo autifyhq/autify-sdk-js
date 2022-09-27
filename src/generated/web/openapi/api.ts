@@ -48,6 +48,43 @@ import {
 /**
  *
  * @export
+ * @interface AccessPoint
+ */
+export interface AccessPoint {
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  name: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  last_use?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  creator: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  created_at: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AccessPoint
+   */
+  updated_at: string;
+}
+/**
+ *
+ * @export
  * @interface Capability
  */
 export interface Capability {
@@ -742,6 +779,32 @@ export interface ExecuteSchedule404ResponseErrorsInner {
 /**
  *
  * @export
+ * @interface ExecuteScheduleRequest
+ */
+export interface ExecuteScheduleRequest {
+  /**
+   *
+   * @type {ExecuteScheduleRequestAutifyConnect}
+   * @memberof ExecuteScheduleRequest
+   */
+  autify_connect?: ExecuteScheduleRequestAutifyConnect;
+}
+/**
+ *
+ * @export
+ * @interface ExecuteScheduleRequestAutifyConnect
+ */
+export interface ExecuteScheduleRequestAutifyConnect {
+  /**
+   * The name of access point to override the original settings. When null is given, the test_plan will run without Autify Connect.
+   * @type {string}
+   * @memberof ExecuteScheduleRequestAutifyConnect
+   */
+  name: string | null;
+}
+/**
+ *
+ * @export
  * @interface Label
  */
 export interface Label {
@@ -1243,6 +1306,62 @@ export const AutifyConnectApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     * List access points for the project.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {number} [page] The number of page returns.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listAccessPoints: async (
+      projectId: number,
+      page?: number,
+      options: AxiosRequestConfig = {}
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("listAccessPoints", "projectId", projectId);
+      const localVarPath =
+        `/projects/{project_id}/autify_connect/access_points`.replace(
+          `{${"project_id"}}`,
+          encodeURIComponent(String(projectId))
+        );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -1311,6 +1430,36 @@ export const AutifyConnectApiFp = function (configuration?: Configuration) {
         configuration
       );
     },
+    /**
+     * List access points for the project.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {number} [page] The number of page returns.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listAccessPoints(
+      projectId: number,
+      page?: number,
+      options?: AxiosRequestConfig
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string
+      ) => AxiosPromise<Array<AccessPoint>>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.listAccessPoints(
+          projectId,
+          page,
+          options
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration
+      );
+    },
   };
 };
 
@@ -1357,6 +1506,22 @@ export const AutifyConnectApiFactory = function (
         .deleteAccessPoint(projectId, deleteAccessPointRequest, options)
         .then((request) => request(axios, basePath));
     },
+    /**
+     * List access points for the project.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {number} [page] The number of page returns.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listAccessPoints(
+      projectId: number,
+      page?: number,
+      options?: any
+    ): AxiosPromise<Array<AccessPoint>> {
+      return localVarFp
+        .listAccessPoints(projectId, page, options)
+        .then((request) => request(axios, basePath));
+    },
   };
 };
 
@@ -1400,6 +1565,24 @@ export class AutifyConnectApi extends BaseAPI {
   ) {
     return AutifyConnectApiFp(this.configuration)
       .deleteAccessPoint(projectId, deleteAccessPointRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List access points for the project.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {number} [page] The number of page returns.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof AutifyConnectApi
+   */
+  public listAccessPoints(
+    projectId: number,
+    page?: number,
+    options?: AxiosRequestConfig
+  ) {
+    return AutifyConnectApiFp(this.configuration)
+      .listAccessPoints(projectId, page, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
@@ -2308,11 +2491,13 @@ export const ScheduleApiAxiosParamCreator = function (
     /**
      * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
+     * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     executeSchedule: async (
       scheduleId: number,
+      executeScheduleRequest?: ExecuteScheduleRequest,
       options: AxiosRequestConfig = {}
     ): Promise<RequestArgs> => {
       // verify required parameter 'scheduleId' is not null or undefined
@@ -2340,6 +2525,8 @@ export const ScheduleApiAxiosParamCreator = function (
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
         baseOptions && baseOptions.headers ? baseOptions.headers : {};
@@ -2348,6 +2535,11 @@ export const ScheduleApiAxiosParamCreator = function (
         ...headersFromBaseOptions,
         ...options.headers,
       };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        executeScheduleRequest,
+        localVarRequestOptions,
+        configuration
+      );
 
       return {
         url: toPathString(localVarUrlObj),
@@ -2367,11 +2559,13 @@ export const ScheduleApiFp = function (configuration?: Configuration) {
     /**
      * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
+     * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async executeSchedule(
       scheduleId: number,
+      executeScheduleRequest?: ExecuteScheduleRequest,
       options?: AxiosRequestConfig
     ): Promise<
       (
@@ -2381,6 +2575,7 @@ export const ScheduleApiFp = function (configuration?: Configuration) {
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.executeSchedule(
         scheduleId,
+        executeScheduleRequest,
         options
       );
       return createRequestFunction(
@@ -2407,15 +2602,17 @@ export const ScheduleApiFactory = function (
     /**
      * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
+     * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     executeSchedule(
       scheduleId: number,
+      executeScheduleRequest?: ExecuteScheduleRequest,
       options?: any
     ): AxiosPromise<ExecuteSchedule200Response> {
       return localVarFp
-        .executeSchedule(scheduleId, options)
+        .executeSchedule(scheduleId, executeScheduleRequest, options)
         .then((request) => request(axios, basePath));
     },
   };
@@ -2431,13 +2628,18 @@ export class ScheduleApi extends BaseAPI {
   /**
    * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
    * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
+   * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof ScheduleApi
    */
-  public executeSchedule(scheduleId: number, options?: AxiosRequestConfig) {
+  public executeSchedule(
+    scheduleId: number,
+    executeScheduleRequest?: ExecuteScheduleRequest,
+    options?: AxiosRequestConfig
+  ) {
     return ScheduleApiFp(this.configuration)
-      .executeSchedule(scheduleId, options)
+      .executeSchedule(scheduleId, executeScheduleRequest, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
