@@ -40,6 +40,14 @@ paths:
             For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
           schema:
             type: integer
+      requestBody:
+        description: The options to execute a test plan.
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/ExecuteScheduleRequest"
       responses:
         "200":
           description: |
@@ -410,6 +418,38 @@ paths:
                           type: string
                           default: Not Found
   "/projects/{project_id}/autify_connect/access_points":
+    get:
+      operationId: listAccessPoints
+      description: |
+        List access points for the project.
+      tags:
+        - autify_connect
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: |
+            For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+          schema:
+            type: integer
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+          description: The number of page returns.
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AccessPoint"
     post:
       operationId: createAccessPoint
       description: |
@@ -662,6 +702,26 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Label"
+    AccessPoint:
+      properties:
+        name:
+          type: string
+        last_use:
+          type: string
+          format: date-time
+        creator:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - "name"
+        - "creator"
+        - "created_at"
+        - "updated_at"
     UrlReplacement:
       properties:
         id:
@@ -846,6 +906,17 @@ components:
         updated_at:
           type: string
           format: date-time
+    ExecuteScheduleRequest:
+      properties:
+        autify_connect:
+          type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+              nullable: true
+              description: "The name of access point to override the original settings. When null is given, the test_plan will run without Autify Connect."
     ExecuteScenariosRequest:
       required:
         - capabilities
