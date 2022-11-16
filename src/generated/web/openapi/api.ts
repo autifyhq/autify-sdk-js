@@ -191,6 +191,12 @@ export interface CapabilityOption {
    * @memberof CapabilityOption
    */
   unsupported?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof CapabilityOption
+   */
+  no_new_registration?: boolean;
 }
 /**
  *
