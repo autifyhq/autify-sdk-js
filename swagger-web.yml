@@ -783,6 +783,8 @@ components:
           type: string
         unsupported:
           type: boolean
+        no_new_registration:
+          type: boolean
     TestPlan:
       properties:
         id:
