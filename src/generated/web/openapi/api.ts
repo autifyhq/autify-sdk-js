@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Autify API
- * ## Authorization You can authenticate the API by using a personal access token and passing it to the Bearer header. To generate or manage API keys、please visit [your account page](https://app.autify.com/settings).  Example of using a personal access token in the header： ``` curl -H \"Authorization: Bearer YOUR_PERSONAL_ACCESS_TOKEN\" https://app.autify.com/api/v1/ ```  If the credentials are invalid or omitted, an error message is returned with status code 401： ``` {   \"errors\":[{     \"message\": \"Bad credentials\"   }] } ```
+ * ## Authorization You can authenticate the API by using a personal access token and passing it to the Bearer header. To generate or manage API keys、please visit [your account page](https://app.autify.com/settings).  If the credentials are invalid or omitted, an error message is returned with status code 401： ``` {   \"errors\":[{     \"message\": \"Bad credentials\"   }] } ```
  *
  * The version of the OpenAPI document: v1
  *
@@ -364,10 +364,10 @@ export interface DescribeResult200Response {
   id?: number;
   /**
    *
-   * @type {string}
+   * @type {TestPlanResultStatus}
    * @memberof DescribeResult200Response
    */
-  status?: DescribeResult200ResponseStatusEnum;
+  status?: TestPlanResultStatus;
   /**
    *
    * @type {number}
@@ -400,86 +400,22 @@ export interface DescribeResult200Response {
   updated_at?: string;
   /**
    *
-   * @type {Array<DescribeResult200ResponseTestPlanCapabilityResultsInner>}
+   * @type {boolean}
    * @memberof DescribeResult200Response
    */
-  test_plan_capability_results?: Array<DescribeResult200ResponseTestPlanCapabilityResultsInner>;
+  review_needed?: boolean;
   /**
    *
-   * @type {DescribeResult200ResponseTestPlan}
+   * @type {Array<TestPlanCapabilityResult>}
    * @memberof DescribeResult200Response
    */
-  test_plan?: DescribeResult200ResponseTestPlan;
-}
-
-export const DescribeResult200ResponseStatusEnum = {
-  Queuing: "queuing",
-  Waiting: "waiting",
-  Running: "running",
-  Passed: "passed",
-  Failed: "failed",
-  Skipped: "skipped",
-  InternalError: "internal_error",
-} as const;
-
-export type DescribeResult200ResponseStatusEnum =
-  typeof DescribeResult200ResponseStatusEnum[keyof typeof DescribeResult200ResponseStatusEnum];
-
-/**
- *
- * @export
- * @interface DescribeResult200ResponseTestPlan
- */
-export interface DescribeResult200ResponseTestPlan {
+  test_plan_capability_results?: Array<TestPlanCapabilityResult>;
   /**
    *
-   * @type {number}
-   * @memberof DescribeResult200ResponseTestPlan
+   * @type {TestPlan}
+   * @memberof DescribeResult200Response
    */
-  id?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof DescribeResult200ResponseTestPlan
-   */
-  name?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof DescribeResult200ResponseTestPlan
-   */
-  created_at?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof DescribeResult200ResponseTestPlan
-   */
-  updated_at?: string;
-}
-/**
- *
- * @export
- * @interface DescribeResult200ResponseTestPlanCapabilityResultsInner
- */
-export interface DescribeResult200ResponseTestPlanCapabilityResultsInner {
-  /**
-   *
-   * @type {number}
-   * @memberof DescribeResult200ResponseTestPlanCapabilityResultsInner
-   */
-  id?: number;
-  /**
-   *
-   * @type {Capability}
-   * @memberof DescribeResult200ResponseTestPlanCapabilityResultsInner
-   */
-  capability?: Capability;
-  /**
-   *
-   * @type {Array<TestCaseResult>}
-   * @memberof DescribeResult200ResponseTestPlanCapabilityResultsInner
-   */
-  test_case_results?: Array<TestCaseResult>;
+  test_plan?: TestPlan | null;
 }
 /**
  *
@@ -896,10 +832,10 @@ export interface TestCaseResult {
   id?: number;
   /**
    *
-   * @type {string}
+   * @type {TestCaseResultStatus}
    * @memberof TestCaseResult
    */
-  status?: TestCaseResultStatusEnum;
+  status?: TestCaseResultStatus;
   /**
    *
    * @type {number}
@@ -931,7 +867,7 @@ export interface TestCaseResult {
    */
   updated_at?: string;
   /**
-   *
+   * ID of the scenario executed.
    * @type {number}
    * @memberof TestCaseResult
    */
@@ -943,24 +879,30 @@ export interface TestCaseResult {
    */
   project_url?: string;
   /**
-   *
+   * Number of \"Review needed\" flags present in the test results.
    * @type {number}
    * @memberof TestCaseResult
    */
   review_needed?: number;
 }
+/**
+ *
+ * @export
+ * @enum {string}
+ */
 
-export const TestCaseResultStatusEnum = {
+export const TestCaseResultStatus = {
   Waiting: "waiting",
   Running: "running",
   Passed: "passed",
   Failed: "failed",
   Skipped: "skipped",
   InternalError: "internal_error",
+  Canceled: "canceled",
 } as const;
 
-export type TestCaseResultStatusEnum =
-  typeof TestCaseResultStatusEnum[keyof typeof TestCaseResultStatusEnum];
+export type TestCaseResultStatus =
+  typeof TestCaseResultStatus[keyof typeof TestCaseResultStatus];
 
 /**
  *
@@ -980,6 +922,18 @@ export interface TestPlan {
    * @memberof TestPlan
    */
   name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TestPlan
+   */
+  created_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TestPlan
+   */
+  updated_at?: string;
 }
 /**
  *
@@ -995,54 +949,17 @@ export interface TestPlanCapabilityResult {
   id?: number;
   /**
    *
-   * @type {string}
+   * @type {Capability}
    * @memberof TestPlanCapabilityResult
    */
-  status?: TestPlanCapabilityResultStatusEnum;
+  capability?: Capability;
   /**
    *
-   * @type {number}
+   * @type {Array<TestCaseResult>}
    * @memberof TestPlanCapabilityResult
    */
-  duration?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof TestPlanCapabilityResult
-   */
-  started_at?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TestPlanCapabilityResult
-   */
-  finished_at?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TestPlanCapabilityResult
-   */
-  created_at?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TestPlanCapabilityResult
-   */
-  updated_at?: string;
+  test_case_results?: Array<TestCaseResult>;
 }
-
-export const TestPlanCapabilityResultStatusEnum = {
-  Waiting: "waiting",
-  Running: "running",
-  Passed: "passed",
-  Failed: "failed",
-  Skipped: "skipped",
-  InternalError: "internal_error",
-} as const;
-
-export type TestPlanCapabilityResultStatusEnum =
-  typeof TestPlanCapabilityResultStatusEnum[keyof typeof TestPlanCapabilityResultStatusEnum];
-
 /**
  *
  * @export
@@ -1057,10 +974,10 @@ export interface TestPlanResult {
   id?: number;
   /**
    *
-   * @type {string}
+   * @type {TestPlanResultStatus}
    * @memberof TestPlanResult
    */
-  status?: TestPlanResultStatusEnum;
+  status?: TestPlanResultStatus;
   /**
    *
    * @type {number}
@@ -1093,23 +1010,36 @@ export interface TestPlanResult {
   updated_at?: string;
   /**
    *
-   * @type {DescribeResult200ResponseTestPlan}
+   * @type {boolean}
    * @memberof TestPlanResult
    */
-  test_plan?: DescribeResult200ResponseTestPlan;
+  review_needed?: boolean;
+  /**
+   *
+   * @type {TestPlan}
+   * @memberof TestPlanResult
+   */
+  test_plan?: TestPlan | null;
 }
+/**
+ *
+ * @export
+ * @enum {string}
+ */
 
-export const TestPlanResultStatusEnum = {
+export const TestPlanResultStatus = {
+  Queuing: "queuing",
   Waiting: "waiting",
   Running: "running",
   Passed: "passed",
   Failed: "failed",
   Skipped: "skipped",
   InternalError: "internal_error",
+  Canceled: "canceled",
 } as const;
 
-export type TestPlanResultStatusEnum =
-  typeof TestPlanResultStatusEnum[keyof typeof TestPlanResultStatusEnum];
+export type TestPlanResultStatus =
+  typeof TestPlanResultStatus[keyof typeof TestPlanResultStatus];
 
 /**
  *
@@ -1791,7 +1721,8 @@ export const ResultApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Get a result.
+     * Get a test result.
+     * @summary Get a test result.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {*} [options] Override http request option.
@@ -1843,7 +1774,8 @@ export const ResultApiAxiosParamCreator = function (
       };
     },
     /**
-     * List results.
+     * List test results.
+     * @summary List test results.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results
      * @param {number} [page] The number of page returns.
      * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
@@ -1920,7 +1852,8 @@ export const ResultApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = ResultApiAxiosParamCreator(configuration);
   return {
     /**
-     * Get a result.
+     * Get a test result.
+     * @summary Get a test result.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {*} [options] Override http request option.
@@ -1949,7 +1882,8 @@ export const ResultApiFp = function (configuration?: Configuration) {
       );
     },
     /**
-     * List results.
+     * List test results.
+     * @summary List test results.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results
      * @param {number} [page] The number of page returns.
      * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
@@ -1998,7 +1932,8 @@ export const ResultApiFactory = function (
   const localVarFp = ResultApiFp(configuration);
   return {
     /**
-     * Get a result.
+     * Get a test result.
+     * @summary Get a test result.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {*} [options] Override http request option.
@@ -2014,7 +1949,8 @@ export const ResultApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     * List results.
+     * List test results.
+     * @summary List test results.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results
      * @param {number} [page] The number of page returns.
      * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
@@ -2044,7 +1980,8 @@ export const ResultApiFactory = function (
  */
 export class ResultApi extends BaseAPI {
   /**
-   * Get a result.
+   * Get a test result.
+   * @summary Get a test result.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
    * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
    * @param {*} [options] Override http request option.
@@ -2062,7 +1999,8 @@ export class ResultApi extends BaseAPI {
   }
 
   /**
-   * List results.
+   * List test results.
+   * @summary List test results.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results
    * @param {number} [page] The number of page returns.
    * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
@@ -2495,7 +2433,8 @@ export const ScheduleApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
+     * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+     * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
      * @param {*} [options] Override http request option.
@@ -2563,7 +2502,8 @@ export const ScheduleApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = ScheduleApiAxiosParamCreator(configuration);
   return {
     /**
-     * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
+     * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+     * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
      * @param {*} [options] Override http request option.
@@ -2606,7 +2546,8 @@ export const ScheduleApiFactory = function (
   const localVarFp = ScheduleApiFp(configuration);
   return {
     /**
-     * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
+     * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+     * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
      * @param {*} [options] Override http request option.
@@ -2632,7 +2573,8 @@ export const ScheduleApiFactory = function (
  */
 export class ScheduleApi extends BaseAPI {
   /**
-   * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
+   * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+   * @summary Run a test plan.
    * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
    * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
    * @param {*} [options] Override http request option.
