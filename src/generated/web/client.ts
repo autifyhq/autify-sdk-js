@@ -15,9 +15,6 @@ import {
   DeleteAccessPoint404ResponseErrorsInner,
   DeleteAccessPointRequest,
   DescribeResult200Response,
-  DescribeResult200ResponseStatusEnum,
-  DescribeResult200ResponseTestPlan,
-  DescribeResult200ResponseTestPlanCapabilityResultsInner,
   ExecuteScenarios401Response,
   ExecuteScenarios401ResponseErrorsInner,
   ExecuteScenarios404Response,
@@ -40,12 +37,11 @@ import {
   Label,
   Scenario,
   TestCaseResult,
-  TestCaseResultStatusEnum,
+  TestCaseResultStatus,
   TestPlan,
   TestPlanCapabilityResult,
-  TestPlanCapabilityResultStatusEnum,
   TestPlanResult,
-  TestPlanResultStatusEnum,
+  TestPlanResultStatus,
   UpdateUrlReplacementRequest,
   UrlReplacement,
   AutifyConnectApiAxiosParamCreator,
@@ -209,7 +205,8 @@ export class WebClient {
   private readonly resultApi;
 
   /**
-   * Get a result.
+   * Get a test result.
+   * @summary Get a test result.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
    * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
    * @param {*} [options] Override http request option.
@@ -225,7 +222,8 @@ export class WebClient {
   }
 
   /**
-   * List results.
+   * List test results.
+   * @summary List test results.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results
    * @param {number} [page] The number of page returns.
    * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
@@ -307,7 +305,8 @@ export class WebClient {
   private readonly scheduleApi;
 
   /**
-   * Run a test plan. (Note: \"Schedule\" is called as \"TestPlan\" now.)
+   * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+   * @summary Run a test plan.
    * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
    * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
    * @param {*} [options] Override http request option.

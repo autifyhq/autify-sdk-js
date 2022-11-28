@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Autify API
- * ## Authorization You can authenticate the API by using a personal access token and passing it to the Bearer header. To generate or manage API keys、please visit [your account page](https://app.autify.com/settings).  Example of using a personal access token in the header： ``` curl -H \"Authorization: Bearer YOUR_PERSONAL_ACCESS_TOKEN\" https://app.autify.com/api/v1/ ```  If the credentials are invalid or omitted, an error message is returned with status code 401： ``` {   \"errors\":[{     \"message\": \"Bad credentials\"   }] } ```
+ * ## Authorization You can authenticate the API by using a personal access token and passing it to the Bearer header. To generate or manage API keys、please visit [your account page](https://app.autify.com/settings).  If the credentials are invalid or omitted, an error message is returned with status code 401： ``` {   \"errors\":[{     \"message\": \"Bad credentials\"   }] } ```
  *
  * The version of the OpenAPI document: v1
  *
