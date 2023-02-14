@@ -8,8 +8,8 @@
       "groupName": "all non major npm update"
     },
     {
-      "matchPackageNames": ["axios"],
-      "allowedVersions": "<=1.2.3"
+      "enabled": false,
+      "matchPackageNames": ["axios"]
     }
   ],
   "rangeStrategy": "bump",
