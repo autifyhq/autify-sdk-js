@@ -833,6 +833,33 @@ components:
         review_needed:
           type: integer
           description: Number of "Review needed" flags present in the test results.
+        import_variables:
+          description: THIS FEATURE IS FOR LIMITED NUMBER OF CUSTOMERS. Variables imported from previously executed test results in a test plan.
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
+              set_by:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  id:
+                    type: integer
+        export_variables:
+          description: THIS FEATURE IS FOR LIMITED NUMBER OF CUSTOMERS. Variables exported from this test result.
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value:
+                type: string
     Label:
       properties:
         id:

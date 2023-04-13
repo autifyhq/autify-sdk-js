@@ -531,7 +531,7 @@ export const ExecuteScenariosRequestExecutionTypeEnum = {
 } as const;
 
 export type ExecuteScenariosRequestExecutionTypeEnum =
-  typeof ExecuteScenariosRequestExecutionTypeEnum[keyof typeof ExecuteScenariosRequestExecutionTypeEnum];
+  (typeof ExecuteScenariosRequestExecutionTypeEnum)[keyof typeof ExecuteScenariosRequestExecutionTypeEnum];
 
 /**
  *
@@ -884,6 +884,81 @@ export interface TestCaseResult {
    * @memberof TestCaseResult
    */
   review_needed?: number;
+  /**
+   * THIS FEATURE IS FOR LIMITED NUMBER OF CUSTOMERS. Variables imported from previously executed test results in a test plan.
+   * @type {Array<TestCaseResultImportVariablesInner>}
+   * @memberof TestCaseResult
+   */
+  import_variables?: Array<TestCaseResultImportVariablesInner>;
+  /**
+   * THIS FEATURE IS FOR LIMITED NUMBER OF CUSTOMERS. Variables exported from this test result.
+   * @type {Array<TestCaseResultExportVariablesInner>}
+   * @memberof TestCaseResult
+   */
+  export_variables?: Array<TestCaseResultExportVariablesInner>;
+}
+/**
+ *
+ * @export
+ * @interface TestCaseResultExportVariablesInner
+ */
+export interface TestCaseResultExportVariablesInner {
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultExportVariablesInner
+   */
+  key?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultExportVariablesInner
+   */
+  value?: string;
+}
+/**
+ *
+ * @export
+ * @interface TestCaseResultImportVariablesInner
+ */
+export interface TestCaseResultImportVariablesInner {
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultImportVariablesInner
+   */
+  key?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultImportVariablesInner
+   */
+  value?: string;
+  /**
+   *
+   * @type {TestCaseResultImportVariablesInnerSetBy}
+   * @memberof TestCaseResultImportVariablesInner
+   */
+  set_by?: TestCaseResultImportVariablesInnerSetBy;
+}
+/**
+ *
+ * @export
+ * @interface TestCaseResultImportVariablesInnerSetBy
+ */
+export interface TestCaseResultImportVariablesInnerSetBy {
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultImportVariablesInnerSetBy
+   */
+  type?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof TestCaseResultImportVariablesInnerSetBy
+   */
+  id?: number;
 }
 /**
  *
@@ -902,7 +977,7 @@ export const TestCaseResultStatus = {
 } as const;
 
 export type TestCaseResultStatus =
-  typeof TestCaseResultStatus[keyof typeof TestCaseResultStatus];
+  (typeof TestCaseResultStatus)[keyof typeof TestCaseResultStatus];
 
 /**
  *
@@ -1039,7 +1114,7 @@ export const TestPlanResultStatus = {
 } as const;
 
 export type TestPlanResultStatus =
-  typeof TestPlanResultStatus[keyof typeof TestPlanResultStatus];
+  (typeof TestPlanResultStatus)[keyof typeof TestPlanResultStatus];
 
 /**
  *
