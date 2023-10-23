@@ -76,6 +76,7 @@ import {
 export { BASE_PATH as WEB_BASE_PATH } from "./openapi/base";
 
 class CustomFormData extends FormData {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   append(key: string, filename: any) {
     const stream = createReadStream(filename);
     super.append(key, stream, { filename });
@@ -132,12 +133,12 @@ export class WebClient {
   createAccessPoint(
     projectId: number,
     createAccessPointRequest: CreateAccessPointRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.autifyConnectApi.createAccessPoint(
       projectId,
       createAccessPointRequest,
-      options
+      options,
     );
   }
 
@@ -152,12 +153,12 @@ export class WebClient {
   deleteAccessPoint(
     projectId: number,
     deleteAccessPointRequest: DeleteAccessPointRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.autifyConnectApi.deleteAccessPoint(
       projectId,
       deleteAccessPointRequest,
-      options
+      options,
     );
   }
 
@@ -172,7 +173,7 @@ export class WebClient {
   listAccessPoints(
     projectId: number,
     page?: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.autifyConnectApi.listAccessPoints(projectId, page, options);
   }
@@ -194,14 +195,14 @@ export class WebClient {
     os?: string,
     browser?: string,
     deviceType?: string,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.capabilityApi.listCapabilities(
       projectId,
       os,
       browser,
       deviceType,
-      options
+      options,
     );
   }
 
@@ -219,7 +220,7 @@ export class WebClient {
   describeResult(
     projectId: number,
     resultId: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.resultApi.describeResult(projectId, resultId, options);
   }
@@ -240,14 +241,14 @@ export class WebClient {
     page?: number,
     perPage?: number,
     testPlanId?: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.resultApi.listResults(
       projectId,
       page,
       perPage,
       testPlanId,
-      options
+      options,
     );
   }
 
@@ -264,7 +265,7 @@ export class WebClient {
   describeScenario(
     projectId: number,
     scenarioId: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.scenarioApi.describeScenario(projectId, scenarioId, options);
   }
@@ -280,12 +281,12 @@ export class WebClient {
   executeScenarios(
     projectId: number,
     executeScenariosRequest: ExecuteScenariosRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.scenarioApi.executeScenarios(
       projectId,
       executeScenariosRequest,
-      options
+      options,
     );
   }
 
@@ -300,7 +301,7 @@ export class WebClient {
   listScenarios(
     projectId: number,
     page?: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.scenarioApi.listScenarios(projectId, page, options);
   }
@@ -319,12 +320,12 @@ export class WebClient {
   executeSchedule(
     scheduleId: number,
     executeScheduleRequest?: ExecuteScheduleRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.scheduleApi.executeSchedule(
       scheduleId,
       executeScheduleRequest,
-      options
+      options,
     );
   }
 
@@ -341,12 +342,12 @@ export class WebClient {
   createUrlReplacement(
     testPlanId: number,
     createUrlReplacementRequest: CreateUrlReplacementRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.urlReplacementApi.createUrlReplacement(
       testPlanId,
       createUrlReplacementRequest,
-      options
+      options,
     );
   }
 
@@ -361,12 +362,12 @@ export class WebClient {
   deleteUrlReplacement(
     testPlanId: number,
     urlReplacementId: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.urlReplacementApi.deleteUrlReplacement(
       testPlanId,
       urlReplacementId,
-      options
+      options,
     );
   }
 
@@ -394,13 +395,13 @@ export class WebClient {
     testPlanId: number,
     urlReplacementId: number,
     updateUrlReplacementRequest: UpdateUrlReplacementRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.urlReplacementApi.updateUrlReplacement(
       testPlanId,
       urlReplacementId,
       updateUrlReplacementRequest,
-      options
+      options,
     );
   }
 }

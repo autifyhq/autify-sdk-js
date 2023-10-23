@@ -512,7 +512,7 @@ export interface UploadBuild400ResponseErrorsInner {
  * @export
  */
 export const BuildsApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -526,7 +526,7 @@ export const BuildsApiAxiosParamCreator = function (
     uploadBuild: async (
       projectId: string,
       file: any,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("uploadBuild", "projectId", projectId);
@@ -534,7 +534,7 @@ export const BuildsApiAxiosParamCreator = function (
       assertParamExists("uploadBuild", "file", file);
       const localVarPath = `/projects/{project_id}/builds`.replace(
         `{${"project_id"}}`,
-        encodeURIComponent(String(projectId))
+        encodeURIComponent(String(projectId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -601,23 +601,23 @@ export const BuildsApiFp = function (configuration?: Configuration) {
     async uploadBuild(
       projectId: string,
       file: any,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<UploadBuild201Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.uploadBuild(
         projectId,
         file,
-        options
+        options,
       );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -630,7 +630,7 @@ export const BuildsApiFp = function (configuration?: Configuration) {
 export const BuildsApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = BuildsApiFp(configuration);
   return {
@@ -645,7 +645,7 @@ export const BuildsApiFactory = function (
     uploadBuild(
       projectId: string,
       file: any,
-      options?: any
+      options?: any,
     ): AxiosPromise<UploadBuild201Response> {
       return localVarFp
         .uploadBuild(projectId, file, options)
@@ -673,7 +673,7 @@ export class BuildsApi extends BaseAPI {
   public uploadBuild(
     projectId: string,
     file: any,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return BuildsApiFp(this.configuration)
       .uploadBuild(projectId, file, options)
@@ -686,7 +686,7 @@ export class BuildsApi extends BaseAPI {
  * @export
  */
 export const TestPlansApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -700,7 +700,7 @@ export const TestPlansApiAxiosParamCreator = function (
     runTestPlan: async (
       testPlanId: string,
       runTestPlanRequest: RunTestPlanRequest,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'testPlanId' is not null or undefined
       assertParamExists("runTestPlan", "testPlanId", testPlanId);
@@ -708,12 +708,12 @@ export const TestPlansApiAxiosParamCreator = function (
       assertParamExists(
         "runTestPlan",
         "runTestPlanRequest",
-        runTestPlanRequest
+        runTestPlanRequest,
       );
       const localVarPath =
         `/test_plans/{test_plan_id}/test_plan_results`.replace(
           `{${"test_plan_id"}}`,
-          encodeURIComponent(String(testPlanId))
+          encodeURIComponent(String(testPlanId)),
         );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -747,7 +747,7 @@ export const TestPlansApiAxiosParamCreator = function (
       localVarRequestOptions.data = serializeDataIfNeeded(
         runTestPlanRequest,
         localVarRequestOptions,
-        configuration
+        configuration,
       );
 
       return {
@@ -777,23 +777,23 @@ export const TestPlansApiFp = function (configuration?: Configuration) {
     async runTestPlan(
       testPlanId: string,
       runTestPlanRequest: RunTestPlanRequest,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<RunTestPlan201Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.runTestPlan(
         testPlanId,
         runTestPlanRequest,
-        options
+        options,
       );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -806,7 +806,7 @@ export const TestPlansApiFp = function (configuration?: Configuration) {
 export const TestPlansApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = TestPlansApiFp(configuration);
   return {
@@ -821,7 +821,7 @@ export const TestPlansApiFactory = function (
     runTestPlan(
       testPlanId: string,
       runTestPlanRequest: RunTestPlanRequest,
-      options?: any
+      options?: any,
     ): AxiosPromise<RunTestPlan201Response> {
       return localVarFp
         .runTestPlan(testPlanId, runTestPlanRequest, options)
@@ -849,7 +849,7 @@ export class TestPlansApi extends BaseAPI {
   public runTestPlan(
     testPlanId: string,
     runTestPlanRequest: RunTestPlanRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return TestPlansApiFp(this.configuration)
       .runTestPlan(testPlanId, runTestPlanRequest, options)
@@ -862,7 +862,7 @@ export class TestPlansApi extends BaseAPI {
  * @export
  */
 export const TestResultsApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -876,7 +876,7 @@ export const TestResultsApiAxiosParamCreator = function (
     describeTestResult: async (
       projectId: string,
       id: string,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("describeTestResult", "projectId", projectId);
@@ -933,13 +933,13 @@ export const TestResultsApiAxiosParamCreator = function (
       page?: number,
       perPage?: number,
       testPlanId?: string,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("listTestResults", "projectId", projectId);
       const localVarPath = `/projects/{project_id}/results`.replace(
         `{${"project_id"}}`,
-        encodeURIComponent(String(projectId))
+        encodeURIComponent(String(projectId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1008,24 +1008,24 @@ export const TestResultsApiFp = function (configuration?: Configuration) {
     async describeTestResult(
       projectId: string,
       id: string,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<DescribeTestResult200Response>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.describeTestResult(
           projectId,
           id,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -1043,11 +1043,11 @@ export const TestResultsApiFp = function (configuration?: Configuration) {
       page?: number,
       perPage?: number,
       testPlanId?: string,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<ListTestResults200Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.listTestResults(
@@ -1055,13 +1055,13 @@ export const TestResultsApiFp = function (configuration?: Configuration) {
         page,
         perPage,
         testPlanId,
-        options
+        options,
       );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -1074,7 +1074,7 @@ export const TestResultsApiFp = function (configuration?: Configuration) {
 export const TestResultsApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = TestResultsApiFp(configuration);
   return {
@@ -1089,7 +1089,7 @@ export const TestResultsApiFactory = function (
     describeTestResult(
       projectId: string,
       id: string,
-      options?: any
+      options?: any,
     ): AxiosPromise<DescribeTestResult200Response> {
       return localVarFp
         .describeTestResult(projectId, id, options)
@@ -1110,7 +1110,7 @@ export const TestResultsApiFactory = function (
       page?: number,
       perPage?: number,
       testPlanId?: string,
-      options?: any
+      options?: any,
     ): AxiosPromise<ListTestResults200Response> {
       return localVarFp
         .listTestResults(projectId, page, perPage, testPlanId, options)
@@ -1138,7 +1138,7 @@ export class TestResultsApi extends BaseAPI {
   public describeTestResult(
     projectId: string,
     id: string,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return TestResultsApiFp(this.configuration)
       .describeTestResult(projectId, id, options)
@@ -1161,7 +1161,7 @@ export class TestResultsApi extends BaseAPI {
     page?: number,
     perPage?: number,
     testPlanId?: string,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return TestResultsApiFp(this.configuration)
       .listTestResults(projectId, page, perPage, testPlanId, options)

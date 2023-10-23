@@ -21,7 +21,7 @@ describe.each([{ clientClass: WebClient }, { clientClass: MobileClient }])(
         new clientClass("");
       }).toThrowError();
     });
-  }
+  },
 );
 
 test("WEB_BASE_PATH", () => {
