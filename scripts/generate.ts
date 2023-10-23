@@ -14,7 +14,7 @@ const pascallize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 const writeClientSource = (
   service: string,
   apiClass: ClassDeclaration,
-  apiMethod: MethodDeclaration
+  apiMethod: MethodDeclaration,
 ) => {
   const clientClassName = `${pascallize(service)}Client`;
   const clientSource =
@@ -62,7 +62,7 @@ export class ${clientClassName} {
   }
 }
 `.trim(),
-      { overwrite: true }
+      { overwrite: true },
     );
   if (!clientSource.getImportDeclaration("./openapi")) {
     const namedImports: string[] = ["Configuration"];
@@ -89,7 +89,7 @@ export class ${clientClassName} {
     clientClass
       .getConstructors()[0]
       .addStatements(
-        `this.${apiClassProperty} = new ${apiClass.getName()}(configuration)`
+        `this.${apiClassProperty} = new ${apiClass.getName()}(configuration)`,
       );
   }
 
@@ -114,7 +114,7 @@ const main = () => {
     unlinkSync(`./src/generated/${service}/client.ts`);
 
   apiSource = project.addSourceFileAtPath(
-    `./src/generated/${service}/openapi/api.ts`
+    `./src/generated/${service}/openapi/api.ts`,
   );
   for (const apiClass of apiSource.getClasses()) {
     for (const apiMethod of apiClass.getMethods()) {

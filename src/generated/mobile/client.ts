@@ -37,6 +37,7 @@ import {
 export { BASE_PATH as MOBILE_BASE_PATH } from "./openapi/base";
 
 class CustomFormData extends FormData {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   append(key: string, filename: any) {
     const stream = createReadStream(filename);
     super.append(key, stream, { filename });
@@ -106,12 +107,12 @@ export class MobileClient {
   runTestPlan(
     testPlanId: string,
     runTestPlanRequest: RunTestPlanRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.testPlansApi.runTestPlan(
       testPlanId,
       runTestPlanRequest,
-      options
+      options,
     );
   }
 
@@ -129,7 +130,7 @@ export class MobileClient {
   describeTestResult(
     projectId: string,
     id: string,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.testResultsApi.describeTestResult(projectId, id, options);
   }
@@ -150,14 +151,14 @@ export class MobileClient {
     page?: number,
     perPage?: number,
     testPlanId?: string,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return this.testResultsApi.listTestResults(
       projectId,
       page,
       perPage,
       testPlanId,
-      options
+      options,
     );
   }
 }

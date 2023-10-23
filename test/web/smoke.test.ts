@@ -20,7 +20,7 @@ describe.each([
       mock.onPost(
         WEB_BASE_PATH + "/projects/1/autify_connect/access_points",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -30,7 +30,7 @@ describe.each([
       mock.onDelete(
         WEB_BASE_PATH + "/projects/1/autify_connect/access_points",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -40,7 +40,7 @@ describe.each([
       mock.onGet(
         WEB_BASE_PATH + "/projects/1/autify_connect/access_points",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -50,7 +50,7 @@ describe.each([
       mock.onGet(
         WEB_BASE_PATH + "/projects/1/capabilities",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -60,7 +60,7 @@ describe.each([
       mock.onGet(
         WEB_BASE_PATH + "/projects/1/results/2",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -70,7 +70,7 @@ describe.each([
       mock.onGet(
         WEB_BASE_PATH + "/projects/1/results",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -80,7 +80,7 @@ describe.each([
       mock.onGet(
         WEB_BASE_PATH + "/projects/1/scenarios/2",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -94,7 +94,7 @@ describe.each([
       mock.onPost(
         WEB_BASE_PATH + "/projects/1/execute_scenarios",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -104,7 +104,7 @@ describe.each([
       mock.onGet(
         WEB_BASE_PATH + "/projects/1/scenarios",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -124,7 +124,7 @@ describe.each([
       mock.onPost(
         WEB_BASE_PATH + "/test_plans/1/url_replacements",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -134,7 +134,7 @@ describe.each([
       mock.onDelete(
         WEB_BASE_PATH + "/test_plans/1/url_replacements/2",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -144,7 +144,7 @@ describe.each([
       mock.onGet(
         WEB_BASE_PATH + "/test_plans/1/url_replacements",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -154,7 +154,7 @@ describe.each([
       mock.onPut(
         WEB_BASE_PATH + "/test_plans/1/url_replacements/2",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
 ])("$desc", ({ api, mockOn }) => {

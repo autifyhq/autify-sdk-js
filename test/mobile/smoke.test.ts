@@ -21,7 +21,7 @@ describe.each([
       mock.onPost(
         MOBILE_BASE_PATH + "/projects/id/builds",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -31,7 +31,7 @@ describe.each([
       mock.onPost(
         MOBILE_BASE_PATH + "/test_plans/id/test_plan_results",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -41,7 +41,7 @@ describe.each([
       mock.onGet(
         MOBILE_BASE_PATH + "/projects/id/results/id2",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
   {
@@ -51,7 +51,7 @@ describe.each([
       mock.onGet(
         MOBILE_BASE_PATH + "/projects/id/results",
         undefined,
-        headersMatcher
+        headersMatcher,
       ),
   },
 ])("$desc", ({ api, mockOn }) => {

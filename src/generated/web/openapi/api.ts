@@ -1184,7 +1184,7 @@ export interface UrlReplacement {
  * @export
  */
 export const AutifyConnectApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -1197,7 +1197,7 @@ export const AutifyConnectApiAxiosParamCreator = function (
     createAccessPoint: async (
       projectId: number,
       createAccessPointRequest: CreateAccessPointRequest,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("createAccessPoint", "projectId", projectId);
@@ -1205,12 +1205,12 @@ export const AutifyConnectApiAxiosParamCreator = function (
       assertParamExists(
         "createAccessPoint",
         "createAccessPointRequest",
-        createAccessPointRequest
+        createAccessPointRequest,
       );
       const localVarPath =
         `/projects/{project_id}/autify_connect/access_points`.replace(
           `{${"project_id"}}`,
-          encodeURIComponent(String(projectId))
+          encodeURIComponent(String(projectId)),
         );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1244,7 +1244,7 @@ export const AutifyConnectApiAxiosParamCreator = function (
       localVarRequestOptions.data = serializeDataIfNeeded(
         createAccessPointRequest,
         localVarRequestOptions,
-        configuration
+        configuration,
       );
 
       return {
@@ -1262,7 +1262,7 @@ export const AutifyConnectApiAxiosParamCreator = function (
     deleteAccessPoint: async (
       projectId: number,
       deleteAccessPointRequest: DeleteAccessPointRequest,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("deleteAccessPoint", "projectId", projectId);
@@ -1270,12 +1270,12 @@ export const AutifyConnectApiAxiosParamCreator = function (
       assertParamExists(
         "deleteAccessPoint",
         "deleteAccessPointRequest",
-        deleteAccessPointRequest
+        deleteAccessPointRequest,
       );
       const localVarPath =
         `/projects/{project_id}/autify_connect/access_points`.replace(
           `{${"project_id"}}`,
-          encodeURIComponent(String(projectId))
+          encodeURIComponent(String(projectId)),
         );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1309,7 +1309,7 @@ export const AutifyConnectApiAxiosParamCreator = function (
       localVarRequestOptions.data = serializeDataIfNeeded(
         deleteAccessPointRequest,
         localVarRequestOptions,
-        configuration
+        configuration,
       );
 
       return {
@@ -1327,14 +1327,14 @@ export const AutifyConnectApiAxiosParamCreator = function (
     listAccessPoints: async (
       projectId: number,
       page?: number,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("listAccessPoints", "projectId", projectId);
       const localVarPath =
         `/projects/{project_id}/autify_connect/access_points`.replace(
           `{${"project_id"}}`,
-          encodeURIComponent(String(projectId))
+          encodeURIComponent(String(projectId)),
         );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1394,24 +1394,24 @@ export const AutifyConnectApiFp = function (configuration?: Configuration) {
     async createAccessPoint(
       projectId: number,
       createAccessPointRequest: CreateAccessPointRequest,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<CreateAccessPointResult>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.createAccessPoint(
           projectId,
           createAccessPointRequest,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -1424,7 +1424,7 @@ export const AutifyConnectApiFp = function (configuration?: Configuration) {
     async deleteAccessPoint(
       projectId: number,
       deleteAccessPointRequest: DeleteAccessPointRequest,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>
     > {
@@ -1432,13 +1432,13 @@ export const AutifyConnectApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.deleteAccessPoint(
           projectId,
           deleteAccessPointRequest,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -1451,24 +1451,24 @@ export const AutifyConnectApiFp = function (configuration?: Configuration) {
     async listAccessPoints(
       projectId: number,
       page?: number,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<Array<AccessPoint>>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.listAccessPoints(
           projectId,
           page,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -1481,7 +1481,7 @@ export const AutifyConnectApiFp = function (configuration?: Configuration) {
 export const AutifyConnectApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = AutifyConnectApiFp(configuration);
   return {
@@ -1495,7 +1495,7 @@ export const AutifyConnectApiFactory = function (
     createAccessPoint(
       projectId: number,
       createAccessPointRequest: CreateAccessPointRequest,
-      options?: any
+      options?: any,
     ): AxiosPromise<CreateAccessPointResult> {
       return localVarFp
         .createAccessPoint(projectId, createAccessPointRequest, options)
@@ -1511,7 +1511,7 @@ export const AutifyConnectApiFactory = function (
     deleteAccessPoint(
       projectId: number,
       deleteAccessPointRequest: DeleteAccessPointRequest,
-      options?: any
+      options?: any,
     ): AxiosPromise<object> {
       return localVarFp
         .deleteAccessPoint(projectId, deleteAccessPointRequest, options)
@@ -1527,7 +1527,7 @@ export const AutifyConnectApiFactory = function (
     listAccessPoints(
       projectId: number,
       page?: number,
-      options?: any
+      options?: any,
     ): AxiosPromise<Array<AccessPoint>> {
       return localVarFp
         .listAccessPoints(projectId, page, options)
@@ -1554,7 +1554,7 @@ export class AutifyConnectApi extends BaseAPI {
   public createAccessPoint(
     projectId: number,
     createAccessPointRequest: CreateAccessPointRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return AutifyConnectApiFp(this.configuration)
       .createAccessPoint(projectId, createAccessPointRequest, options)
@@ -1572,7 +1572,7 @@ export class AutifyConnectApi extends BaseAPI {
   public deleteAccessPoint(
     projectId: number,
     deleteAccessPointRequest: DeleteAccessPointRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return AutifyConnectApiFp(this.configuration)
       .deleteAccessPoint(projectId, deleteAccessPointRequest, options)
@@ -1590,7 +1590,7 @@ export class AutifyConnectApi extends BaseAPI {
   public listAccessPoints(
     projectId: number,
     page?: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return AutifyConnectApiFp(this.configuration)
       .listAccessPoints(projectId, page, options)
@@ -1603,7 +1603,7 @@ export class AutifyConnectApi extends BaseAPI {
  * @export
  */
 export const CapabilityApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -1620,13 +1620,13 @@ export const CapabilityApiAxiosParamCreator = function (
       os?: string,
       browser?: string,
       deviceType?: string,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("listCapabilities", "projectId", projectId);
       const localVarPath = `/projects/{project_id}/capabilities`.replace(
         `{${"project_id"}}`,
-        encodeURIComponent(String(projectId))
+        encodeURIComponent(String(projectId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1698,11 +1698,11 @@ export const CapabilityApiFp = function (configuration?: Configuration) {
       os?: string,
       browser?: string,
       deviceType?: string,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<Array<CapabilityOption>>
     > {
       const localVarAxiosArgs =
@@ -1711,13 +1711,13 @@ export const CapabilityApiFp = function (configuration?: Configuration) {
           os,
           browser,
           deviceType,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -1730,7 +1730,7 @@ export const CapabilityApiFp = function (configuration?: Configuration) {
 export const CapabilityApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = CapabilityApiFp(configuration);
   return {
@@ -1748,7 +1748,7 @@ export const CapabilityApiFactory = function (
       os?: string,
       browser?: string,
       deviceType?: string,
-      options?: any
+      options?: any,
     ): AxiosPromise<Array<CapabilityOption>> {
       return localVarFp
         .listCapabilities(projectId, os, browser, deviceType, options)
@@ -1779,7 +1779,7 @@ export class CapabilityApi extends BaseAPI {
     os?: string,
     browser?: string,
     deviceType?: string,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return CapabilityApiFp(this.configuration)
       .listCapabilities(projectId, os, browser, deviceType, options)
@@ -1792,7 +1792,7 @@ export class CapabilityApi extends BaseAPI {
  * @export
  */
 export const ResultApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -1806,7 +1806,7 @@ export const ResultApiAxiosParamCreator = function (
     describeResult: async (
       projectId: number,
       resultId: number,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("describeResult", "projectId", projectId);
@@ -1863,13 +1863,13 @@ export const ResultApiAxiosParamCreator = function (
       page?: number,
       perPage?: number,
       testPlanId?: number,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("listResults", "projectId", projectId);
       const localVarPath = `/projects/{project_id}/results`.replace(
         `{${"project_id"}}`,
-        encodeURIComponent(String(projectId))
+        encodeURIComponent(String(projectId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1937,23 +1937,23 @@ export const ResultApiFp = function (configuration?: Configuration) {
     async describeResult(
       projectId: number,
       resultId: number,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<DescribeResult200Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.describeResult(
         projectId,
         resultId,
-        options
+        options,
       );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -1971,11 +1971,11 @@ export const ResultApiFp = function (configuration?: Configuration) {
       page?: number,
       perPage?: number,
       testPlanId?: number,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<Array<TestPlanResult>>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.listResults(
@@ -1983,13 +1983,13 @@ export const ResultApiFp = function (configuration?: Configuration) {
         page,
         perPage,
         testPlanId,
-        options
+        options,
       );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -2002,7 +2002,7 @@ export const ResultApiFp = function (configuration?: Configuration) {
 export const ResultApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = ResultApiFp(configuration);
   return {
@@ -2017,7 +2017,7 @@ export const ResultApiFactory = function (
     describeResult(
       projectId: number,
       resultId: number,
-      options?: any
+      options?: any,
     ): AxiosPromise<DescribeResult200Response> {
       return localVarFp
         .describeResult(projectId, resultId, options)
@@ -2038,7 +2038,7 @@ export const ResultApiFactory = function (
       page?: number,
       perPage?: number,
       testPlanId?: number,
-      options?: any
+      options?: any,
     ): AxiosPromise<Array<TestPlanResult>> {
       return localVarFp
         .listResults(projectId, page, perPage, testPlanId, options)
@@ -2066,7 +2066,7 @@ export class ResultApi extends BaseAPI {
   public describeResult(
     projectId: number,
     resultId: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return ResultApiFp(this.configuration)
       .describeResult(projectId, resultId, options)
@@ -2089,7 +2089,7 @@ export class ResultApi extends BaseAPI {
     page?: number,
     perPage?: number,
     testPlanId?: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return ResultApiFp(this.configuration)
       .listResults(projectId, page, perPage, testPlanId, options)
@@ -2102,7 +2102,7 @@ export class ResultApi extends BaseAPI {
  * @export
  */
 export const ScenarioApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -2115,7 +2115,7 @@ export const ScenarioApiAxiosParamCreator = function (
     describeScenario: async (
       projectId: number,
       scenarioId: number,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("describeScenario", "projectId", projectId);
@@ -2167,7 +2167,7 @@ export const ScenarioApiAxiosParamCreator = function (
     executeScenarios: async (
       projectId: number,
       executeScenariosRequest: ExecuteScenariosRequest,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("executeScenarios", "projectId", projectId);
@@ -2175,11 +2175,11 @@ export const ScenarioApiAxiosParamCreator = function (
       assertParamExists(
         "executeScenarios",
         "executeScenariosRequest",
-        executeScenariosRequest
+        executeScenariosRequest,
       );
       const localVarPath = `/projects/{project_id}/execute_scenarios`.replace(
         `{${"project_id"}}`,
-        encodeURIComponent(String(projectId))
+        encodeURIComponent(String(projectId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2213,7 +2213,7 @@ export const ScenarioApiAxiosParamCreator = function (
       localVarRequestOptions.data = serializeDataIfNeeded(
         executeScenariosRequest,
         localVarRequestOptions,
-        configuration
+        configuration,
       );
 
       return {
@@ -2231,13 +2231,13 @@ export const ScenarioApiAxiosParamCreator = function (
     listScenarios: async (
       projectId: number,
       page?: number,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
       assertParamExists("listScenarios", "projectId", projectId);
       const localVarPath = `/projects/{project_id}/scenarios`.replace(
         `{${"project_id"}}`,
-        encodeURIComponent(String(projectId))
+        encodeURIComponent(String(projectId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2296,7 +2296,7 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
     async describeScenario(
       projectId: number,
       scenarioId: number,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Scenario>
     > {
@@ -2304,13 +2304,13 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.describeScenario(
           projectId,
           scenarioId,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -2323,24 +2323,24 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
     async executeScenarios(
       projectId: number,
       executeScenariosRequest: ExecuteScenariosRequest,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<ExecuteScenariosResult>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.executeScenarios(
           projectId,
           executeScenariosRequest,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -2353,23 +2353,23 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
     async listScenarios(
       projectId: number,
       page?: number,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<Array<Scenario>>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.listScenarios(
         projectId,
         page,
-        options
+        options,
       );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -2382,7 +2382,7 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
 export const ScenarioApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = ScenarioApiFp(configuration);
   return {
@@ -2396,7 +2396,7 @@ export const ScenarioApiFactory = function (
     describeScenario(
       projectId: number,
       scenarioId: number,
-      options?: any
+      options?: any,
     ): AxiosPromise<Scenario> {
       return localVarFp
         .describeScenario(projectId, scenarioId, options)
@@ -2412,7 +2412,7 @@ export const ScenarioApiFactory = function (
     executeScenarios(
       projectId: number,
       executeScenariosRequest: ExecuteScenariosRequest,
-      options?: any
+      options?: any,
     ): AxiosPromise<ExecuteScenariosResult> {
       return localVarFp
         .executeScenarios(projectId, executeScenariosRequest, options)
@@ -2428,7 +2428,7 @@ export const ScenarioApiFactory = function (
     listScenarios(
       projectId: number,
       page?: number,
-      options?: any
+      options?: any,
     ): AxiosPromise<Array<Scenario>> {
       return localVarFp
         .listScenarios(projectId, page, options)
@@ -2455,7 +2455,7 @@ export class ScenarioApi extends BaseAPI {
   public describeScenario(
     projectId: number,
     scenarioId: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return ScenarioApiFp(this.configuration)
       .describeScenario(projectId, scenarioId, options)
@@ -2473,7 +2473,7 @@ export class ScenarioApi extends BaseAPI {
   public executeScenarios(
     projectId: number,
     executeScenariosRequest: ExecuteScenariosRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return ScenarioApiFp(this.configuration)
       .executeScenarios(projectId, executeScenariosRequest, options)
@@ -2491,7 +2491,7 @@ export class ScenarioApi extends BaseAPI {
   public listScenarios(
     projectId: number,
     page?: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return ScenarioApiFp(this.configuration)
       .listScenarios(projectId, page, options)
@@ -2504,7 +2504,7 @@ export class ScenarioApi extends BaseAPI {
  * @export
  */
 export const ScheduleApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -2518,13 +2518,13 @@ export const ScheduleApiAxiosParamCreator = function (
     executeSchedule: async (
       scheduleId: number,
       executeScheduleRequest?: ExecuteScheduleRequest,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'scheduleId' is not null or undefined
       assertParamExists("executeSchedule", "scheduleId", scheduleId);
       const localVarPath = `/schedules/{schedule_id}`.replace(
         `{${"schedule_id"}}`,
-        encodeURIComponent(String(scheduleId))
+        encodeURIComponent(String(scheduleId)),
       );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2558,7 +2558,7 @@ export const ScheduleApiAxiosParamCreator = function (
       localVarRequestOptions.data = serializeDataIfNeeded(
         executeScheduleRequest,
         localVarRequestOptions,
-        configuration
+        configuration,
       );
 
       return {
@@ -2587,23 +2587,23 @@ export const ScheduleApiFp = function (configuration?: Configuration) {
     async executeSchedule(
       scheduleId: number,
       executeScheduleRequest?: ExecuteScheduleRequest,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<ExecuteSchedule200Response>
     > {
       const localVarAxiosArgs = await localVarAxiosParamCreator.executeSchedule(
         scheduleId,
         executeScheduleRequest,
-        options
+        options,
       );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -2616,7 +2616,7 @@ export const ScheduleApiFp = function (configuration?: Configuration) {
 export const ScheduleApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = ScheduleApiFp(configuration);
   return {
@@ -2631,7 +2631,7 @@ export const ScheduleApiFactory = function (
     executeSchedule(
       scheduleId: number,
       executeScheduleRequest?: ExecuteScheduleRequest,
-      options?: any
+      options?: any,
     ): AxiosPromise<ExecuteSchedule200Response> {
       return localVarFp
         .executeSchedule(scheduleId, executeScheduleRequest, options)
@@ -2659,7 +2659,7 @@ export class ScheduleApi extends BaseAPI {
   public executeSchedule(
     scheduleId: number,
     executeScheduleRequest?: ExecuteScheduleRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return ScheduleApiFp(this.configuration)
       .executeSchedule(scheduleId, executeScheduleRequest, options)
@@ -2672,7 +2672,7 @@ export class ScheduleApi extends BaseAPI {
  * @export
  */
 export const UrlReplacementApiAxiosParamCreator = function (
-  configuration?: Configuration
+  configuration?: Configuration,
 ) {
   return {
     /**
@@ -2685,7 +2685,7 @@ export const UrlReplacementApiAxiosParamCreator = function (
     createUrlReplacement: async (
       testPlanId: number,
       createUrlReplacementRequest: CreateUrlReplacementRequest,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'testPlanId' is not null or undefined
       assertParamExists("createUrlReplacement", "testPlanId", testPlanId);
@@ -2693,12 +2693,12 @@ export const UrlReplacementApiAxiosParamCreator = function (
       assertParamExists(
         "createUrlReplacement",
         "createUrlReplacementRequest",
-        createUrlReplacementRequest
+        createUrlReplacementRequest,
       );
       const localVarPath =
         `/test_plans/{test_plan_id}/url_replacements`.replace(
           `{${"test_plan_id"}}`,
-          encodeURIComponent(String(testPlanId))
+          encodeURIComponent(String(testPlanId)),
         );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2732,7 +2732,7 @@ export const UrlReplacementApiAxiosParamCreator = function (
       localVarRequestOptions.data = serializeDataIfNeeded(
         createUrlReplacementRequest,
         localVarRequestOptions,
-        configuration
+        configuration,
       );
 
       return {
@@ -2750,7 +2750,7 @@ export const UrlReplacementApiAxiosParamCreator = function (
     deleteUrlReplacement: async (
       testPlanId: number,
       urlReplacementId: number,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'testPlanId' is not null or undefined
       assertParamExists("deleteUrlReplacement", "testPlanId", testPlanId);
@@ -2758,17 +2758,17 @@ export const UrlReplacementApiAxiosParamCreator = function (
       assertParamExists(
         "deleteUrlReplacement",
         "urlReplacementId",
-        urlReplacementId
+        urlReplacementId,
       );
       const localVarPath =
         `/test_plans/{test_plan_id}/url_replacements/{url_replacement_id}`
           .replace(
             `{${"test_plan_id"}}`,
-            encodeURIComponent(String(testPlanId))
+            encodeURIComponent(String(testPlanId)),
           )
           .replace(
             `{${"url_replacement_id"}}`,
-            encodeURIComponent(String(urlReplacementId))
+            encodeURIComponent(String(urlReplacementId)),
           );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2811,14 +2811,14 @@ export const UrlReplacementApiAxiosParamCreator = function (
      */
     listUrlReplacements: async (
       testPlanId: number,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'testPlanId' is not null or undefined
       assertParamExists("listUrlReplacements", "testPlanId", testPlanId);
       const localVarPath =
         `/test_plans/{test_plan_id}/url_replacements`.replace(
           `{${"test_plan_id"}}`,
-          encodeURIComponent(String(testPlanId))
+          encodeURIComponent(String(testPlanId)),
         );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2865,7 +2865,7 @@ export const UrlReplacementApiAxiosParamCreator = function (
       testPlanId: number,
       urlReplacementId: number,
       updateUrlReplacementRequest: UpdateUrlReplacementRequest,
-      options: AxiosRequestConfig = {}
+      options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'testPlanId' is not null or undefined
       assertParamExists("updateUrlReplacement", "testPlanId", testPlanId);
@@ -2873,23 +2873,23 @@ export const UrlReplacementApiAxiosParamCreator = function (
       assertParamExists(
         "updateUrlReplacement",
         "urlReplacementId",
-        urlReplacementId
+        urlReplacementId,
       );
       // verify required parameter 'updateUrlReplacementRequest' is not null or undefined
       assertParamExists(
         "updateUrlReplacement",
         "updateUrlReplacementRequest",
-        updateUrlReplacementRequest
+        updateUrlReplacementRequest,
       );
       const localVarPath =
         `/test_plans/{test_plan_id}/url_replacements/{url_replacement_id}`
           .replace(
             `{${"test_plan_id"}}`,
-            encodeURIComponent(String(testPlanId))
+            encodeURIComponent(String(testPlanId)),
           )
           .replace(
             `{${"url_replacement_id"}}`,
-            encodeURIComponent(String(urlReplacementId))
+            encodeURIComponent(String(urlReplacementId)),
           );
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2923,7 +2923,7 @@ export const UrlReplacementApiAxiosParamCreator = function (
       localVarRequestOptions.data = serializeDataIfNeeded(
         updateUrlReplacementRequest,
         localVarRequestOptions,
-        configuration
+        configuration,
       );
 
       return {
@@ -2952,7 +2952,7 @@ export const UrlReplacementApiFp = function (configuration?: Configuration) {
     async createUrlReplacement(
       testPlanId: number,
       createUrlReplacementRequest: CreateUrlReplacementRequest,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UrlReplacement>
     > {
@@ -2960,13 +2960,13 @@ export const UrlReplacementApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.createUrlReplacement(
           testPlanId,
           createUrlReplacementRequest,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -2979,7 +2979,7 @@ export const UrlReplacementApiFp = function (configuration?: Configuration) {
     async deleteUrlReplacement(
       testPlanId: number,
       urlReplacementId: number,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>
     > {
@@ -2987,13 +2987,13 @@ export const UrlReplacementApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.deleteUrlReplacement(
           testPlanId,
           urlReplacementId,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -3004,23 +3004,23 @@ export const UrlReplacementApiFp = function (configuration?: Configuration) {
      */
     async listUrlReplacements(
       testPlanId: number,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (
         axios?: AxiosInstance,
-        basePath?: string
+        basePath?: string,
       ) => AxiosPromise<Array<UrlReplacement>>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.listUrlReplacements(
           testPlanId,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
     /**
@@ -3035,7 +3035,7 @@ export const UrlReplacementApiFp = function (configuration?: Configuration) {
       testPlanId: number,
       urlReplacementId: number,
       updateUrlReplacementRequest: UpdateUrlReplacementRequest,
-      options?: AxiosRequestConfig
+      options?: AxiosRequestConfig,
     ): Promise<
       (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UrlReplacement>
     > {
@@ -3044,13 +3044,13 @@ export const UrlReplacementApiFp = function (configuration?: Configuration) {
           testPlanId,
           urlReplacementId,
           updateUrlReplacementRequest,
-          options
+          options,
         );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
         BASE_PATH,
-        configuration
+        configuration,
       );
     },
   };
@@ -3063,7 +3063,7 @@ export const UrlReplacementApiFp = function (configuration?: Configuration) {
 export const UrlReplacementApiFactory = function (
   configuration?: Configuration,
   basePath?: string,
-  axios?: AxiosInstance
+  axios?: AxiosInstance,
 ) {
   const localVarFp = UrlReplacementApiFp(configuration);
   return {
@@ -3077,7 +3077,7 @@ export const UrlReplacementApiFactory = function (
     createUrlReplacement(
       testPlanId: number,
       createUrlReplacementRequest: CreateUrlReplacementRequest,
-      options?: any
+      options?: any,
     ): AxiosPromise<UrlReplacement> {
       return localVarFp
         .createUrlReplacement(testPlanId, createUrlReplacementRequest, options)
@@ -3093,7 +3093,7 @@ export const UrlReplacementApiFactory = function (
     deleteUrlReplacement(
       testPlanId: number,
       urlReplacementId: number,
-      options?: any
+      options?: any,
     ): AxiosPromise<string> {
       return localVarFp
         .deleteUrlReplacement(testPlanId, urlReplacementId, options)
@@ -3107,7 +3107,7 @@ export const UrlReplacementApiFactory = function (
      */
     listUrlReplacements(
       testPlanId: number,
-      options?: any
+      options?: any,
     ): AxiosPromise<Array<UrlReplacement>> {
       return localVarFp
         .listUrlReplacements(testPlanId, options)
@@ -3125,14 +3125,14 @@ export const UrlReplacementApiFactory = function (
       testPlanId: number,
       urlReplacementId: number,
       updateUrlReplacementRequest: UpdateUrlReplacementRequest,
-      options?: any
+      options?: any,
     ): AxiosPromise<UrlReplacement> {
       return localVarFp
         .updateUrlReplacement(
           testPlanId,
           urlReplacementId,
           updateUrlReplacementRequest,
-          options
+          options,
         )
         .then((request) => request(axios, basePath));
     },
@@ -3157,7 +3157,7 @@ export class UrlReplacementApi extends BaseAPI {
   public createUrlReplacement(
     testPlanId: number,
     createUrlReplacementRequest: CreateUrlReplacementRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return UrlReplacementApiFp(this.configuration)
       .createUrlReplacement(testPlanId, createUrlReplacementRequest, options)
@@ -3175,7 +3175,7 @@ export class UrlReplacementApi extends BaseAPI {
   public deleteUrlReplacement(
     testPlanId: number,
     urlReplacementId: number,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return UrlReplacementApiFp(this.configuration)
       .deleteUrlReplacement(testPlanId, urlReplacementId, options)
@@ -3208,14 +3208,14 @@ export class UrlReplacementApi extends BaseAPI {
     testPlanId: number,
     urlReplacementId: number,
     updateUrlReplacementRequest: UpdateUrlReplacementRequest,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ) {
     return UrlReplacementApiFp(this.configuration)
       .updateUrlReplacement(
         testPlanId,
         urlReplacementId,
         updateUrlReplacementRequest,
-        options
+        options,
       )
       .then((request) => request(this.axios, this.basePath));
   }
