@@ -20,4 +20,16 @@ jobs:
       - run: npm run generate:client:web
       - run: npm run format
       - run: npm run lint
-      - run: git diff
+      - id: check-diff
+        uses: technote-space/get-diff-action@v6
+      - uses: peter-evans/create-pull-request@v5
+        if: steps.check-diff.outputs.diff
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "feat: update Web Client"
+          commit-message: "feat: update web client"
+          base: main
+          branch: feat/update-web-client
+          delete-branch: true
+          body: |
+            Automatically generated changes by `npm run generate:client:web`
