@@ -651,6 +651,78 @@ paths:
               schema:
                 type: string
                 example: "ok"
+  "/projects/{project_id}/credits":
+    get:
+      operationId: getCreditUsage
+      description: |
+        Get the number of credits used in the project\
+        \
+        Notes:\
+        This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+      tags:
+        - credit
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: |
+            For example, 1 for the following URL: https://app.autify.com/projects/1/credits
+          schema:
+            type: integer
+        - name: date_from
+          in: query
+          required: false
+          description: |
+            The date to start counting used credits from.\
+            If not specified, the date will be set to 1 week ago.\
+            Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\
+            Date must follow the format YYYY-MM-DD (example: "2023-09-21").
+          schema:
+            type: string
+            format: date
+            example: "2023-09-21"
+        - name: date_to
+          in: query
+          required: false
+          description: |
+            The date to end counting used credits from.\
+            If not specified, the date will be set to today.\
+            Date must follow the format YYYY-MM-DD (example: "2023-09-28").
+          schema:
+            type: string
+            format: date
+            example: "2023-09-28"
+        - name: scenario_id
+          in: query
+          required: false
+          description: |
+            The scenario ID to filter used credits by.
+          schema:
+            type: integer
+        - name: test_plan_id
+          in: query
+          required: false
+          description: |
+            The test plan ID to filter used credits by.
+          schema:
+            type: integer
+        - name: user_id
+          in: query
+          required: false
+          description: |
+            The user ID that executed tests to filter used credits by.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/UsedCredits"
 components:
   securitySchemes:
     bearerAuth:
@@ -833,6 +905,9 @@ components:
         review_needed:
           type: integer
           description: Number of "Review needed" flags present in the test results.
+        number_of_credits_consumed:
+          type: integer
+          description: Number of credits consumed by this test result. (default 0 for test result created before credit based system)
         import_variables:
           description: THIS FEATURE IS FOR LIMITED NUMBER OF CUSTOMERS. Variables imported from previously executed test results in a test plan.
           type: array
@@ -1018,6 +1093,21 @@ components:
         - internal_error
         - canceled
       default: waiting
+    UsedCredits:
+      properties:
+        date_from:
+          type: string
+          format: date
+          example: "2023-09-21"
+        date_to:
+          type: string
+          format: date
+          example: "2023-09-28"
+        credits_consumed:
+          type: integer
+        credit_consumption_event_count:
+          type: integer
+
 tags:
   - name: schedule
     description: |
