@@ -1,0 +1,23 @@
+name: Generate Web Client
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: "https://registry.npmjs.org"
+      - run: npm ci
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "adopt"
+          java-version: "11"
+      - run: npm run generate:client:web
+      - run: npm run format
+      - run: npm run lint
+      - run: git diff
