@@ -784,6 +784,37 @@ export interface Label {
 /**
  *
  * @export
+ * @interface ProjectInfo
+ */
+export interface ProjectInfo {
+  /**
+   *
+   * @type {number}
+   * @memberof ProjectInfo
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectInfo
+   */
+  name?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof ProjectInfo
+   */
+  scenarios_count?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof ProjectInfo
+   */
+  test_plans_count?: number;
+}
+/**
+ *
+ * @export
  * @interface Scenario
  */
 export interface Scenario {
@@ -884,6 +915,12 @@ export interface TestCaseResult {
    * @memberof TestCaseResult
    */
   review_needed?: number;
+  /**
+   * Number of credits consumed by this test result. (default 0 for test result created before credit based system)
+   * @type {number}
+   * @memberof TestCaseResult
+   */
+  number_of_credits_consumed?: number;
   /**
    * THIS FEATURE IS FOR LIMITED NUMBER OF CUSTOMERS. Variables imported from previously executed test results in a test plan.
    * @type {Array<TestCaseResultImportVariablesInner>}
@@ -1177,6 +1214,37 @@ export interface UrlReplacement {
    * @memberof UrlReplacement
    */
   updated_at: string;
+}
+/**
+ *
+ * @export
+ * @interface UsedCredits
+ */
+export interface UsedCredits {
+  /**
+   *
+   * @type {string}
+   * @memberof UsedCredits
+   */
+  date_from?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UsedCredits
+   */
+  date_to?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof UsedCredits
+   */
+  credits_consumed?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof UsedCredits
+   */
+  credit_consumption_event_count?: number;
 }
 
 /**
@@ -1783,6 +1851,380 @@ export class CapabilityApi extends BaseAPI {
   ) {
     return CapabilityApiFp(this.configuration)
       .listCapabilities(projectId, os, browser, deviceType, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * CreditApi - axios parameter creator
+ * @export
+ */
+export const CreditApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
+     * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
+     * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+     * @param {number} [scenarioId] The scenario ID to filter used credits by.
+     * @param {number} [testPlanId] The test plan ID to filter used credits by.
+     * @param {number} [userId] The user ID that executed tests to filter used credits by.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getCreditUsage: async (
+      projectId: number,
+      dateFrom?: string,
+      dateTo?: string,
+      scenarioId?: number,
+      testPlanId?: number,
+      userId?: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("getCreditUsage", "projectId", projectId);
+      const localVarPath = `/projects/{project_id}/credits`.replace(
+        `{${"project_id"}}`,
+        encodeURIComponent(String(projectId)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (dateFrom !== undefined) {
+        localVarQueryParameter["date_from"] =
+          (dateFrom as any) instanceof Date
+            ? (dateFrom as any).toISOString().substr(0, 10)
+            : dateFrom;
+      }
+
+      if (dateTo !== undefined) {
+        localVarQueryParameter["date_to"] =
+          (dateTo as any) instanceof Date
+            ? (dateTo as any).toISOString().substr(0, 10)
+            : dateTo;
+      }
+
+      if (scenarioId !== undefined) {
+        localVarQueryParameter["scenario_id"] = scenarioId;
+      }
+
+      if (testPlanId !== undefined) {
+        localVarQueryParameter["test_plan_id"] = testPlanId;
+      }
+
+      if (userId !== undefined) {
+        localVarQueryParameter["user_id"] = userId;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * CreditApi - functional programming interface
+ * @export
+ */
+export const CreditApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = CreditApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
+     * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
+     * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+     * @param {number} [scenarioId] The scenario ID to filter used credits by.
+     * @param {number} [testPlanId] The test plan ID to filter used credits by.
+     * @param {number} [userId] The user ID that executed tests to filter used credits by.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getCreditUsage(
+      projectId: number,
+      dateFrom?: string,
+      dateTo?: string,
+      scenarioId?: number,
+      testPlanId?: number,
+      userId?: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<UsedCredits>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getCreditUsage(
+        projectId,
+        dateFrom,
+        dateTo,
+        scenarioId,
+        testPlanId,
+        userId,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+  };
+};
+
+/**
+ * CreditApi - factory interface
+ * @export
+ */
+export const CreditApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = CreditApiFp(configuration);
+  return {
+    /**
+     * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
+     * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
+     * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+     * @param {number} [scenarioId] The scenario ID to filter used credits by.
+     * @param {number} [testPlanId] The test plan ID to filter used credits by.
+     * @param {number} [userId] The user ID that executed tests to filter used credits by.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getCreditUsage(
+      projectId: number,
+      dateFrom?: string,
+      dateTo?: string,
+      scenarioId?: number,
+      testPlanId?: number,
+      userId?: number,
+      options?: any,
+    ): AxiosPromise<UsedCredits> {
+      return localVarFp
+        .getCreditUsage(
+          projectId,
+          dateFrom,
+          dateTo,
+          scenarioId,
+          testPlanId,
+          userId,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * CreditApi - object-oriented interface
+ * @export
+ * @class CreditApi
+ * @extends {BaseAPI}
+ */
+export class CreditApi extends BaseAPI {
+  /**
+   * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
+   * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
+   * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+   * @param {number} [scenarioId] The scenario ID to filter used credits by.
+   * @param {number} [testPlanId] The test plan ID to filter used credits by.
+   * @param {number} [userId] The user ID that executed tests to filter used credits by.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof CreditApi
+   */
+  public getCreditUsage(
+    projectId: number,
+    dateFrom?: string,
+    dateTo?: string,
+    scenarioId?: number,
+    testPlanId?: number,
+    userId?: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return CreditApiFp(this.configuration)
+      .getCreditUsage(
+        projectId,
+        dateFrom,
+        dateTo,
+        scenarioId,
+        testPlanId,
+        userId,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * ProjectApi - axios parameter creator
+ * @export
+ */
+export const ProjectApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Get project information.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectInfo: async (
+      projectId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("getProjectInfo", "projectId", projectId);
+      const localVarPath = `/projects/{project_id}/project_info`.replace(
+        `{${"project_id"}}`,
+        encodeURIComponent(String(projectId)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * ProjectApi - functional programming interface
+ * @export
+ */
+export const ProjectApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = ProjectApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Get project information.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getProjectInfo(
+      projectId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectInfo>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getProjectInfo(
+        projectId,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+  };
+};
+
+/**
+ * ProjectApi - factory interface
+ * @export
+ */
+export const ProjectApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = ProjectApiFp(configuration);
+  return {
+    /**
+     * Get project information.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectInfo(
+      projectId: number,
+      options?: any,
+    ): AxiosPromise<ProjectInfo> {
+      return localVarFp
+        .getProjectInfo(projectId, options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * ProjectApi - object-oriented interface
+ * @export
+ * @class ProjectApi
+ * @extends {BaseAPI}
+ */
+export class ProjectApi extends BaseAPI {
+  /**
+   * Get project information.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProjectApi
+   */
+  public getProjectInfo(projectId: number, options?: AxiosRequestConfig) {
+    return ProjectApiFp(this.configuration)
+      .getProjectInfo(projectId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }

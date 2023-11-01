@@ -35,6 +35,7 @@ import {
   ExecuteScheduleRequest,
   ExecuteScheduleRequestAutifyConnect,
   Label,
+  ProjectInfo,
   Scenario,
   TestCaseResult,
   TestCaseResultExportVariablesInner,
@@ -47,6 +48,7 @@ import {
   TestPlanResultStatus,
   UpdateUrlReplacementRequest,
   UrlReplacement,
+  UsedCredits,
   AutifyConnectApiAxiosParamCreator,
   AutifyConnectApiFp,
   AutifyConnectApiFactory,
@@ -55,6 +57,14 @@ import {
   CapabilityApiFp,
   CapabilityApiFactory,
   CapabilityApi,
+  CreditApiAxiosParamCreator,
+  CreditApiFp,
+  CreditApiFactory,
+  CreditApi,
+  ProjectApiAxiosParamCreator,
+  ProjectApiFp,
+  ProjectApiFactory,
+  ProjectApi,
   ResultApiAxiosParamCreator,
   ResultApiFp,
   ResultApiFactory,
@@ -114,6 +124,8 @@ export class WebClient {
     });
     this.autifyConnectApi = new AutifyConnectApi(configuration);
     this.capabilityApi = new CapabilityApi(configuration);
+    this.creditApi = new CreditApi(configuration);
+    this.projectApi = new ProjectApi(configuration);
     this.resultApi = new ResultApi(configuration);
     this.scenarioApi = new ScenarioApi(configuration);
     this.scheduleApi = new ScheduleApi(configuration);
@@ -204,6 +216,53 @@ export class WebClient {
       deviceType,
       options,
     );
+  }
+
+  private readonly creditApi;
+
+  /**
+   * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
+   * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
+   * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+   * @param {number} [scenarioId] The scenario ID to filter used credits by.
+   * @param {number} [testPlanId] The test plan ID to filter used credits by.
+   * @param {number} [userId] The user ID that executed tests to filter used credits by.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof CreditApi
+   */
+  getCreditUsage(
+    projectId: number,
+    dateFrom?: string,
+    dateTo?: string,
+    scenarioId?: number,
+    testPlanId?: number,
+    userId?: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return this.creditApi.getCreditUsage(
+      projectId,
+      dateFrom,
+      dateTo,
+      scenarioId,
+      testPlanId,
+      userId,
+      options,
+    );
+  }
+
+  private readonly projectApi;
+
+  /**
+   * Get project information.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProjectApi
+   */
+  getProjectInfo(projectId: number, options?: AxiosRequestConfig) {
+    return this.projectApi.getProjectInfo(projectId, options);
   }
 
   private readonly resultApi;
