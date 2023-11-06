@@ -17,7 +17,9 @@ jobs:
         with:
           distribution: "adopt"
           java-version: "11"
-      - run: curl https://autifyhq.github.io/autify-api/swagger.yml
+      - run: npm run update-swagger-web
+      - id: check-diff
+        uses: technote-space/get-diff-action@v6
       - run: npm run generate:client:web
       - run: npm run format
       - run: npm run lint
