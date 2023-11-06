@@ -18,7 +18,7 @@ jobs:
           distribution: "adopt"
           java-version: "11"
       - run: npm run update-swagger-web
-      - id: check-diff
+      - id: check-yaml-diff
         uses: technote-space/get-diff-action@v6
       - run: npm run generate:client:web
       - run: npm run format
