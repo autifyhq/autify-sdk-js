@@ -723,6 +723,31 @@ paths:
               schema:
                 type: object
                 $ref: "#/components/schemas/UsedCredits"
+  "/projects/{project_id}/project_info":
+    get:
+      operationId: getProjectInfo
+      description: |
+        Get project information.
+      tags:
+        - project
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: project_id
+          in: path
+          required: true
+          description: |
+            For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ProjectInfo"
 components:
   securitySchemes:
     bearerAuth:
@@ -1106,6 +1131,16 @@ components:
         credits_consumed:
           type: integer
         credit_consumption_event_count:
+          type: integer
+    ProjectInfo:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        scenarios_count:
+          type: integer
+        test_plans_count:
           type: integer
 
 tags:

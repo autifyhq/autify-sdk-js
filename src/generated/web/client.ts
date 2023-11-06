@@ -35,6 +35,7 @@ import {
   ExecuteScheduleRequest,
   ExecuteScheduleRequestAutifyConnect,
   Label,
+  ProjectInfo,
   Scenario,
   TestCaseResult,
   TestCaseResultExportVariablesInner,
@@ -60,6 +61,10 @@ import {
   CreditApiFp,
   CreditApiFactory,
   CreditApi,
+  ProjectApiAxiosParamCreator,
+  ProjectApiFp,
+  ProjectApiFactory,
+  ProjectApi,
   ResultApiAxiosParamCreator,
   ResultApiFp,
   ResultApiFactory,
@@ -120,6 +125,7 @@ export class WebClient {
     this.autifyConnectApi = new AutifyConnectApi(configuration);
     this.capabilityApi = new CapabilityApi(configuration);
     this.creditApi = new CreditApi(configuration);
+    this.projectApi = new ProjectApi(configuration);
     this.resultApi = new ResultApi(configuration);
     this.scenarioApi = new ScenarioApi(configuration);
     this.scheduleApi = new ScheduleApi(configuration);
@@ -244,6 +250,19 @@ export class WebClient {
       userId,
       options,
     );
+  }
+
+  private readonly projectApi;
+
+  /**
+   * Get project information.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProjectApi
+   */
+  getProjectInfo(projectId: number, options?: AxiosRequestConfig) {
+    return this.projectApi.getProjectInfo(projectId, options);
   }
 
   private readonly resultApi;
