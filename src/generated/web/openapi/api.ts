@@ -784,6 +784,37 @@ export interface Label {
 /**
  *
  * @export
+ * @interface ProjectInfo
+ */
+export interface ProjectInfo {
+  /**
+   *
+   * @type {number}
+   * @memberof ProjectInfo
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectInfo
+   */
+  name?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof ProjectInfo
+   */
+  scenarios_count?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof ProjectInfo
+   */
+  test_plans_count?: number;
+}
+/**
+ *
+ * @export
  * @interface Scenario
  */
 export interface Scenario {
@@ -2052,6 +2083,148 @@ export class CreditApi extends BaseAPI {
         userId,
         options,
       )
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * ProjectApi - axios parameter creator
+ * @export
+ */
+export const ProjectApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Get project information.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectInfo: async (
+      projectId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("getProjectInfo", "projectId", projectId);
+      const localVarPath = `/projects/{project_id}/project_info`.replace(
+        `{${"project_id"}}`,
+        encodeURIComponent(String(projectId)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * ProjectApi - functional programming interface
+ * @export
+ */
+export const ProjectApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator = ProjectApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Get project information.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async getProjectInfo(
+      projectId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectInfo>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.getProjectInfo(
+        projectId,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+  };
+};
+
+/**
+ * ProjectApi - factory interface
+ * @export
+ */
+export const ProjectApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = ProjectApiFp(configuration);
+  return {
+    /**
+     * Get project information.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    getProjectInfo(
+      projectId: number,
+      options?: any,
+    ): AxiosPromise<ProjectInfo> {
+      return localVarFp
+        .getProjectInfo(projectId, options)
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * ProjectApi - object-oriented interface
+ * @export
+ * @class ProjectApi
+ * @extends {BaseAPI}
+ */
+export class ProjectApi extends BaseAPI {
+  /**
+   * Get project information.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/project_info
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProjectApi
+   */
+  public getProjectInfo(projectId: number, options?: AxiosRequestConfig) {
+    return ProjectApiFp(this.configuration)
+      .getProjectInfo(projectId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
