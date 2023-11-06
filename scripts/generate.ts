@@ -29,6 +29,7 @@ import {createReadStream} from 'fs';
 export {BASE_PATH as ${service.toUpperCase()}_BASE_PATH} from './openapi/base'
 
 class CustomFormData extends FormData {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   append(key: string, filename: any) {
     const stream = createReadStream(filename);
     super.append(key, stream, {filename})
