@@ -17,6 +17,7 @@ jobs:
         with:
           distribution: "adopt"
           java-version: "11"
+      - run: curl https://autifyhq.github.io/autify-api/swagger.yml
       - run: npm run generate:client:web
       - run: npm run format
       - run: npm run lint
