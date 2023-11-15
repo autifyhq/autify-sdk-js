@@ -651,6 +651,163 @@ paths:
               schema:
                 type: string
                 example: "ok"
+  "/test_plans/{test_plan_id}/test_plan_variables":
+    post:
+      operationId: createTestPlanVariable
+      description: |
+        Create a new variable for the test plan
+      tags:
+        - test_plan_variable
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: test_plan_id
+          in: path
+          required: true
+          description: |
+            For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+          schema:
+            type: integer
+      requestBody:
+        description: The new variable key and default value to use in the test plan
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/CreateTestPlanVariableRequest"
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/TestPlanVariable"
+        "400":
+          description: An error occured when creating the variable (most likely, the variable key is already taken)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+    get:
+      operationId: listTestPlanVariable
+      description: |
+        List the test plan's variables
+      tags:
+        - test_plan_variable
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: test_plan_id
+          in: path
+          required: true
+          description: |
+            For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TestPlanVariable"
+  "/test_plans/{test_plan_id}/test_plan_variables/{test_plan_variable_id}":
+    put:
+      operationId: updateTestPlanVariable
+      description: |
+        Update a url replacement for the test plan
+      tags:
+        - test_plan_variable
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: test_plan_id
+          in: path
+          required: true
+          description: |
+            For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+          schema:
+            type: integer
+        - name: test_plan_variable_id
+          in: path
+          required: true
+          description: |
+            test_plan_variable id
+          schema:
+            type: integer
+      requestBody:
+        description: The variable's new key and/or default_value's value to register
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/UpdateTestPlanVariableRequest"
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/TestPlanVariable"
+        "400":
+          description: An error occured when creating the variable (most likely, the variable key is already taken)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+    delete:
+      operationId: deleteTestPlanVariable
+      description: |
+        Delete an existing test plan variable for the test plan
+      tags:
+        - test_plan_variable
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: test_plan_id
+          in: path
+          required: true
+          description: |
+            For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15/
+          schema:
+            type: integer
+        - name: test_plan_variable_id
+          in: path
+          required: true
+          description: |
+            test_plan_variable id
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "ok"
   "/projects/{project_id}/credits":
     get:
       operationId: getCreditUsage
@@ -1093,6 +1250,45 @@ components:
           type: string
           example: "https://example.com"
         replacement_url:
+          type: string
+          example: "https://example.net"
+    TestPlanVariable:
+      properties:
+        id:
+          type: integer
+        test_plan_id:
+          type: integer
+        key:
+          type: string
+        default_value:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - "id"
+        - "test_plan_id"
+        - "key"
+        - "default_value"
+        - "created_at"
+        - "updated_at"
+    CreateTestPlanVariableRequest:
+      properties:
+        key:
+          type: string
+          example: "ANY_VARIABLE_NAME"
+        default_value:
+          type: string
+          example: "https://example.net"
+    UpdateTestPlanVariableRequest:
+      properties:
+        key:
+          type: string
+          example: "ANY_VARIABLE_NAME"
+        default_value:
           type: string
           example: "https://example.net"
     TestPlanResultStatus:
