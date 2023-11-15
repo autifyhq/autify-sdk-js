@@ -289,6 +289,51 @@ export interface CreateAccessPointResult {
 /**
  *
  * @export
+ * @interface CreateTestPlanVariable400Response
+ */
+export interface CreateTestPlanVariable400Response {
+  /**
+   *
+   * @type {Array<CreateTestPlanVariable400ResponseErrorsInner>}
+   * @memberof CreateTestPlanVariable400Response
+   */
+  errors?: Array<CreateTestPlanVariable400ResponseErrorsInner>;
+}
+/**
+ *
+ * @export
+ * @interface CreateTestPlanVariable400ResponseErrorsInner
+ */
+export interface CreateTestPlanVariable400ResponseErrorsInner {
+  /**
+   *
+   * @type {string}
+   * @memberof CreateTestPlanVariable400ResponseErrorsInner
+   */
+  message?: string;
+}
+/**
+ *
+ * @export
+ * @interface CreateTestPlanVariableRequest
+ */
+export interface CreateTestPlanVariableRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof CreateTestPlanVariableRequest
+   */
+  key?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateTestPlanVariableRequest
+   */
+  default_value?: string;
+}
+/**
+ *
+ * @export
  * @interface CreateUrlReplacementRequest
  */
 export interface CreateUrlReplacementRequest {
@@ -1153,6 +1198,68 @@ export const TestPlanResultStatus = {
 export type TestPlanResultStatus =
   (typeof TestPlanResultStatus)[keyof typeof TestPlanResultStatus];
 
+/**
+ *
+ * @export
+ * @interface TestPlanVariable
+ */
+export interface TestPlanVariable {
+  /**
+   *
+   * @type {number}
+   * @memberof TestPlanVariable
+   */
+  id: number;
+  /**
+   *
+   * @type {number}
+   * @memberof TestPlanVariable
+   */
+  test_plan_id: number;
+  /**
+   *
+   * @type {string}
+   * @memberof TestPlanVariable
+   */
+  key: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TestPlanVariable
+   */
+  default_value: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TestPlanVariable
+   */
+  created_at: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TestPlanVariable
+   */
+  updated_at: string;
+}
+/**
+ *
+ * @export
+ * @interface UpdateTestPlanVariableRequest
+ */
+export interface UpdateTestPlanVariableRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateTestPlanVariableRequest
+   */
+  key?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateTestPlanVariableRequest
+   */
+  default_value?: string;
+}
 /**
  *
  * @export
@@ -3105,6 +3212,577 @@ export class ScheduleApi extends BaseAPI {
   ) {
     return ScheduleApiFp(this.configuration)
       .executeSchedule(scheduleId, executeScheduleRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+}
+
+/**
+ * TestPlanVariableApi - axios parameter creator
+ * @export
+ */
+export const TestPlanVariableApiAxiosParamCreator = function (
+  configuration?: Configuration,
+) {
+  return {
+    /**
+     * Create a new variable for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {CreateTestPlanVariableRequest} createTestPlanVariableRequest The new variable key and default value to use in the test plan
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createTestPlanVariable: async (
+      testPlanId: number,
+      createTestPlanVariableRequest: CreateTestPlanVariableRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'testPlanId' is not null or undefined
+      assertParamExists("createTestPlanVariable", "testPlanId", testPlanId);
+      // verify required parameter 'createTestPlanVariableRequest' is not null or undefined
+      assertParamExists(
+        "createTestPlanVariable",
+        "createTestPlanVariableRequest",
+        createTestPlanVariableRequest,
+      );
+      const localVarPath =
+        `/test_plans/{test_plan_id}/test_plan_variables`.replace(
+          `{${"test_plan_id"}}`,
+          encodeURIComponent(String(testPlanId)),
+        );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        createTestPlanVariableRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Delete an existing test plan variable for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15/
+     * @param {number} testPlanVariableId test_plan_variable id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteTestPlanVariable: async (
+      testPlanId: number,
+      testPlanVariableId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'testPlanId' is not null or undefined
+      assertParamExists("deleteTestPlanVariable", "testPlanId", testPlanId);
+      // verify required parameter 'testPlanVariableId' is not null or undefined
+      assertParamExists(
+        "deleteTestPlanVariable",
+        "testPlanVariableId",
+        testPlanVariableId,
+      );
+      const localVarPath =
+        `/test_plans/{test_plan_id}/test_plan_variables/{test_plan_variable_id}`
+          .replace(
+            `{${"test_plan_id"}}`,
+            encodeURIComponent(String(testPlanId)),
+          )
+          .replace(
+            `{${"test_plan_variable_id"}}`,
+            encodeURIComponent(String(testPlanVariableId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "DELETE",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List the test plan\'s variables
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listTestPlanVariable: async (
+      testPlanId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'testPlanId' is not null or undefined
+      assertParamExists("listTestPlanVariable", "testPlanId", testPlanId);
+      const localVarPath =
+        `/test_plans/{test_plan_id}/test_plan_variables`.replace(
+          `{${"test_plan_id"}}`,
+          encodeURIComponent(String(testPlanId)),
+        );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Update a url replacement for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {number} testPlanVariableId test_plan_variable id
+     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateTestPlanVariable: async (
+      testPlanId: number,
+      testPlanVariableId: number,
+      updateTestPlanVariableRequest: UpdateTestPlanVariableRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'testPlanId' is not null or undefined
+      assertParamExists("updateTestPlanVariable", "testPlanId", testPlanId);
+      // verify required parameter 'testPlanVariableId' is not null or undefined
+      assertParamExists(
+        "updateTestPlanVariable",
+        "testPlanVariableId",
+        testPlanVariableId,
+      );
+      // verify required parameter 'updateTestPlanVariableRequest' is not null or undefined
+      assertParamExists(
+        "updateTestPlanVariable",
+        "updateTestPlanVariableRequest",
+        updateTestPlanVariableRequest,
+      );
+      const localVarPath =
+        `/test_plans/{test_plan_id}/test_plan_variables/{test_plan_variable_id}`
+          .replace(
+            `{${"test_plan_id"}}`,
+            encodeURIComponent(String(testPlanId)),
+          )
+          .replace(
+            `{${"test_plan_variable_id"}}`,
+            encodeURIComponent(String(testPlanVariableId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PUT",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        updateTestPlanVariableRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+  };
+};
+
+/**
+ * TestPlanVariableApi - functional programming interface
+ * @export
+ */
+export const TestPlanVariableApiFp = function (configuration?: Configuration) {
+  const localVarAxiosParamCreator =
+    TestPlanVariableApiAxiosParamCreator(configuration);
+  return {
+    /**
+     * Create a new variable for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {CreateTestPlanVariableRequest} createTestPlanVariableRequest The new variable key and default value to use in the test plan
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async createTestPlanVariable(
+      testPlanId: number,
+      createTestPlanVariableRequest: CreateTestPlanVariableRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<TestPlanVariable>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.createTestPlanVariable(
+          testPlanId,
+          createTestPlanVariableRequest,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Delete an existing test plan variable for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15/
+     * @param {number} testPlanVariableId test_plan_variable id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async deleteTestPlanVariable(
+      testPlanId: number,
+      testPlanVariableId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.deleteTestPlanVariable(
+          testPlanId,
+          testPlanVariableId,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * List the test plan\'s variables
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listTestPlanVariable(
+      testPlanId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<Array<TestPlanVariable>>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.listTestPlanVariable(
+          testPlanId,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Update a url replacement for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {number} testPlanVariableId test_plan_variable id
+     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async updateTestPlanVariable(
+      testPlanId: number,
+      testPlanVariableId: number,
+      updateTestPlanVariableRequest: UpdateTestPlanVariableRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<TestPlanVariable>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.updateTestPlanVariable(
+          testPlanId,
+          testPlanVariableId,
+          updateTestPlanVariableRequest,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+  };
+};
+
+/**
+ * TestPlanVariableApi - factory interface
+ * @export
+ */
+export const TestPlanVariableApiFactory = function (
+  configuration?: Configuration,
+  basePath?: string,
+  axios?: AxiosInstance,
+) {
+  const localVarFp = TestPlanVariableApiFp(configuration);
+  return {
+    /**
+     * Create a new variable for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {CreateTestPlanVariableRequest} createTestPlanVariableRequest The new variable key and default value to use in the test plan
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createTestPlanVariable(
+      testPlanId: number,
+      createTestPlanVariableRequest: CreateTestPlanVariableRequest,
+      options?: any,
+    ): AxiosPromise<TestPlanVariable> {
+      return localVarFp
+        .createTestPlanVariable(
+          testPlanId,
+          createTestPlanVariableRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Delete an existing test plan variable for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15/
+     * @param {number} testPlanVariableId test_plan_variable id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteTestPlanVariable(
+      testPlanId: number,
+      testPlanVariableId: number,
+      options?: any,
+    ): AxiosPromise<string> {
+      return localVarFp
+        .deleteTestPlanVariable(testPlanId, testPlanVariableId, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List the test plan\'s variables
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listTestPlanVariable(
+      testPlanId: number,
+      options?: any,
+    ): AxiosPromise<Array<TestPlanVariable>> {
+      return localVarFp
+        .listTestPlanVariable(testPlanId, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Update a url replacement for the test plan
+     * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+     * @param {number} testPlanVariableId test_plan_variable id
+     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateTestPlanVariable(
+      testPlanId: number,
+      testPlanVariableId: number,
+      updateTestPlanVariableRequest: UpdateTestPlanVariableRequest,
+      options?: any,
+    ): AxiosPromise<TestPlanVariable> {
+      return localVarFp
+        .updateTestPlanVariable(
+          testPlanId,
+          testPlanVariableId,
+          updateTestPlanVariableRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+  };
+};
+
+/**
+ * TestPlanVariableApi - object-oriented interface
+ * @export
+ * @class TestPlanVariableApi
+ * @extends {BaseAPI}
+ */
+export class TestPlanVariableApi extends BaseAPI {
+  /**
+   * Create a new variable for the test plan
+   * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+   * @param {CreateTestPlanVariableRequest} createTestPlanVariableRequest The new variable key and default value to use in the test plan
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestPlanVariableApi
+   */
+  public createTestPlanVariable(
+    testPlanId: number,
+    createTestPlanVariableRequest: CreateTestPlanVariableRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return TestPlanVariableApiFp(this.configuration)
+      .createTestPlanVariable(
+        testPlanId,
+        createTestPlanVariableRequest,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Delete an existing test plan variable for the test plan
+   * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15/
+   * @param {number} testPlanVariableId test_plan_variable id
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestPlanVariableApi
+   */
+  public deleteTestPlanVariable(
+    testPlanId: number,
+    testPlanVariableId: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return TestPlanVariableApiFp(this.configuration)
+      .deleteTestPlanVariable(testPlanId, testPlanVariableId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List the test plan\'s variables
+   * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestPlanVariableApi
+   */
+  public listTestPlanVariable(
+    testPlanId: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return TestPlanVariableApiFp(this.configuration)
+      .listTestPlanVariable(testPlanId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Update a url replacement for the test plan
+   * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+   * @param {number} testPlanVariableId test_plan_variable id
+   * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestPlanVariableApi
+   */
+  public updateTestPlanVariable(
+    testPlanId: number,
+    testPlanVariableId: number,
+    updateTestPlanVariableRequest: UpdateTestPlanVariableRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return TestPlanVariableApiFp(this.configuration)
+      .updateTestPlanVariable(
+        testPlanId,
+        testPlanVariableId,
+        updateTestPlanVariableRequest,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 }

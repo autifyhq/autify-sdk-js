@@ -10,6 +10,9 @@ import {
   CreateAccessPoint400ResponseErrorsInner,
   CreateAccessPointRequest,
   CreateAccessPointResult,
+  CreateTestPlanVariable400Response,
+  CreateTestPlanVariable400ResponseErrorsInner,
+  CreateTestPlanVariableRequest,
   CreateUrlReplacementRequest,
   DeleteAccessPoint404Response,
   DeleteAccessPoint404ResponseErrorsInner,
@@ -46,6 +49,8 @@ import {
   TestPlanCapabilityResult,
   TestPlanResult,
   TestPlanResultStatus,
+  TestPlanVariable,
+  UpdateTestPlanVariableRequest,
   UpdateUrlReplacementRequest,
   UrlReplacement,
   UsedCredits,
@@ -77,6 +82,10 @@ import {
   ScheduleApiFp,
   ScheduleApiFactory,
   ScheduleApi,
+  TestPlanVariableApiAxiosParamCreator,
+  TestPlanVariableApiFp,
+  TestPlanVariableApiFactory,
+  TestPlanVariableApi,
   UrlReplacementApiAxiosParamCreator,
   UrlReplacementApiFp,
   UrlReplacementApiFactory,
@@ -129,6 +138,7 @@ export class WebClient {
     this.resultApi = new ResultApi(configuration);
     this.scenarioApi = new ScenarioApi(configuration);
     this.scheduleApi = new ScheduleApi(configuration);
+    this.testPlanVariableApi = new TestPlanVariableApi(configuration);
     this.urlReplacementApi = new UrlReplacementApi(configuration);
   }
 
@@ -384,6 +394,82 @@ export class WebClient {
     return this.scheduleApi.executeSchedule(
       scheduleId,
       executeScheduleRequest,
+      options,
+    );
+  }
+
+  private readonly testPlanVariableApi;
+
+  /**
+   * Create a new variable for the test plan
+   * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+   * @param {CreateTestPlanVariableRequest} createTestPlanVariableRequest The new variable key and default value to use in the test plan
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestPlanVariableApi
+   */
+  createTestPlanVariable(
+    testPlanId: number,
+    createTestPlanVariableRequest: CreateTestPlanVariableRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return this.testPlanVariableApi.createTestPlanVariable(
+      testPlanId,
+      createTestPlanVariableRequest,
+      options,
+    );
+  }
+
+  /**
+   * Delete an existing test plan variable for the test plan
+   * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15/
+   * @param {number} testPlanVariableId test_plan_variable id
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestPlanVariableApi
+   */
+  deleteTestPlanVariable(
+    testPlanId: number,
+    testPlanVariableId: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return this.testPlanVariableApi.deleteTestPlanVariable(
+      testPlanId,
+      testPlanVariableId,
+      options,
+    );
+  }
+
+  /**
+   * List the test plan\'s variables
+   * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestPlanVariableApi
+   */
+  listTestPlanVariable(testPlanId: number, options?: AxiosRequestConfig) {
+    return this.testPlanVariableApi.listTestPlanVariable(testPlanId, options);
+  }
+
+  /**
+   * Update a url replacement for the test plan
+   * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
+   * @param {number} testPlanVariableId test_plan_variable id
+   * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof TestPlanVariableApi
+   */
+  updateTestPlanVariable(
+    testPlanId: number,
+    testPlanVariableId: number,
+    updateTestPlanVariableRequest: UpdateTestPlanVariableRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return this.testPlanVariableApi.updateTestPlanVariable(
+      testPlanId,
+      testPlanVariableId,
+      updateTestPlanVariableRequest,
       options,
     );
   }
