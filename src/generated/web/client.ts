@@ -282,6 +282,7 @@ export class WebClient {
    * @summary Get a test result.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
    * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+   * @param {boolean} [getDetails] The flag to get details of the test case result.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof ResultApi
@@ -289,9 +290,15 @@ export class WebClient {
   describeResult(
     projectId: number,
     resultId: number,
+    getDetails?: boolean,
     options?: AxiosRequestConfig,
   ) {
-    return this.resultApi.describeResult(projectId, resultId, options);
+    return this.resultApi.describeResult(
+      projectId,
+      resultId,
+      getDetails,
+      options,
+    );
   }
 
   /**
