@@ -2349,12 +2349,14 @@ export const ResultApiAxiosParamCreator = function (
      * @summary Get a test result.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {boolean} [getDetails] The flag to get details of the test case result.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     describeResult: async (
       projectId: number,
       resultId: number,
+      getDetails?: boolean,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
@@ -2382,6 +2384,10 @@ export const ResultApiAxiosParamCreator = function (
       // authentication bearerAuth required
       // http bearer authentication required
       await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (getDetails !== undefined) {
+        localVarQueryParameter["get_details"] = getDetails;
+      }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -2480,12 +2486,14 @@ export const ResultApiFp = function (configuration?: Configuration) {
      * @summary Get a test result.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {boolean} [getDetails] The flag to get details of the test case result.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async describeResult(
       projectId: number,
       resultId: number,
+      getDetails?: boolean,
       options?: AxiosRequestConfig,
     ): Promise<
       (
@@ -2496,6 +2504,7 @@ export const ResultApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs = await localVarAxiosParamCreator.describeResult(
         projectId,
         resultId,
+        getDetails,
         options,
       );
       return createRequestFunction(
@@ -2560,16 +2569,18 @@ export const ResultApiFactory = function (
      * @summary Get a test result.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {boolean} [getDetails] The flag to get details of the test case result.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     describeResult(
       projectId: number,
       resultId: number,
+      getDetails?: boolean,
       options?: any,
     ): AxiosPromise<DescribeResult200Response> {
       return localVarFp
-        .describeResult(projectId, resultId, options)
+        .describeResult(projectId, resultId, getDetails, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -2608,6 +2619,7 @@ export class ResultApi extends BaseAPI {
    * @summary Get a test result.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
    * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+   * @param {boolean} [getDetails] The flag to get details of the test case result.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof ResultApi
@@ -2615,10 +2627,11 @@ export class ResultApi extends BaseAPI {
   public describeResult(
     projectId: number,
     resultId: number,
+    getDetails?: boolean,
     options?: AxiosRequestConfig,
   ) {
     return ResultApiFp(this.configuration)
-      .describeResult(projectId, resultId, options)
+      .describeResult(projectId, resultId, getDetails, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
