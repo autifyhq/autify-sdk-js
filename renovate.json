@@ -6,10 +6,6 @@
       "matchDatasources": ["npm"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "all non major npm update"
-    },
-    {
-      "enabled": false,
-      "matchPackageNames": ["axios"]
     }
   ],
   "rangeStrategy": "bump",
