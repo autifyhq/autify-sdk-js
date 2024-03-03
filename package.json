@@ -23,10 +23,10 @@
     "tslib": "^2.6.2"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.9.0",
+    "@openapitools/openapi-generator-cli": "^2.10.0",
     "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.21",
+    "@types/node": "^20.11.24",
     "@typescript-eslint/eslint-plugin": "^7.1.0",
     "@typescript-eslint/parser": "^7.1.0",
     "axios-mock-adapter": "^1.22.0",
