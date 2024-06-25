@@ -26,9 +26,9 @@
     "@openapitools/openapi-generator-cli": "^2.13.4",
     "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.12",
-    "@types/node": "^20.14.4",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
+    "@types/node": "^20.14.9",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.14.1",
     "axios-mock-adapter": "^1.22.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
@@ -41,7 +41,7 @@
     "ts-jest": "^29.1.5",
     "ts-morph": "^22.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.2"
   },
   "scripts": {
     "update-swagger-web": "curl -o swagger-web.yml https://autifyhq.github.io/autify-api/swagger.yml",
