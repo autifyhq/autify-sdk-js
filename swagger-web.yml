@@ -307,17 +307,29 @@ paths:
           name: os
           schema:
             type: string
-          description: os name to filter
+          description: os name to filter (deprecated)
+          deprecated: true
+        - in: query
+          name: os_type
+          description: Type of the os to filter
+          schema:
+            $ref: "#/components/schemas/OsTypeEnum"
         - in: query
           name: browser
           schema:
             type: string
-          description: browser name to filter
+          description: browser name to filter (deprecated)
+          deprecated: true
+        - in: query
+          name: browser_type
+          description: Type of the browser to filter
+          schema:
+            $ref: "#/components/schemas/BrowserTypeEnum"
         - in: query
           name: device_type
+          description: device_type name to filter (mobile is deprecated)
           schema:
-            type: string
-          description: device_type name to filter
+            $ref: "#/components/schemas/DeviceTypeEnum"
       responses:
         "200":
           description: ok
@@ -978,6 +990,33 @@ components:
         - "replacement_url"
         - "created_at"
         - "updated_at"
+    DeviceTypeEnum:
+      type: string
+      description: "mobile is deprecated and will be replaced by smartphone"
+      enum:
+        - desktop
+        - mobile
+        - smartphone
+        - tablet
+        - emulator
+    BrowserTypeEnum:
+      type: string
+      enum:
+        - chrome
+        - firefox
+        - safari
+        - edge
+        - edge_legacy
+        - ie
+    OsTypeEnum:
+      type: string
+      enum:
+        - macos
+        - linux
+        - windows
+        - windows_server
+        - ios
+        - android
     Capability:
       properties:
         id:
@@ -1004,20 +1043,24 @@ components:
       properties:
         os:
           type: string
+        os_type:
+          $ref: "#/components/schemas/OsTypeEnum"
         os_version:
           type: string
         browser:
           type: string
+        browser_type:
+          $ref: "#/components/schemas/BrowserTypeEnum"
         browser_version:
           type: string
         device:
           type: string
         device_type:
-          type: string
+          $ref: "#/components/schemas/DeviceTypeEnum"
         unsupported:
           type: boolean
-        no_new_registration:
-          type: boolean
+          deprecated: true
+          description: "(deprecated)"
     TestPlan:
       type: object
       nullable: true
@@ -1171,14 +1214,18 @@ components:
             properties:
               os:
                 type: string
+                deprecated: true
+              os_type:
+                $ref: "#/components/schemas/OsTypeEnum"
               os_version:
                 type: string
               device:
                 type: string
-              device_type:
-                type: string
               browser:
                 type: string
+                deprecated: true
+              browser_type:
+                $ref: "#/components/schemas/BrowserTypeEnum"
               browser_version:
                 type: string
         url_replacements:

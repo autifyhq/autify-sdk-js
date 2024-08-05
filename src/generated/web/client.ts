@@ -4,6 +4,7 @@ import { createReadStream } from "fs";
 import {
   Configuration,
   AccessPoint,
+  BrowserTypeEnum,
   Capability,
   CapabilityOption,
   CreateAccessPoint400Response,
@@ -18,6 +19,7 @@ import {
   DeleteAccessPoint404ResponseErrorsInner,
   DeleteAccessPointRequest,
   DescribeResult200Response,
+  DeviceTypeEnum,
   ExecuteScenarios401Response,
   ExecuteScenarios401ResponseErrorsInner,
   ExecuteScenarios404Response,
@@ -38,6 +40,7 @@ import {
   ExecuteScheduleRequest,
   ExecuteScheduleRequestAutifyConnect,
   Label,
+  OsTypeEnum,
   ProjectInfo,
   Scenario,
   TestCaseResult,
@@ -205,9 +208,11 @@ export class WebClient {
   /**
    * List available Capabilities.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/capabilities
-   * @param {string} [os] os name to filter
-   * @param {string} [browser] browser name to filter
-   * @param {string} [deviceType] device_type name to filter
+   * @param {string} [os] os name to filter (deprecated)
+   * @param {OsTypeEnum} [osType] Type of the os to filter
+   * @param {string} [browser] browser name to filter (deprecated)
+   * @param {BrowserTypeEnum} [browserType] Type of the browser to filter
+   * @param {DeviceTypeEnum} [deviceType] device_type name to filter (mobile is deprecated)
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof CapabilityApi
@@ -215,14 +220,18 @@ export class WebClient {
   listCapabilities(
     projectId: number,
     os?: string,
+    osType?: OsTypeEnum,
     browser?: string,
-    deviceType?: string,
+    browserType?: BrowserTypeEnum,
+    deviceType?: DeviceTypeEnum,
     options?: AxiosRequestConfig,
   ) {
     return this.capabilityApi.listCapabilities(
       projectId,
       os,
+      osType,
       browser,
+      browserType,
       deviceType,
       options,
     );

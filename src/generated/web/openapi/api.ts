@@ -85,6 +85,24 @@ export interface AccessPoint {
 /**
  *
  * @export
+ * @enum {string}
+ */
+
+export const BrowserTypeEnum = {
+  Chrome: "chrome",
+  Firefox: "firefox",
+  Safari: "safari",
+  Edge: "edge",
+  EdgeLegacy: "edge_legacy",
+  Ie: "ie",
+} as const;
+
+export type BrowserTypeEnum =
+  (typeof BrowserTypeEnum)[keyof typeof BrowserTypeEnum];
+
+/**
+ *
+ * @export
  * @interface Capability
  */
 export interface Capability {
@@ -157,6 +175,12 @@ export interface CapabilityOption {
   os?: string;
   /**
    *
+   * @type {OsTypeEnum}
+   * @memberof CapabilityOption
+   */
+  os_type?: OsTypeEnum;
+  /**
+   *
    * @type {string}
    * @memberof CapabilityOption
    */
@@ -167,6 +191,12 @@ export interface CapabilityOption {
    * @memberof CapabilityOption
    */
   browser?: string;
+  /**
+   *
+   * @type {BrowserTypeEnum}
+   * @memberof CapabilityOption
+   */
+  browser_type?: BrowserTypeEnum;
   /**
    *
    * @type {string}
@@ -181,22 +211,17 @@ export interface CapabilityOption {
   device?: string;
   /**
    *
-   * @type {string}
+   * @type {DeviceTypeEnum}
    * @memberof CapabilityOption
    */
-  device_type?: string;
+  device_type?: DeviceTypeEnum;
   /**
-   *
+   * (deprecated)
    * @type {boolean}
    * @memberof CapabilityOption
+   * @deprecated
    */
   unsupported?: boolean;
-  /**
-   *
-   * @type {boolean}
-   * @memberof CapabilityOption
-   */
-  no_new_registration?: boolean;
 }
 /**
  *
@@ -463,6 +488,23 @@ export interface DescribeResult200Response {
   test_plan?: TestPlan | null;
 }
 /**
+ * mobile is deprecated and will be replaced by smartphone
+ * @export
+ * @enum {string}
+ */
+
+export const DeviceTypeEnum = {
+  Desktop: "desktop",
+  Mobile: "mobile",
+  Smartphone: "smartphone",
+  Tablet: "tablet",
+  Emulator: "emulator",
+} as const;
+
+export type DeviceTypeEnum =
+  (typeof DeviceTypeEnum)[keyof typeof DeviceTypeEnum];
+
+/**
  *
  * @export
  * @interface ExecuteScenarios401Response
@@ -601,8 +643,15 @@ export interface ExecuteScenariosRequestCapabilitiesInner {
    *
    * @type {string}
    * @memberof ExecuteScenariosRequestCapabilitiesInner
+   * @deprecated
    */
   os?: string;
+  /**
+   *
+   * @type {OsTypeEnum}
+   * @memberof ExecuteScenariosRequestCapabilitiesInner
+   */
+  os_type?: OsTypeEnum;
   /**
    *
    * @type {string}
@@ -619,14 +668,15 @@ export interface ExecuteScenariosRequestCapabilitiesInner {
    *
    * @type {string}
    * @memberof ExecuteScenariosRequestCapabilitiesInner
-   */
-  device_type?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ExecuteScenariosRequestCapabilitiesInner
+   * @deprecated
    */
   browser?: string;
+  /**
+   *
+   * @type {BrowserTypeEnum}
+   * @memberof ExecuteScenariosRequestCapabilitiesInner
+   */
+  browser_type?: BrowserTypeEnum;
   /**
    *
    * @type {string}
@@ -826,6 +876,23 @@ export interface Label {
    */
   updated_at?: string;
 }
+/**
+ *
+ * @export
+ * @enum {string}
+ */
+
+export const OsTypeEnum = {
+  Macos: "macos",
+  Linux: "linux",
+  Windows: "windows",
+  WindowsServer: "windows_server",
+  Ios: "ios",
+  Android: "android",
+} as const;
+
+export type OsTypeEnum = (typeof OsTypeEnum)[keyof typeof OsTypeEnum];
+
 /**
  *
  * @export
@@ -1784,17 +1851,21 @@ export const CapabilityApiAxiosParamCreator = function (
     /**
      * List available Capabilities.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/capabilities
-     * @param {string} [os] os name to filter
-     * @param {string} [browser] browser name to filter
-     * @param {string} [deviceType] device_type name to filter
+     * @param {string} [os] os name to filter (deprecated)
+     * @param {OsTypeEnum} [osType] Type of the os to filter
+     * @param {string} [browser] browser name to filter (deprecated)
+     * @param {BrowserTypeEnum} [browserType] Type of the browser to filter
+     * @param {DeviceTypeEnum} [deviceType] device_type name to filter (mobile is deprecated)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     listCapabilities: async (
       projectId: number,
       os?: string,
+      osType?: OsTypeEnum,
       browser?: string,
-      deviceType?: string,
+      browserType?: BrowserTypeEnum,
+      deviceType?: DeviceTypeEnum,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
@@ -1826,8 +1897,16 @@ export const CapabilityApiAxiosParamCreator = function (
         localVarQueryParameter["os"] = os;
       }
 
+      if (osType !== undefined) {
+        localVarQueryParameter["os_type"] = osType;
+      }
+
       if (browser !== undefined) {
         localVarQueryParameter["browser"] = browser;
+      }
+
+      if (browserType !== undefined) {
+        localVarQueryParameter["browser_type"] = browserType;
       }
 
       if (deviceType !== undefined) {
@@ -1862,17 +1941,21 @@ export const CapabilityApiFp = function (configuration?: Configuration) {
     /**
      * List available Capabilities.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/capabilities
-     * @param {string} [os] os name to filter
-     * @param {string} [browser] browser name to filter
-     * @param {string} [deviceType] device_type name to filter
+     * @param {string} [os] os name to filter (deprecated)
+     * @param {OsTypeEnum} [osType] Type of the os to filter
+     * @param {string} [browser] browser name to filter (deprecated)
+     * @param {BrowserTypeEnum} [browserType] Type of the browser to filter
+     * @param {DeviceTypeEnum} [deviceType] device_type name to filter (mobile is deprecated)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     async listCapabilities(
       projectId: number,
       os?: string,
+      osType?: OsTypeEnum,
       browser?: string,
-      deviceType?: string,
+      browserType?: BrowserTypeEnum,
+      deviceType?: DeviceTypeEnum,
       options?: AxiosRequestConfig,
     ): Promise<
       (
@@ -1884,7 +1967,9 @@ export const CapabilityApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.listCapabilities(
           projectId,
           os,
+          osType,
           browser,
+          browserType,
           deviceType,
           options,
         );
@@ -1912,21 +1997,33 @@ export const CapabilityApiFactory = function (
     /**
      * List available Capabilities.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/capabilities
-     * @param {string} [os] os name to filter
-     * @param {string} [browser] browser name to filter
-     * @param {string} [deviceType] device_type name to filter
+     * @param {string} [os] os name to filter (deprecated)
+     * @param {OsTypeEnum} [osType] Type of the os to filter
+     * @param {string} [browser] browser name to filter (deprecated)
+     * @param {BrowserTypeEnum} [browserType] Type of the browser to filter
+     * @param {DeviceTypeEnum} [deviceType] device_type name to filter (mobile is deprecated)
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
     listCapabilities(
       projectId: number,
       os?: string,
+      osType?: OsTypeEnum,
       browser?: string,
-      deviceType?: string,
+      browserType?: BrowserTypeEnum,
+      deviceType?: DeviceTypeEnum,
       options?: any,
     ): AxiosPromise<Array<CapabilityOption>> {
       return localVarFp
-        .listCapabilities(projectId, os, browser, deviceType, options)
+        .listCapabilities(
+          projectId,
+          os,
+          osType,
+          browser,
+          browserType,
+          deviceType,
+          options,
+        )
         .then((request) => request(axios, basePath));
     },
   };
@@ -1942,9 +2039,11 @@ export class CapabilityApi extends BaseAPI {
   /**
    * List available Capabilities.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/capabilities
-   * @param {string} [os] os name to filter
-   * @param {string} [browser] browser name to filter
-   * @param {string} [deviceType] device_type name to filter
+   * @param {string} [os] os name to filter (deprecated)
+   * @param {OsTypeEnum} [osType] Type of the os to filter
+   * @param {string} [browser] browser name to filter (deprecated)
+   * @param {BrowserTypeEnum} [browserType] Type of the browser to filter
+   * @param {DeviceTypeEnum} [deviceType] device_type name to filter (mobile is deprecated)
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof CapabilityApi
@@ -1952,12 +2051,22 @@ export class CapabilityApi extends BaseAPI {
   public listCapabilities(
     projectId: number,
     os?: string,
+    osType?: OsTypeEnum,
     browser?: string,
-    deviceType?: string,
+    browserType?: BrowserTypeEnum,
+    deviceType?: DeviceTypeEnum,
     options?: AxiosRequestConfig,
   ) {
     return CapabilityApiFp(this.configuration)
-      .listCapabilities(projectId, os, browser, deviceType, options)
+      .listCapabilities(
+        projectId,
+        os,
+        osType,
+        browser,
+        browserType,
+        deviceType,
+        options,
+      )
       .then((request) => request(this.axios, this.basePath));
   }
 }
