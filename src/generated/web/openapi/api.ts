@@ -3528,7 +3528,7 @@ export const TestPlanVariableApiAxiosParamCreator = function (
      * Update a url replacement for the test plan
      * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
      * @param {number} testPlanVariableId test_plan_variable id
-     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable's new key and/or default_value's value to register
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -3701,7 +3701,7 @@ export const TestPlanVariableApiFp = function (configuration?: Configuration) {
      * Update a url replacement for the test plan
      * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
      * @param {number} testPlanVariableId test_plan_variable id
-     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable's new key and/or default_value's value to register
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -3798,7 +3798,7 @@ export const TestPlanVariableApiFactory = function (
      * Update a url replacement for the test plan
      * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
      * @param {number} testPlanVariableId test_plan_variable id
-     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+     * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable's new key and/or default_value's value to register
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -3887,7 +3887,7 @@ export class TestPlanVariableApi extends BaseAPI {
    * Update a url replacement for the test plan
    * @param {number} testPlanId For example, 15 for the following URL: https://app.autify.com/projects/1/test_plans/15
    * @param {number} testPlanVariableId test_plan_variable id
-   * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable\&#39;s new key and/or default_value\&#39;s value to register
+   * @param {UpdateTestPlanVariableRequest} updateTestPlanVariableRequest The variable's new key and/or default_value's value to register
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof TestPlanVariableApi

@@ -50,10 +50,11 @@
     "generate:sdk-client": "ts-node scripts/generate.ts",
     "generate:client:web": "npm run update-swagger-web && npm run generate:openapi-client:web && npm run generate:sdk-client web",
     "generate:client:mobile": "npm run generate:openapi-client:mobile && npm run generate:sdk-client mobile",
-    "generate": "npm run generate:client:web && npm run generate:client:mobile && npm run lint && npm run format",
+    "generate": "npm run generate:client:web && npm run generate:client:mobile && npm run fix-html-escape && npm run lint && npm run format",
     "build": "shx rm -rf dist && tsc -b",
     "prepack": "npm run build",
     "lint": "eslint . --ext .ts",
+    "fix-html-escape": "bash scripts/fixHtmlEscape.sh",
     "format": "prettier --write '**/*.{md,json,yml,js,cjs,ts}'",
     "prepare": "husky install",
     "test": "jest test"
