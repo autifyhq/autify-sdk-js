@@ -240,10 +240,10 @@ export class WebClient {
   private readonly creditApi;
 
   /**
-   * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+   * Get the number of credits used in the project  Notes: This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
-   * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
-   * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+   * @param {string} [dateFrom] The date to start counting used credits from. If not specified, the date will be set to 1 week ago. Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago. Date must follow the format YYYY-MM-DD (example: "2023-09-21").
+   * @param {string} [dateTo] The date to end counting used credits from. If not specified, the date will be set to today. Date must follow the format YYYY-MM-DD (example: "2023-09-28").
    * @param {number} [scenarioId] The scenario ID to filter used credits by.
    * @param {number} [testPlanId] The test plan ID to filter used credits by.
    * @param {number} [userId] The user ID that executed tests to filter used credits by.
@@ -356,7 +356,7 @@ export class WebClient {
   }
 
   /**
-   * You can execute any scenarios in your workspace using any execution environments (which is called \"capabilities\" here).
+   * You can execute any scenarios in your workspace using any execution environments (which is called "capabilities" here).
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
    * @param {ExecuteScenariosRequest} executeScenariosRequest The scenarios and settings to execute
    * @param {*} [options] Override http request option.
@@ -394,7 +394,7 @@ export class WebClient {
   private readonly scheduleApi;
 
   /**
-   * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+   * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
    * @summary Run a test plan.
    * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
    * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.

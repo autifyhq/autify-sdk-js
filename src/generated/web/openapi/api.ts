@@ -2,7 +2,7 @@
 /* eslint-disable */
 /**
  * Autify API
- * ## Authorization You can authenticate the API by using a personal access token and passing it to the Bearer header. To generate or manage API keys、please visit [your account page](https://app.autify.com/settings).  If the credentials are invalid or omitted, an error message is returned with status code 401： ``` {   \"errors\":[{     \"message\": \"Bad credentials\"   }] } ```
+ * ## Authorization You can authenticate the API by using a personal access token and passing it to the Bearer header. To generate or manage API keys、please visit [your account page](https://app.autify.com/settings).  If the credentials are invalid or omitted, an error message is returned with status code 401： ``` {   "errors":[{     "message": "Bad credentials"   }] } ```
  *
  * The version of the OpenAPI document: v1
  *
@@ -575,13 +575,13 @@ export interface ExecuteScenarios404ResponseErrorsInner {
  */
 export interface ExecuteScenariosRequest {
   /**
-   * Defaults to \"API execution {{time_at(Time.now, organization.timezone)}}\"
+   * Defaults to "API execution {{time_at(Time.now, organization.timezone)}}"
    * @type {string}
    * @memberof ExecuteScenariosRequest
    */
   name?: string;
   /**
-   * Defaults to \"parallel\" (\"sequential\" In case parallel execution was disabled in the workspace)
+   * Defaults to "parallel" ("sequential" In case parallel execution was disabled in the workspace)
    * @type {string}
    * @memberof ExecuteScenariosRequest
    */
@@ -1022,7 +1022,7 @@ export interface TestCaseResult {
    */
   project_url?: string;
   /**
-   * Number of \"Review needed\" flags present in the test results.
+   * Number of "Review needed" flags present in the test results.
    * @type {number}
    * @memberof TestCaseResult
    */
@@ -2080,10 +2080,10 @@ export const CreditApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+     * Get the number of credits used in the project  Notes: This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
-     * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
-     * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+     * @param {string} [dateFrom] The date to start counting used credits from. If not specified, the date will be set to 1 week ago. Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago. Date must follow the format YYYY-MM-DD (example: "2023-09-21").
+     * @param {string} [dateTo] The date to end counting used credits from. If not specified, the date will be set to today. Date must follow the format YYYY-MM-DD (example: "2023-09-28").
      * @param {number} [scenarioId] The scenario ID to filter used credits by.
      * @param {number} [testPlanId] The test plan ID to filter used credits by.
      * @param {number} [userId] The user ID that executed tests to filter used credits by.
@@ -2175,10 +2175,10 @@ export const CreditApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = CreditApiAxiosParamCreator(configuration);
   return {
     /**
-     * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+     * Get the number of credits used in the project  Notes: This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
-     * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
-     * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+     * @param {string} [dateFrom] The date to start counting used credits from. If not specified, the date will be set to 1 week ago. Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago. Date must follow the format YYYY-MM-DD (example: "2023-09-21").
+     * @param {string} [dateTo] The date to end counting used credits from. If not specified, the date will be set to today. Date must follow the format YYYY-MM-DD (example: "2023-09-28").
      * @param {number} [scenarioId] The scenario ID to filter used credits by.
      * @param {number} [testPlanId] The test plan ID to filter used credits by.
      * @param {number} [userId] The user ID that executed tests to filter used credits by.
@@ -2227,10 +2227,10 @@ export const CreditApiFactory = function (
   const localVarFp = CreditApiFp(configuration);
   return {
     /**
-     * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+     * Get the number of credits used in the project  Notes: This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
-     * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
-     * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+     * @param {string} [dateFrom] The date to start counting used credits from. If not specified, the date will be set to 1 week ago. Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago. Date must follow the format YYYY-MM-DD (example: "2023-09-21").
+     * @param {string} [dateTo] The date to end counting used credits from. If not specified, the date will be set to today. Date must follow the format YYYY-MM-DD (example: "2023-09-28").
      * @param {number} [scenarioId] The scenario ID to filter used credits by.
      * @param {number} [testPlanId] The test plan ID to filter used credits by.
      * @param {number} [userId] The user ID that executed tests to filter used credits by.
@@ -2269,10 +2269,10 @@ export const CreditApiFactory = function (
  */
 export class CreditApi extends BaseAPI {
   /**
-   * Get the number of credits used in the project\\ \\ Notes:\\ This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
+   * Get the number of credits used in the project  Notes: This endpoint works only for organizations on credit-based plans. It always returns 0 for `credits_consumed` and `credit_consumption_event_count` if your organization is on a run-based plan.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/credits
-   * @param {string} [dateFrom] The date to start counting used credits from.\\ If not specified, the date will be set to 1 week ago.\\ Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-21\&quot;).
-   * @param {string} [dateTo] The date to end counting used credits from.\\ If not specified, the date will be set to today.\\ Date must follow the format YYYY-MM-DD (example: \&quot;2023-09-28\&quot;).
+   * @param {string} [dateFrom] The date to start counting used credits from. If not specified, the date will be set to 1 week ago. Up to 90 days in advance can be specified. If the specified date is more than 90 days in the past, the date will be set to 90 days ago. Date must follow the format YYYY-MM-DD (example: "2023-09-21").
+   * @param {string} [dateTo] The date to end counting used credits from. If not specified, the date will be set to today. Date must follow the format YYYY-MM-DD (example: "2023-09-28").
    * @param {number} [scenarioId] The scenario ID to filter used credits by.
    * @param {number} [testPlanId] The test plan ID to filter used credits by.
    * @param {number} [userId] The user ID that executed tests to filter used credits by.
@@ -2829,7 +2829,7 @@ export const ScenarioApiAxiosParamCreator = function (
       };
     },
     /**
-     * You can execute any scenarios in your workspace using any execution environments (which is called \"capabilities\" here).
+     * You can execute any scenarios in your workspace using any execution environments (which is called "capabilities" here).
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
      * @param {ExecuteScenariosRequest} executeScenariosRequest The scenarios and settings to execute
      * @param {*} [options] Override http request option.
@@ -2985,7 +2985,7 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
       );
     },
     /**
-     * You can execute any scenarios in your workspace using any execution environments (which is called \"capabilities\" here).
+     * You can execute any scenarios in your workspace using any execution environments (which is called "capabilities" here).
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
      * @param {ExecuteScenariosRequest} executeScenariosRequest The scenarios and settings to execute
      * @param {*} [options] Override http request option.
@@ -3074,7 +3074,7 @@ export const ScenarioApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
-     * You can execute any scenarios in your workspace using any execution environments (which is called \"capabilities\" here).
+     * You can execute any scenarios in your workspace using any execution environments (which is called "capabilities" here).
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
      * @param {ExecuteScenariosRequest} executeScenariosRequest The scenarios and settings to execute
      * @param {*} [options] Override http request option.
@@ -3134,7 +3134,7 @@ export class ScenarioApi extends BaseAPI {
   }
 
   /**
-   * You can execute any scenarios in your workspace using any execution environments (which is called \"capabilities\" here).
+   * You can execute any scenarios in your workspace using any execution environments (which is called "capabilities" here).
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
    * @param {ExecuteScenariosRequest} executeScenariosRequest The scenarios and settings to execute
    * @param {*} [options] Override http request option.
@@ -3179,7 +3179,7 @@ export const ScheduleApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+     * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
      * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
@@ -3248,7 +3248,7 @@ export const ScheduleApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = ScheduleApiAxiosParamCreator(configuration);
   return {
     /**
-     * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+     * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
      * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
@@ -3292,7 +3292,7 @@ export const ScheduleApiFactory = function (
   const localVarFp = ScheduleApiFp(configuration);
   return {
     /**
-     * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+     * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
      * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
@@ -3319,7 +3319,7 @@ export const ScheduleApiFactory = function (
  */
 export class ScheduleApi extends BaseAPI {
   /**
-   * \"Schedule\" is called as \"Test Plan\" now.\\ If you want to run a test plan, use this endpoint.
+   * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
    * @summary Run a test plan.
    * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
    * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
