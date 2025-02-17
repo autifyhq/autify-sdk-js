@@ -8,10 +8,12 @@ const mockResponse = {};
 const token = "token";
 const userAgent = "userAgent";
 const client = new MobileClient(token, { userAgent });
-const headersMatcher = expect.objectContaining({
-  Authorization: `Bearer ${token}`,
-  "User-Agent": userAgent,
-});
+const headersMatcher = {
+  headers: expect.objectContaining({
+    Authorization: `Bearer ${token}`,
+    "User-Agent": userAgent,
+  }),
+};
 
 describe.each([
   {
@@ -38,21 +40,13 @@ describe.each([
     desc: "describeTestResult",
     api: () => client.describeTestResult("id", "id2"),
     mockOn: () =>
-      mock.onGet(
-        MOBILE_BASE_PATH + "/projects/id/results/id2",
-        undefined,
-        headersMatcher,
-      ),
+      mock.onGet(MOBILE_BASE_PATH + "/projects/id/results/id2", headersMatcher),
   },
   {
     desc: "listTestResults",
     api: () => client.listTestResults("id"),
     mockOn: () =>
-      mock.onGet(
-        MOBILE_BASE_PATH + "/projects/id/results",
-        undefined,
-        headersMatcher,
-      ),
+      mock.onGet(MOBILE_BASE_PATH + "/projects/id/results", headersMatcher),
   },
 ])("$desc", ({ api, mockOn }) => {
   test("success", async () => {
