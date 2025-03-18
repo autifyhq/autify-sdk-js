@@ -403,3 +403,7 @@ components:
           type: string
           required:
             - build_id
+        device_ids:
+          type: array
+          items:
+            type: string
