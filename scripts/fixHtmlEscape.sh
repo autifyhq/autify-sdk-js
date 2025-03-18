@@ -2,13 +2,17 @@
 
 set -eu
 
-SED_I_FLAG="-i"
-
+# Handle sed differently based on OS
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  SED_I_FLAG="-i ''"
+  # On macOS, sed requires an extension argument (even if empty)
+  find src/generated -type f -exec sed -i "" -e "s/\\\&#39;/'/g" {} +
+  find src/generated -type f -exec sed -i "" -e 's/\&quot;/"/g' {} +
+  find src/generated -type f -exec sed -i "" -e 's/\\\\ / /g' {} +
+  find src/generated -type f -exec sed -i "" -e 's/\\"/"/g' {} +
+else
+  # On Linux and other systems
+  find src/generated -type f -exec sed -i -e "s/\\\&#39;/'/g" {} +
+  find src/generated -type f -exec sed -i -e 's/\&quot;/"/g' {} +
+  find src/generated -type f -exec sed -i -e 's/\\\\ / /g' {} +
+  find src/generated -type f -exec sed -i -e 's/\\"/"/g' {} +
 fi
-
-find src/generated -type f -exec sed $SED_I_FLAG -e "s/\\\&#39;/'/g" {} +
-find src/generated -type f -exec sed $SED_I_FLAG -e 's/\&quot;/"/g' {} +
-find src/generated -type f -exec sed $SED_I_FLAG -e 's/\\\\ / /g' {} +
-find src/generated -type f -exec sed $SED_I_FLAG -e 's/\\"/"/g' {} +
