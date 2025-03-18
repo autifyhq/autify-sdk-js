@@ -466,6 +466,12 @@ export interface RunTestPlanRequest {
    * @memberof RunTestPlanRequest
    */
   build_id?: string;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof RunTestPlanRequest
+   */
+  device_ids?: Array<string>;
 }
 /**
  *
