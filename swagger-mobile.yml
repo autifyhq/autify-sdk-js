@@ -248,6 +248,9 @@ paths:
                         id:
                           type: string
                           example: jx8tyj
+                        name:
+                          type: string
+                          example: Test Scenario Name
                         status:
                           type: string
                           example: passed
