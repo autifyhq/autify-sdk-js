@@ -14,11 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          registry-url: "https://registry.npmjs.org"
-      - run: npm install -g npm@latest
+      # https://github.com/jdx/mise-action/releases/tag/v4.0.1
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151
       - run: npm ci
       - run: npm run test
       - run: npm publish --access=public
