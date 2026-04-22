@@ -2,3 +2,4 @@
 /dist
 /coverage
 /autifyhq-autify-sdk-*.tgz
+/.vscode/settings.json
