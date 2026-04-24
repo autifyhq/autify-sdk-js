@@ -13,7 +13,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       # https://github.com/jdx/mise-action/releases/tag/v4.0.1
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151
       - run: npm ci
