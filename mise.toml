@@ -1,5 +1,5 @@
 [tools]
-node = "22"
+node = "24.16.0"
 npm = "11.16.0"
 
 [settings]
