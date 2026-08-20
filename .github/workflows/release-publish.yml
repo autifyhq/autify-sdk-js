@@ -15,9 +15,11 @@ permissions:
   contents: write
   actions: write
 
-concurrency:
-  group: release-publish
-  cancel-in-progress: false
+# No concurrency group on purpose: each run is pinned to its own commit SHA
+# (checkout + release target + publish all use github.sha), so runs are
+# idempotent and independent. A concurrency group would instead cancel a
+# *pending* run when a newer one queues, silently dropping a release that
+# merged in the middle of a burst.
 
 jobs:
   release:
@@ -25,8 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
-          fetch-depth: 0
+          ref: ${{ github.sha }}
 
       - name: Resolve version
         id: v
@@ -36,7 +37,7 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Skip if this version is already released
+      - name: Check whether this version is already released
         id: check
         env:
           TAG: ${{ steps.v.outputs.tag }}
@@ -49,21 +50,42 @@ jobs:
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
+      # Pin the release to the pushed commit (not `main`, which may have already
+      # advanced to a later release) so bursty merges each tag their own commit.
       - name: Create GitHub Release
         if: steps.check.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.v.outputs.tag }}
-        run: gh release create "$TAG" --target main --title "$TAG" --generate-notes
+          TARGET: ${{ github.sha }}
+        run: gh release create "$TAG" --target "$TARGET" --title "$TAG" --generate-notes
 
       # Pin the publish to the tag we just created so a later merge can't shift
-      # what gets published out from under it.
-      - name: Trigger npm publish (pinned to the tag)
+      # what gets published out from under it, and wait for it so a failed
+      # npm publish fails this run instead of leaving a green release with
+      # nothing on npm.
+      - name: Trigger npm publish (pinned to the tag) and wait
         if: steps.check.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.v.outputs.tag }}
-        run: gh workflow run npm-publish.yml --ref "$TAG"
+        run: |
+          set -euo pipefail
+          gh workflow run npm-publish.yml --ref "$TAG"
+          # gh doesn't return the dispatched run id, so poll for the run whose
+          # ref is this tag (unique per release) before watching it.
+          RUN_ID=""
+          for _ in $(seq 1 20); do
+            RUN_ID="$(gh run list --workflow=npm-publish.yml --branch="$TAG" \
+              --limit=1 --json databaseId --jq '.[0].databaseId // empty')"
+            [ -n "$RUN_ID" ] && break
+            sleep 3
+          done
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::Could not find the dispatched npm-publish run for $TAG."
+            exit 1
+          fi
+          gh run watch "$RUN_ID" --exit-status
 
       - name: Summary
         if: steps.check.outputs.exists == 'false'
@@ -76,7 +98,7 @@ jobs:
             echo "## 🚀 Released $TAG"
             echo ""
             echo "- Created GitHub Release **$TAG** with generated notes."
-            echo "- Dispatched \`npm-publish.yml\` to publish **$VERSION** to npm (OIDC)."
+            echo "- Published **$VERSION** to npm via \`npm-publish.yml\` (OIDC) and waited for it to succeed."
             echo ""
             echo "Publish run: <https://github.com/$REPO/actions/workflows/npm-publish.yml>"
           } >> "$GITHUB_STEP_SUMMARY"

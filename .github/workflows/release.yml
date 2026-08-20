@@ -34,7 +34,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
@@ -48,19 +47,41 @@ jobs:
 
       - name: Bump version
         id: bump
+        env:
+          BUMP: ${{ inputs.bump }}
+          VERSION_INPUT: ${{ inputs.version }}
         run: |
           set -euo pipefail
-          VERSION_INPUT="${{ inputs.version }}"
+          CURRENT="$(node -p "require('./package.json').version")"
           VERSION_INPUT="${VERSION_INPUT#v}"   # tolerate an accidental leading "v"
           if [ -n "$VERSION_INPUT" ]; then
             npm version "$VERSION_INPUT" --no-git-tag-version
           else
-            npm version "${{ inputs.bump }}" --no-git-tag-version
+            npm version "$BUMP" --no-git-tag-version
           fi
           VERSION="$(node -p "require('./package.json').version")"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
-          echo "branch=release/v$VERSION" >> "$GITHUB_OUTPUT"
+          # Refuse a downgrade or no-op: an explicit `version` input bypasses the
+          # monotonic bump, and `npm publish` sets `latest` with no semver check,
+          # so a lower version would repoint every install at an older build.
+          if ! node -e '
+            const cmp = (a, b) => {
+              const pa = a.split(".").map(Number), pb = b.split(".").map(Number);
+              for (let i = 0; i < 3; i++) {
+                if (pa[i] > pb[i]) return 1;
+                if (pa[i] < pb[i]) return -1;
+              }
+              return 0;
+            };
+            process.exit(cmp(process.argv[1], process.argv[2]) > 0 ? 0 : 1);
+          ' "$VERSION" "$CURRENT"; then
+            echo "::error::New version $VERSION is not greater than current $CURRENT — refusing to downgrade or re-release."
+            exit 1
+          fi
+          {
+            echo "version=$VERSION"
+            echo "tag=v$VERSION"
+            echo "branch=release/v$VERSION"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Guard against an existing release
         env:
@@ -90,7 +111,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git add package.json package-lock.json
-          git commit -m "Release $VERSION"
+          # --no-verify: npm ci installed husky, whose pre-commit runs lint-staged
+          # over the staged lockfile — pure waste (and a latent failure) on a bot
+          # commit that only touches version metadata.
+          git commit --no-verify -m "Release $VERSION"
           git push --set-upstream origin "$BRANCH"
 
           PR_URL="$(gh pr create \
