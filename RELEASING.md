@@ -20,7 +20,9 @@ opens a **`Release X.Y.Z`** PR.
 
 > `build-test.yml` does **not** run on the bot-opened PR (GitHub skips workflows
 > on PRs created by `GITHUB_TOKEN`), which is why the prepare job runs build +
-> test itself before opening the PR.
+> test itself before opening the PR. Note this is a smoke check on Node 22 only,
+> not the full `build-test.yml` matrix (Node 18/20/22) — that matrix already ran
+> on `main` before the release was cut.
 >
 > If required status checks are ever enabled on `main`, the bot-opened PR would
 > become unmergeable (those checks never run on it). Open the Release PR from a
@@ -61,7 +63,8 @@ git switch main && git pull
 npm version patch --no-git-tag-version          # or minor / major / an explicit version
 V=$(node -p "require('./package.json').version")
 git switch -c "release/v$V"
-git commit -am "Release $V"
+git add package.json package-lock.json
+git commit -m "Release $V"
 git push -u origin HEAD
 gh pr create --base main --title "Release $V" --fill
 # …then review & rebase-merge the PR. Publishing is automatic from there.
