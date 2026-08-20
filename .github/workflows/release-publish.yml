@@ -1,0 +1,82 @@
+name: Release on version bump
+
+# On a version bump landing on main, tag + create the GitHub Release, then
+# publish to npm. npm-publish.yml is dispatched (not left to the release event)
+# because a GITHUB_TOKEN-created Release does not re-trigger workflows. See
+# RELEASING.md.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: release-publish
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve version
+        id: v
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if this version is already released
+        id: check
+        env:
+          TAG: ${{ steps.v.outputs.tag }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$TAG already exists — this push did not bump the version, nothing to release."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.v.outputs.tag }}
+        run: gh release create "$TAG" --target main --title "$TAG" --generate-notes
+
+      # Pin the publish to the tag we just created so a later merge can't shift
+      # what gets published out from under it.
+      - name: Trigger npm publish (pinned to the tag)
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.v.outputs.tag }}
+        run: gh workflow run npm-publish.yml --ref "$TAG"
+
+      - name: Summary
+        if: steps.check.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
+          TAG: ${{ steps.v.outputs.tag }}
+          REPO: ${{ github.repository }}
+        run: |
+          {
+            echo "## 🚀 Released $TAG"
+            echo ""
+            echo "- Created GitHub Release **$TAG** with generated notes."
+            echo "- Dispatched \`npm-publish.yml\` to publish **$VERSION** to npm (OIDC)."
+            echo ""
+            echo "Publish run: <https://github.com/$REPO/actions/workflows/npm-publish.yml>"
+          } >> "$GITHUB_STEP_SUMMARY"
