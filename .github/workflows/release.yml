@@ -1,0 +1,130 @@
+name: Prepare release
+
+# Bump the version and open a "Release X.Y.Z" PR. Merging it triggers
+# release-publish.yml, which tags, releases, and publishes to npm. See RELEASING.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Semver bump (ignored if 'version' is set)"
+        type: choice
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+      version:
+        description: "Explicit version e.g. 1.2.3 (overrides bump; no leading v)"
+        type: string
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: prepare-release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate build & tests before cutting a release
+        run: |
+          npm run build
+          npm test
+
+      - name: Bump version
+        id: bump
+        run: |
+          set -euo pipefail
+          VERSION_INPUT="${{ inputs.version }}"
+          VERSION_INPUT="${VERSION_INPUT#v}"   # tolerate an accidental leading "v"
+          if [ -n "$VERSION_INPUT" ]; then
+            npm version "$VERSION_INPUT" --no-git-tag-version
+          else
+            npm version "${{ inputs.bump }}" --no-git-tag-version
+          fi
+          VERSION="$(node -p "require('./package.json').version")"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "branch=release/v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Guard against an existing release
+        env:
+          TAG: ${{ steps.bump.outputs.tag }}
+          BRANCH: ${{ steps.bump.outputs.branch }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "::error::Tag $TAG already exists — $TAG has already been released."
+            exit 1
+          fi
+          if git ls-remote --exit-code --heads origin "refs/heads/$BRANCH" >/dev/null 2>&1; then
+            echo "::error::Branch $BRANCH already exists — a release PR for this version is already open."
+            exit 1
+          fi
+
+      - name: Open release PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          TAG: ${{ steps.bump.outputs.tag }}
+          BRANCH: ${{ steps.bump.outputs.branch }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add package.json package-lock.json
+          git commit -m "Release $VERSION"
+          git push --set-upstream origin "$BRANCH"
+
+          PR_URL="$(gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "Release $VERSION" \
+            --body "$(cat <<EOF
+          Automated release PR opened by the \`Prepare release\` workflow.
+
+          - Bumps \`package.json\` + \`package-lock.json\` to **$VERSION**.
+          - \`npm run build\` and \`npm test\` passed in the prepare job (the \`pull_request\` build-test checks do not run on bot-opened PRs).
+
+          ## After merging
+
+          **Rebase-merge** this PR — that is the only manual step. On merge,
+          \`release-publish.yml\` tags \`$TAG\`, creates the GitHub Release with
+          generated notes, and triggers \`npm-publish.yml\` to publish **$VERSION**
+          to npm via OIDC.
+
+          Watch the publish: <https://github.com/$REPO/actions/workflows/npm-publish.yml>
+
+          _See RELEASING.md for the full runbook._
+          EOF
+          )")"
+
+          echo "Opened $PR_URL"
+          {
+            echo "## 🚀 Release $VERSION prepared"
+            echo ""
+            echo "**PR:** $PR_URL"
+            echo ""
+            echo "### Next step"
+            echo "**Rebase-merge** the PR above — that is the only manual step."
+            echo "Merging tags \`$TAG\`, creates the GitHub Release, and publishes $VERSION to npm automatically."
+            echo ""
+            echo "Watch the publish: <https://github.com/$REPO/actions/workflows/npm-publish.yml>"
+          } >> "$GITHUB_STEP_SUMMARY"

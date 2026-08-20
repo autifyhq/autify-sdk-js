@@ -1,8 +1,8 @@
 name: Publish to npm
 
+# Dispatched by release-publish.yml, pinned to the release tag. Run manually to
+# recover a failed publish: gh workflow run npm-publish.yml --ref vX.Y.Z
 on:
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:
