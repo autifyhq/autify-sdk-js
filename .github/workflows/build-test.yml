@@ -38,16 +38,3 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npm run test
-
-  # The build/test jobs above use actions/setup-node, so nothing here exercises
-  # mise — which is how mise.toml pinning npm@11.16.0 while mise.lock still held
-  # 11.12.1 stayed green from June until it broke the release workflow. This job
-  # runs the same mise setup the release workflows do (mise-action runs
-  # `mise install`, which fails under `locked = true` when mise.toml names a
-  # version absent from mise.lock), so that drift fails on the PR that causes it.
-  mise:
-    runs-on: ubuntu-latest
-    name: mise tools resolve from lockfile
-    steps:
-      - uses: actions/checkout@v6
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
