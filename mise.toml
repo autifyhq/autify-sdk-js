@@ -4,3 +4,8 @@ npm = "11.16.0"
 
 [settings]
 locked = true
+# mise 2026.8.11 races npm's node install-dependency check against node's own
+# install when both run in parallel, failing with "requires configured install
+# dependency 'node@22', but its selected version is not installed". Serialising
+# installs avoids it; with two tools the cost is nil.
+jobs = 1
