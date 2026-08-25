@@ -18,6 +18,10 @@ on:
         description: "Explicit version e.g. 1.2.3 (overrides bump; no leading v)"
         type: string
         required: false
+      skip_client_sync:
+        description: "Skip regenerating the clients. Only to unblock an urgent release."
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -37,8 +41,17 @@ jobs:
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Sync the generated clients
+        if: ${{ !inputs.skip_client_sync }}
+        run: npm run generate
 
       - name: Validate build & tests before cutting a release
         run: |
@@ -110,6 +123,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
+          if ! git diff --quiet -- swagger-web.yml swagger-mobile.yml src/generated; then
+            git add swagger-web.yml swagger-mobile.yml src/generated
+            git commit --no-verify -m "Sync the generated clients"
+          fi
           git add package.json package-lock.json
           # --no-verify: npm ci installed husky, whose pre-commit runs lint-staged
           # over the staged lockfile — pure waste (and a latent failure) on a bot
@@ -125,6 +142,12 @@ jobs:
           Automated release PR opened by the \`Prepare release\` workflow.
 
           - Bumps \`package.json\` + \`package-lock.json\` to **$VERSION**.
+          - Regenerated the clients from the published specs first. If this PR
+            contains a \`Sync the generated clients\` commit, **review that diff**:
+            a property that was removed, renamed, or newly made required is a
+            breaking change for consumers even when runtime behaviour is
+            unchanged. If you see one, close this PR and re-run with a larger
+            bump — the version was chosen before this diff existed.
           - \`npm run build\` and \`npm test\` passed in the prepare job (the \`pull_request\` build-test checks do not run on bot-opened PRs).
 
           ## After merging
