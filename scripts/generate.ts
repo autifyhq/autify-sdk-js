@@ -48,7 +48,7 @@ export class ${clientClassName} {
     if (!accessToken) {
       throw new Error("accessToken is required.")
     }
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     this.version = require("../../../package.json").version
     const baseOptions = {
       ...(userAgent && {
