@@ -144,6 +144,12 @@ export interface Capability {
   device?: string;
   /**
    *
+   * @type {TimezoneEnum}
+   * @memberof Capability
+   */
+  timezone?: TimezoneEnum;
+  /**
+   *
    * @type {string}
    * @memberof Capability
    */
@@ -575,7 +581,7 @@ export interface ExecuteScenarios404ResponseErrorsInner {
  */
 export interface ExecuteScenariosRequest {
   /**
-   * Defaults to "API execution {{time_at(Time.now, organization.timezone)}}"
+   * Defaults to "API execution "
    * @type {string}
    * @memberof ExecuteScenariosRequest
    */
@@ -683,6 +689,12 @@ export interface ExecuteScenariosRequestCapabilitiesInner {
    * @memberof ExecuteScenariosRequestCapabilitiesInner
    */
   browser_version?: string;
+  /**
+   *
+   * @type {TimezoneEnum}
+   * @memberof ExecuteScenariosRequestCapabilitiesInner
+   */
+  timezone?: TimezoneEnum;
 }
 /**
  *
@@ -956,10 +968,185 @@ export interface Scenario {
   updated_at?: string;
   /**
    *
+   * @type {User}
+   * @memberof Scenario
+   */
+  author?: User;
+  /**
+   *
+   * @type {User}
+   * @memberof Scenario
+   */
+  updater?: User;
+  /**
+   *
    * @type {Array<Label>}
    * @memberof Scenario
    */
   labels?: Array<Label>;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioDetail
+ */
+export interface ScenarioDetail {
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioDetail
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioDetail
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioDetail
+   */
+  created_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioDetail
+   */
+  updated_at?: string;
+  /**
+   *
+   * @type {User}
+   * @memberof ScenarioDetail
+   */
+  author?: User;
+  /**
+   *
+   * @type {User}
+   * @memberof ScenarioDetail
+   */
+  updater?: User;
+  /**
+   *
+   * @type {Array<ScenarioDetailStepsInner>}
+   * @memberof ScenarioDetail
+   */
+  steps?: Array<ScenarioDetailStepsInner>;
+  /**
+   *
+   * @type {Array<Label>}
+   * @memberof ScenarioDetail
+   */
+  labels?: Array<Label>;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioDetailStepsInner
+ */
+export interface ScenarioDetailStepsInner {
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioDetailStepsInner
+   */
+  id?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioDetailStepsInner
+   */
+  row_order?: number;
+  /**
+   *
+   * @type {ScenarioDetailStepsInnerStepKeyword}
+   * @memberof ScenarioDetailStepsInner
+   */
+  step_keyword?: ScenarioDetailStepsInnerStepKeyword;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioDetailStepsInnerStepKeyword
+ */
+export interface ScenarioDetailStepsInnerStepKeyword {
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioDetailStepsInnerStepKeyword
+   */
+  id?: number;
+  /**
+   *
+   * @type {ScenarioDetailStepsInnerStepKeywordStepArguments}
+   * @memberof ScenarioDetailStepsInnerStepKeyword
+   */
+  step_arguments?: ScenarioDetailStepsInnerStepKeywordStepArguments;
+  /**
+   *
+   * @type {ScenarioDetailStepsInnerStepKeywordTranslatedKeyword}
+   * @memberof ScenarioDetailStepsInnerStepKeyword
+   */
+  translated_keyword?: ScenarioDetailStepsInnerStepKeywordTranslatedKeyword;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioDetailStepsInnerStepKeywordStepArguments
+ */
+export interface ScenarioDetailStepsInnerStepKeywordStepArguments {
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioDetailStepsInnerStepKeywordStepArguments
+   */
+  id?: number;
+  /**
+   *
+   * @type {ScenarioDetailStepsInnerStepKeywordStepArgumentsValue}
+   * @memberof ScenarioDetailStepsInnerStepKeywordStepArguments
+   */
+  value?: ScenarioDetailStepsInnerStepKeywordStepArgumentsValue;
+}
+/**
+ * @type ScenarioDetailStepsInnerStepKeywordStepArgumentsValue
+ * @export
+ */
+export type ScenarioDetailStepsInnerStepKeywordStepArgumentsValue =
+  | boolean
+  | string;
+
+/**
+ *
+ * @export
+ * @interface ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+ */
+export interface ScenarioDetailStepsInnerStepKeywordTranslatedKeyword {
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+   */
+  created_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+   */
+  updated_at?: string;
 }
 /**
  *
@@ -1311,6 +1498,46 @@ export interface TestPlanVariable {
 /**
  *
  * @export
+ * @enum {string}
+ */
+
+export const TimezoneEnum = {
+  Jst: "JST",
+  Utc: "UTC",
+  AsiaTokyo: "Asia/Tokyo",
+  EtcUtc: "Etc/UTC",
+} as const;
+
+export type TimezoneEnum = (typeof TimezoneEnum)[keyof typeof TimezoneEnum];
+
+/**
+ *
+ * @export
+ * @interface UpdateScenarioRequest
+ */
+export interface UpdateScenarioRequest {
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateScenarioRequest
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateScenarioRequest
+   */
+  description?: string;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof UpdateScenarioRequest
+   */
+  labels?: Array<string>;
+}
+/**
+ *
+ * @export
  * @interface UpdateTestPlanVariableRequest
  */
 export interface UpdateTestPlanVariableRequest {
@@ -1419,6 +1646,25 @@ export interface UsedCredits {
    * @memberof UsedCredits
    */
   credit_consumption_event_count?: number;
+}
+/**
+ *
+ * @export
+ * @interface User
+ */
+export interface User {
+  /**
+   *
+   * @type {number}
+   * @memberof User
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof User
+   */
+  username?: string;
 }
 
 /**
@@ -2829,6 +3075,62 @@ export const ScenarioApiAxiosParamCreator = function (
       };
     },
     /**
+     * Duplicate a scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    duplicateScenario: async (
+      projectId: number,
+      scenarioId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("duplicateScenario", "projectId", projectId);
+      // verify required parameter 'scenarioId' is not null or undefined
+      assertParamExists("duplicateScenario", "scenarioId", scenarioId);
+      const localVarPath =
+        `/projects/{project_id}/scenarios/{scenario_id}/duplications`
+          .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+          .replace(
+            `{${"scenario_id"}}`,
+            encodeURIComponent(String(scenarioId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * You can execute any scenarios in your workspace using any execution environments (which is called "capabilities" here).
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
      * @param {ExecuteScenariosRequest} executeScenariosRequest The scenarios and settings to execute
@@ -2947,6 +3249,73 @@ export const ScenarioApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     * Update a scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {UpdateScenarioRequest} updateScenarioRequest The scenario to update
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateScenario: async (
+      projectId: number,
+      scenarioId: number,
+      updateScenarioRequest: UpdateScenarioRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("updateScenario", "projectId", projectId);
+      // verify required parameter 'scenarioId' is not null or undefined
+      assertParamExists("updateScenario", "scenarioId", scenarioId);
+      // verify required parameter 'updateScenarioRequest' is not null or undefined
+      assertParamExists(
+        "updateScenario",
+        "updateScenarioRequest",
+        updateScenarioRequest,
+      );
+      const localVarPath = `/projects/{project_id}/scenarios/{scenario_id}`
+        .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+        .replace(`{${"scenario_id"}}`, encodeURIComponent(String(scenarioId)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PUT",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        updateScenarioRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -2969,10 +3338,37 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
       scenarioId: number,
       options?: AxiosRequestConfig,
     ): Promise<
-      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Scenario>
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ScenarioDetail>
     > {
       const localVarAxiosArgs =
         await localVarAxiosParamCreator.describeScenario(
+          projectId,
+          scenarioId,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Duplicate a scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async duplicateScenario(
+      projectId: number,
+      scenarioId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ScenarioDetail>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.duplicateScenario(
           projectId,
           scenarioId,
           options,
@@ -3043,6 +3439,35 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
         configuration,
       );
     },
+    /**
+     * Update a scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {UpdateScenarioRequest} updateScenarioRequest The scenario to update
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async updateScenario(
+      projectId: number,
+      scenarioId: number,
+      updateScenarioRequest: UpdateScenarioRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ScenarioDetail>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.updateScenario(
+        projectId,
+        scenarioId,
+        updateScenarioRequest,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
   };
 };
 
@@ -3068,9 +3493,25 @@ export const ScenarioApiFactory = function (
       projectId: number,
       scenarioId: number,
       options?: any,
-    ): AxiosPromise<Scenario> {
+    ): AxiosPromise<ScenarioDetail> {
       return localVarFp
         .describeScenario(projectId, scenarioId, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Duplicate a scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    duplicateScenario(
+      projectId: number,
+      scenarioId: number,
+      options?: any,
+    ): AxiosPromise<ScenarioDetail> {
+      return localVarFp
+        .duplicateScenario(projectId, scenarioId, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -3105,6 +3546,24 @@ export const ScenarioApiFactory = function (
         .listScenarios(projectId, page, options)
         .then((request) => request(axios, basePath));
     },
+    /**
+     * Update a scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {UpdateScenarioRequest} updateScenarioRequest The scenario to update
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    updateScenario(
+      projectId: number,
+      scenarioId: number,
+      updateScenarioRequest: UpdateScenarioRequest,
+      options?: any,
+    ): AxiosPromise<ScenarioDetail> {
+      return localVarFp
+        .updateScenario(projectId, scenarioId, updateScenarioRequest, options)
+        .then((request) => request(axios, basePath));
+    },
   };
 };
 
@@ -3130,6 +3589,24 @@ export class ScenarioApi extends BaseAPI {
   ) {
     return ScenarioApiFp(this.configuration)
       .describeScenario(projectId, scenarioId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Duplicate a scenario.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public duplicateScenario(
+    projectId: number,
+    scenarioId: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .duplicateScenario(projectId, scenarioId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -3166,6 +3643,26 @@ export class ScenarioApi extends BaseAPI {
   ) {
     return ScenarioApiFp(this.configuration)
       .listScenarios(projectId, page, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Update a scenario.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {UpdateScenarioRequest} updateScenarioRequest The scenario to update
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public updateScenario(
+    projectId: number,
+    scenarioId: number,
+    updateScenarioRequest: UpdateScenarioRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .updateScenario(projectId, scenarioId, updateScenarioRequest, options)
       .then((request) => request(this.axios, this.basePath));
   }
 }
