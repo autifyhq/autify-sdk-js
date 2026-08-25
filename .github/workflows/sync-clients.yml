@@ -16,9 +16,16 @@ name: Sync generated clients
 #            mobile-app.autify.com/api/docs/v1/swagger.yaml.
 #
 # Because both jobs pull rather than being handed anything, either can be re-run
-# at any time and will converge on what is published.
+# at any time and will converge on what is published. The weekly schedule is the
+# floor: it needs no credentials and cannot race a publish, since it simply reads
+# whatever is served at the time. Dispatches only make it faster, so a missed one
+# costs latency rather than leaving the client silently stale — which is exactly
+# how the mobile client fell a year behind.
 
 on:
+  schedule:
+    # Monday 00:00 UTC (09:00 JST). Produces no PR when nothing changed.
+    - cron: "0 0 * * 1"
   repository_dispatch:
     types: [web-spec-updated, mobile-spec-updated]
   workflow_dispatch:
@@ -36,13 +43,14 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: sync-clients-${{ github.event.action || inputs.service }}
+  group: sync-clients-${{ github.event.action || inputs.service || 'scheduled' }}
   cancel-in-progress: false
 
 jobs:
   web:
     name: Regenerate the web client
     if: >-
+      github.event_name == 'schedule' ||
       (github.event_name == 'repository_dispatch' && github.event.action == 'web-spec-updated') ||
       (github.event_name == 'workflow_dispatch' && inputs.service == 'web')
     runs-on: ubuntu-latest
@@ -85,6 +93,7 @@ jobs:
   mobile:
     name: Regenerate the mobile client
     if: >-
+      github.event_name == 'schedule' ||
       (github.event_name == 'repository_dispatch' && github.event.action == 'mobile-spec-updated') ||
       (github.event_name == 'workflow_dispatch' && inputs.service == 'mobile')
     runs-on: ubuntu-latest
