@@ -43,6 +43,12 @@ import {
   OsTypeEnum,
   ProjectInfo,
   Scenario,
+  ScenarioDetail,
+  ScenarioDetailStepsInner,
+  ScenarioDetailStepsInnerStepKeyword,
+  ScenarioDetailStepsInnerStepKeywordStepArguments,
+  ScenarioDetailStepsInnerStepKeywordStepArgumentsValue,
+  ScenarioDetailStepsInnerStepKeywordTranslatedKeyword,
   TestCaseResult,
   TestCaseResultExportVariablesInner,
   TestCaseResultImportVariablesInner,
@@ -53,10 +59,13 @@ import {
   TestPlanResult,
   TestPlanResultStatus,
   TestPlanVariable,
+  TimezoneEnum,
+  UpdateScenarioRequest,
   UpdateTestPlanVariableRequest,
   UpdateUrlReplacementRequest,
   UrlReplacement,
   UsedCredits,
+  User,
   AutifyConnectApiAxiosParamCreator,
   AutifyConnectApiFp,
   AutifyConnectApiFactory,
@@ -117,7 +126,7 @@ export class WebClient {
     if (!accessToken) {
       throw new Error("accessToken is required.");
     }
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     this.version = require("../../../package.json").version;
     const baseOptions = {
       ...(userAgent && {
@@ -356,6 +365,22 @@ export class WebClient {
   }
 
   /**
+   * Duplicate a scenario.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  duplicateScenario(
+    projectId: number,
+    scenarioId: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return this.scenarioApi.duplicateScenario(projectId, scenarioId, options);
+  }
+
+  /**
    * You can execute any scenarios in your workspace using any execution environments (which is called "capabilities" here).
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
    * @param {ExecuteScenariosRequest} executeScenariosRequest The scenarios and settings to execute
@@ -389,6 +414,29 @@ export class WebClient {
     options?: AxiosRequestConfig,
   ) {
     return this.scenarioApi.listScenarios(projectId, page, options);
+  }
+
+  /**
+   * Update a scenario.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {UpdateScenarioRequest} updateScenarioRequest The scenario to update
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  updateScenario(
+    projectId: number,
+    scenarioId: number,
+    updateScenarioRequest: UpdateScenarioRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return this.scenarioApi.updateScenario(
+      projectId,
+      scenarioId,
+      updateScenarioRequest,
+      options,
+    );
   }
 
   private readonly scheduleApi;
