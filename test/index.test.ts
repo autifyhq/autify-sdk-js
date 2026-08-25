@@ -5,7 +5,7 @@ import {
   MOBILE_BASE_PATH,
 } from "../src/index";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const version = require("../package.json").version;
 
 describe.each([{ clientClass: WebClient }, { clientClass: MobileClient }])(

@@ -556,9 +556,10 @@ export const BuildsApiAxiosParamCreator = function (
       };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
-      const localVarFormParams = new ((configuration &&
-        configuration.formDataCtor) ||
-        FormData)();
+      const localVarFormParams = new (
+        (configuration && configuration.formDataCtor) ||
+        FormData
+      )();
 
       // authentication bearerAuth required
       // http bearer authentication required
