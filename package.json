@@ -54,7 +54,7 @@
     "generate:openapi-client:mobile": "openapi-generator-cli generate -i ./swagger-mobile.yml -g typescript-axios -o src/generated/mobile/openapi --additional-properties withNodeImports=true,multipartFormData=true",
     "generate:sdk-client": "ts-node scripts/generate.ts",
     "generate:client:web": "npm run update-swagger-web && npm run generate:openapi-client:web && npm run generate:sdk-client web",
-    "generate:client:mobile": "npm run generate:openapi-client:mobile && npm run generate:sdk-client mobile",
+    "generate:client:mobile": "npm run update-swagger-mobile && npm run generate:openapi-client:mobile && npm run generate:sdk-client mobile",
     "generate": "npm run generate:client:web && npm run generate:client:mobile && npm run fix-html-escape && npm run lint && npm run format",
     "build": "shx rm -rf dist && tsc -b",
     "prepack": "npm run build",

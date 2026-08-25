@@ -5,8 +5,9 @@
  * SDK sat a year behind the API without anything noticing. This makes it
  * generated output — never edit it directly, edit this script or the overlay.
  *
- * The web client already works this way (`update-swagger-web` curls the
- * published spec). Mobile needs more than a download for two reasons:
+ * Like the web client, the spec is downloaded: mobile-web serves it through
+ * rswag-ui at DEFAULT_SOURCE below. Mobile needs more than a plain curl for two
+ * reasons:
  *
  *   1. mobile-web emits Swagger 2.0, because spec/swagger_helper.rb pins it to
  *      work around an rswag 2.3 file-upload bug. rswag is on 2.16 now, so that
@@ -27,6 +28,8 @@ import { parse, stringify } from "yaml";
 // @ts-expect-error swagger2openapi ships no type declarations.
 import { convertObj } from "swagger2openapi";
 
+/** mobile-web serves its spec here; see its config/initializers/rswag-ui.rb. */
+const DEFAULT_SOURCE = "https://mobile-app.autify.com/api/docs/v1/swagger.yaml";
 const SERVER_URL = "https://mobile-app.autify.com/api/v1";
 const PATH_PREFIX = "/api/v1";
 const OVERLAY_PATH = "swagger-mobile-overlay.yml";
@@ -133,14 +136,10 @@ const main = async () => {
     return index === -1 ? undefined : args[index + 1];
   };
 
-  const source = valueOf("--source") ?? process.env.MOBILE_SWAGGER_SOURCE;
-  if (!source) {
-    throw new Error(
-      "no source given. Pass --source <path-or-url>, or set MOBILE_SWAGGER_SOURCE.\n" +
-        "mobile-web does not publish its spec yet (the endpoint 401s), so this is\n" +
-        "usually mobile-web's public/swagger/v1/swagger.yaml.",
-    );
-  }
+  // Defaults to the published spec, so this mirrors update-swagger-web. Pass
+  // --source to build from a local file or a staging deployment instead.
+  const source =
+    valueOf("--source") ?? process.env.MOBILE_SWAGGER_SOURCE ?? DEFAULT_SOURCE;
   const out = valueOf("--out") ?? "swagger-mobile.yml";
 
   const spec = normalize(await toOpenApi3(parse(await readSource(source))));
