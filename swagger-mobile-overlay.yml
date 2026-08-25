@@ -1,0 +1,44 @@
+# Merged over the converted spec by scripts/buildMobileSpec.ts.
+#
+# Everything here is missing from mobile-web's rswag spec. Each entry is a TODO:
+# document it upstream, then delete it here.
+
+paths:
+  "/projects/{project_id}/builds":
+    post:
+      responses:
+        "400": &error_body
+          content:
+            application/json:
+              schema:
+                properties:
+                  errors:
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: Error message.
+  "/projects/{project_id}/results":
+    get:
+      responses:
+        "400": *error_body
+  "/projects/{project_id}/results/{id}":
+    get:
+      responses:
+        "404": *error_body
+
+  "/test_plans/{test_plan_id}/test_plan_results":
+    post:
+      requestBody:
+        description: The build_id to execute the test plan.
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                # Used by autify-cli today.
+                device_ids:
+                  type: array
+                  items:
+                    type: string
