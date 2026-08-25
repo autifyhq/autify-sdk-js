@@ -58,7 +58,7 @@ export interface DescribeTestResult200Response {
    */
   id?: string;
   /**
-   *
+   * Possible values:             waiting             running             passed             failed             queuing             canceled             internal_error
    * @type {string}
    * @memberof DescribeTestResult200Response
    */
@@ -95,6 +95,12 @@ export interface DescribeTestResult200Response {
   updated_at?: string;
   /**
    *
+   * @type {string}
+   * @memberof DescribeTestResult200Response
+   */
+  url?: string;
+  /**
+   *
    * @type {ListTestResults200ResponseDataInnerTestPlan}
    * @memberof DescribeTestResult200Response
    */
@@ -119,7 +125,7 @@ export interface DescribeTestResult200ResponseTestCaseResultsInner {
    */
   id?: string;
   /**
-   *
+   * Possible values:                   waiting                   running                   passed                   failed                   canceled                   internal_error
    * @type {string}
    * @memberof DescribeTestResult200ResponseTestCaseResultsInner
    */
@@ -130,6 +136,12 @@ export interface DescribeTestResult200ResponseTestCaseResultsInner {
    * @memberof DescribeTestResult200ResponseTestCaseResultsInner
    */
   duration?: number | null;
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInner
+   */
+  url?: string;
   /**
    *
    * @type {DescribeTestResult200ResponseTestCaseResultsInnerTestCase}
@@ -143,6 +155,12 @@ export interface DescribeTestResult200ResponseTestCaseResultsInner {
  * @interface DescribeTestResult200ResponseTestCaseResultsInnerTestCase
  */
 export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCase {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCase
+   */
+  name?: string;
   /**
    *
    * @type {Array<DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner>}
@@ -181,6 +199,12 @@ export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseBuild 
  * @interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability
  */
 export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability
+   */
+  id?: string;
   /**
    *
    * @type {string}
@@ -257,7 +281,7 @@ export interface ListTestResults200ResponseDataInner {
    */
   id?: string;
   /**
-   *
+   * Possible values:                   waiting                   running                   passed                   failed                   queuing                   canceled                   internal_error
    * @type {string}
    * @memberof ListTestResults200ResponseDataInner
    */
@@ -465,7 +489,7 @@ export interface RunTestPlanRequest {
    * @type {string}
    * @memberof RunTestPlanRequest
    */
-  build_id?: string;
+  build_id: string;
   /**
    *
    * @type {Array<string>}
