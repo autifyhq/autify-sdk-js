@@ -95,6 +95,12 @@ export interface DescribeTestResult200Response {
   updated_at?: string;
   /**
    *
+   * @type {string}
+   * @memberof DescribeTestResult200Response
+   */
+  url?: string;
+  /**
+   *
    * @type {ListTestResults200ResponseDataInnerTestPlan}
    * @memberof DescribeTestResult200Response
    */
@@ -132,6 +138,12 @@ export interface DescribeTestResult200ResponseTestCaseResultsInner {
   duration?: number | null;
   /**
    *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInner
+   */
+  url?: string;
+  /**
+   *
    * @type {DescribeTestResult200ResponseTestCaseResultsInnerTestCase}
    * @memberof DescribeTestResult200ResponseTestCaseResultsInner
    */
@@ -143,6 +155,12 @@ export interface DescribeTestResult200ResponseTestCaseResultsInner {
  * @interface DescribeTestResult200ResponseTestCaseResultsInnerTestCase
  */
 export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCase {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCase
+   */
+  name?: string;
   /**
    *
    * @type {Array<DescribeTestResult200ResponseTestCaseResultsInnerTestCaseEnvironmentVariablesInner>}
@@ -181,6 +199,12 @@ export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseBuild 
  * @interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability
  */
 export interface DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability {
+  /**
+   *
+   * @type {string}
+   * @memberof DescribeTestResult200ResponseTestCaseResultsInnerTestCaseCapability
+   */
+  id?: string;
   /**
    *
    * @type {string}
@@ -556,9 +580,10 @@ export const BuildsApiAxiosParamCreator = function (
       };
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
-      const localVarFormParams = new ((configuration &&
-        configuration.formDataCtor) ||
-        FormData)();
+      const localVarFormParams = new (
+        (configuration && configuration.formDataCtor) ||
+        FormData
+      )();
 
       // authentication bearerAuth required
       // http bearer authentication required

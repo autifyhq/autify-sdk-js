@@ -225,6 +225,9 @@ paths:
                   updated_at:
                     type: string
                     example: "2022-06-13T17:06:19.487+09:00"
+                  url:
+                    type: string
+                    example: https://mobile-app.autify.com/projects/jx8tyj/results/jx8tyj
                   test_plan:
                     type: object
                     properties:
@@ -248,9 +251,6 @@ paths:
                         id:
                           type: string
                           example: jx8tyj
-                        name:
-                          type: string
-                          example: Test Scenario Name
                         status:
                           type: string
                           example: passed
@@ -258,9 +258,15 @@ paths:
                           type: number
                           nullable: true
                           example: "10"
+                        url:
+                          type: string
+                          example: https://mobile-app.autify.com/projects/jx8tyj/results/jx8tyj/capabilities/jx8tyj/scenarios/jx8tyj
                         test_case:
                           type: object
                           properties:
+                            name:
+                              type: string
+                              example: Test Scenario Name
                             environment_variables:
                               type: array
                               items:
@@ -284,6 +290,9 @@ paths:
                             capability:
                               type: object
                               properties:
+                                id:
+                                  type: string
+                                  example: jx8tyj
                                 os:
                                   type: string
                                   example: iOS

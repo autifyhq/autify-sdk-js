@@ -3,3 +3,4 @@
 /coverage
 /autifyhq-autify-sdk-*.tgz
 /.vscode/settings.json
+/tsconfig.tsbuildinfo
