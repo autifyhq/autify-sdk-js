@@ -40,13 +40,16 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
     "shx": "^0.4.0",
+    "swagger2openapi": "^7.0.8",
     "ts-jest": "^29.4.11",
     "ts-morph": "^26.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "yaml": "^2.9.0"
   },
   "scripts": {
     "update-swagger-web": "curl -o swagger-web.yml https://autifyhq.github.io/autify-api/swagger.yml",
+    "update-swagger-mobile": "ts-node scripts/buildMobileSpec.ts",
     "generate:openapi-client:web": "openapi-generator-cli generate -i ./swagger-web.yml -g typescript-axios -o src/generated/web/openapi --additional-properties withNodeImports=true,multipartFormData=true",
     "generate:openapi-client:mobile": "openapi-generator-cli generate -i ./swagger-mobile.yml -g typescript-axios -o src/generated/mobile/openapi --additional-properties withNodeImports=true,multipartFormData=true",
     "generate:sdk-client": "ts-node scripts/generate.ts",

@@ -28,7 +28,7 @@ describe.each([
   },
   {
     desc: "runTestPlan",
-    api: () => client.runTestPlan("id", {}),
+    api: () => client.runTestPlan("id", { build_id: "build-id" }),
     mockOn: () =>
       mock.onPost(
         MOBILE_BASE_PATH + "/test_plans/id/test_plan_results",

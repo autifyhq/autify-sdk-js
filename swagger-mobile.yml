@@ -2,11 +2,8 @@ openapi: 3.0.0
 info:
   title: Autify for Mobile API
   version: v1
-servers:
-  - url: https://mobile-app.autify.com/api/v1
-    description: Production server
 paths:
-  "/projects/{project_id}/builds":
+  /projects/{project_id}/builds:
     post:
       summary: Upload a build
       tags:
@@ -23,18 +20,18 @@ paths:
           schema:
             type: string
       requestBody:
-        required: true
         content:
           multipart/form-data:
             schema:
               type: object
               properties:
                 file:
+                  description: Build file.
                   type: string
                   format: binary
-                  description: Build file.
               required:
-                - "file"
+                - file
+        required: true
       responses:
         "201":
           description: build created
@@ -55,15 +52,16 @@ paths:
                 properties:
                   errors:
                     type: array
+                    example: Error message.
                     items:
                       type: object
-                      properties:
+                      properties: &a1
                         message:
                           type: string
                           example: Error message.
         "401":
           description: bad credentials
-  "/projects/{project_id}/results":
+  /projects/{project_id}/results:
     get:
       summary: List test results
       tags:
@@ -76,9 +74,7 @@ paths:
         - name: project_id
           in: path
           required: true
-          description:
-            ID of the project from which the list of test results will be
-            retrieved.
+          description: ID of the project from which the list of test results will be retrieved.
           schema:
             type: string
         - name: page
@@ -120,6 +116,15 @@ paths:
                           example: jx8tyj
                         status:
                           type: string
+                          description: |-
+                            Possible values:
+                                              waiting
+                                              running
+                                              passed
+                                              failed
+                                              queuing
+                                              canceled
+                                              internal_error
                           example: passed
                         duration:
                           type: number
@@ -128,17 +133,17 @@ paths:
                         started_at:
                           type: string
                           nullable: true
-                          example: "2022-06-13T17:06:19.487+09:00"
+                          example: 2022-06-13T17:06:19.487+09:00
                         finished_at:
                           type: string
                           nullable: true
-                          example: "2022-06-13T17:06:19.487+09:00"
+                          example: 2022-06-13T17:06:19.487+09:00
                         created_at:
                           type: string
-                          example: "2022-06-13T17:06:19.487+09:00"
+                          example: 2022-06-13T17:06:19.487+09:00
                         updated_at:
                           type: string
-                          example: "2022-06-13T17:06:19.487+09:00"
+                          example: 2022-06-13T17:06:19.487+09:00
                         test_plan:
                           type: object
                           properties:
@@ -150,10 +155,10 @@ paths:
                               example: E2E Test
                             created_at:
                               type: string
-                              example: "2022-06-13T17:06:19.487+09:00"
+                              example: 2022-06-13T17:06:19.487+09:00
                             updated_at:
                               type: string
-                              example: "2022-06-13T17:06:19.487+09:00"
+                              example: 2022-06-13T17:06:19.487+09:00
         "400":
           description: bad request
           content:
@@ -163,15 +168,13 @@ paths:
                 properties:
                   errors:
                     type: array
+                    example: Error message.
                     items:
                       type: object
-                      properties:
-                        message:
-                          type: string
-                          example: Error message.
+                      properties: *a1
         "401":
           description: bad credentials
-  "/projects/{project_id}/results/{id}":
+  /projects/{project_id}/results/{id}:
     get:
       summary: Get a test result
       tags:
@@ -206,6 +209,15 @@ paths:
                     example: jx8tyj
                   status:
                     type: string
+                    description: |-
+                      Possible values:
+                                  waiting
+                                  running
+                                  passed
+                                  failed
+                                  queuing
+                                  canceled
+                                  internal_error
                     example: passed
                   duration:
                     type: number
@@ -214,17 +226,17 @@ paths:
                   started_at:
                     type: string
                     nullable: true
-                    example: "2022-06-13T17:06:19.487+09:00"
+                    example: 2022-06-13T17:06:19.487+09:00
                   finished_at:
                     type: string
                     nullable: true
-                    example: "2022-06-13T17:06:19.487+09:00"
+                    example: 2022-06-13T17:06:19.487+09:00
                   created_at:
                     type: string
-                    example: "2022-06-13T17:06:19.487+09:00"
+                    example: 2022-06-13T17:06:19.487+09:00
                   updated_at:
                     type: string
-                    example: "2022-06-13T17:06:19.487+09:00"
+                    example: 2022-06-13T17:06:19.487+09:00
                   url:
                     type: string
                     example: https://mobile-app.autify.com/projects/jx8tyj/results/jx8tyj
@@ -239,10 +251,10 @@ paths:
                         example: E2E Test
                       created_at:
                         type: string
-                        example: "2022-06-13T17:06:19.487+09:00"
+                        example: 2022-06-13T17:06:19.487+09:00
                       updated_at:
                         type: string
-                        example: "2022-06-13T17:06:19.487+09:00"
+                        example: 2022-06-13T17:06:19.487+09:00
                   test_case_results:
                     type: array
                     items:
@@ -253,6 +265,14 @@ paths:
                           example: jx8tyj
                         status:
                           type: string
+                          description: |-
+                            Possible values:
+                                              waiting
+                                              running
+                                              passed
+                                              failed
+                                              canceled
+                                              internal_error
                           example: passed
                         duration:
                           type: number
@@ -313,13 +333,11 @@ paths:
                 properties:
                   errors:
                     type: array
+                    example: Error message.
                     items:
                       type: object
-                      properties:
-                        message:
-                          type: string
-                          example: Error message.
-  "/test_plans/{test_plan_id}/test_plan_results":
+                      properties: *a1
+  /test_plans/{test_plan_id}/test_plan_results:
     post:
       summary: Run a test plan
       security:
@@ -336,13 +354,21 @@ paths:
           schema:
             type: string
       requestBody:
-        description: The build_id to execute the test plan.
-        required: true
         content:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/RunTestPlanRequest"
+              properties:
+                build_id:
+                  type: string
+                device_ids:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - build_id
+        description: The build_id to execute the test plan.
+        required: true
       responses:
         "201":
           description: Test plan result created
@@ -365,10 +391,10 @@ paths:
                         example: Test Plan Name
                       created_at:
                         type: string
-                        example: "2021-05-18T02:44:55.978Z"
+                        example: 2021-05-18T02:44:55.978Z
                       updated_at:
                         type: string
-                        example: "2021-05-18T02:44:55.978Z"
+                        example: 2021-05-18T02:44:55.978Z
                       build:
                         type: object
                         properties:
@@ -383,10 +409,10 @@ paths:
                             example: 4.0.0 0000
                           created_at:
                             type: string
-                            example: "2021-05-18T02:44:55.978Z"
+                            example: 2021-05-18T02:44:55.978Z
                           updated_at:
                             type: string
-                            example: "2021-05-18T02:44:55.978Z"
+                            example: 2021-05-18T02:44:55.978Z
                       execute_environments:
                         type: array
                         items:
@@ -402,20 +428,11 @@ paths:
                               example: iPhone 12 Pro
         "401":
           description: bad credentials
+servers:
+  - url: https://mobile-app.autify.com/api/v1
+    description: Production server
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: http
-  schemas:
-    RunTestPlanRequest:
-      properties:
-        build_id:
-          type: string
-          required:
-            - build_id
-        device_ids:
-          type: array
-          items:
-            type: string

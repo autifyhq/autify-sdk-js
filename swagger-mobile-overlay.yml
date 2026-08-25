@@ -1,0 +1,59 @@
+# Overlay merged over the converted mobile spec by scripts/buildMobileSpec.ts.
+#
+# Everything here exists because mobile-web's rswag spec under-describes its own
+# API. A converter cannot invent what upstream never documented, so without this
+# file, regenerating swagger-mobile.yml would silently *remove* published SDK
+# types.
+#
+# Every entry is a standing TODO. Fix it in mobile-web's rswag spec, regenerate
+# there, then delete the entry here. When this file is empty, buildMobileSpec.ts
+# can collapse into the same plain curl the web client uses.
+
+paths:
+  # mobile-web types error bodies as `errors: array` with no `items`, which
+  # generates `Array<any>`. The SDK has always described the item shape.
+  # TODO(mobile-web): type the error array in the rswag response schemas.
+  "/projects/{project_id}/builds":
+    post:
+      responses:
+        "400": &error_body
+          content:
+            application/json:
+              schema:
+                properties:
+                  errors:
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: Error message.
+  "/projects/{project_id}/results":
+    get:
+      responses:
+        "400": *error_body
+  "/projects/{project_id}/results/{id}":
+    get:
+      responses:
+        "404": *error_body
+
+  "/test_plans/{test_plan_id}/test_plan_results":
+    post:
+      requestBody:
+        # rswag models the body as an unannotated `in: body` parameter, so the
+        # converted spec has no description and no `required`.
+        # TODO(mobile-web): annotate the request body in the rswag spec.
+        description: The build_id to execute the test plan.
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                # Added to the API in autify-sdk-js@23c6314 (2025-03) and never
+                # documented upstream. Dropping this would be a breaking change
+                # for anyone passing device_ids today.
+                # TODO(mobile-web): document device_ids in the rswag spec.
+                device_ids:
+                  type: array
+                  items:
+                    type: string

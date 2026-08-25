@@ -58,7 +58,7 @@ export interface DescribeTestResult200Response {
    */
   id?: string;
   /**
-   *
+   * Possible values:             waiting             running             passed             failed             queuing             canceled             internal_error
    * @type {string}
    * @memberof DescribeTestResult200Response
    */
@@ -125,7 +125,7 @@ export interface DescribeTestResult200ResponseTestCaseResultsInner {
    */
   id?: string;
   /**
-   *
+   * Possible values:                   waiting                   running                   passed                   failed                   canceled                   internal_error
    * @type {string}
    * @memberof DescribeTestResult200ResponseTestCaseResultsInner
    */
@@ -281,7 +281,7 @@ export interface ListTestResults200ResponseDataInner {
    */
   id?: string;
   /**
-   *
+   * Possible values:                   waiting                   running                   passed                   failed                   queuing                   canceled                   internal_error
    * @type {string}
    * @memberof ListTestResults200ResponseDataInner
    */
@@ -489,7 +489,7 @@ export interface RunTestPlanRequest {
    * @type {string}
    * @memberof RunTestPlanRequest
    */
-  build_id?: string;
+  build_id: string;
   /**
    *
    * @type {Array<string>}
