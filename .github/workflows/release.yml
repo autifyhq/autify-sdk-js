@@ -59,7 +59,7 @@ jobs:
           if [ -n "$CHANGED" ]; then
             echo "$CHANGED"
             git --no-pager diff --stat -- swagger-web.yml swagger-mobile.yml src/generated
-            echo "::error::The generated clients are behind their published specs. Run the 'Sync generated clients' workflow for each service that moved, review and merge its PR, then re-run this release with the bump that diff turns out to warrant."
+            echo "::error::The generated clients are behind their published specs. Run the 'Sync generated clients' workflow, review and merge the PR it opens for each service that moved, then re-run this release with the bump that diff turns out to warrant."
             exit 1
           fi
 

@@ -105,9 +105,10 @@ gh pr create --base main --title "Release $V" --fill
   Dependency Dashboard isn't rate-limited — lives in the Notion runbook named at the top.
 - **Client regeneration also runs outside a release**, via
   [`sync-clients.yml`](.github/workflows/sync-clients.yml) — Actions → **Sync generated clients** →
-  **Run workflow**, pick `web` or `mobile`. It lints, builds and tests the regenerated client, then
-  opens a PR if the published spec has moved. Merging those as they arrive is what keeps the
-  release-time freshness check green.
+  **Run workflow**. The default `web+mobile` syncs both; pick `web` or `mobile` to do one. Each client
+  is linted, built and tested, and gets a PR only if its published spec has moved — a service that
+  is already in sync says so in the run summary instead. Merging those PRs as they arrive is what
+  keeps the release-time freshness check green.
   > **Today that is the only way it fires.** The workflow also declares a `repository_dispatch`
   > trigger (`web-spec-updated` / `mobile-spec-updated`), but **neither core-web nor mobile-web
   > sends it yet** — nothing is wired up on their side. The upstream signal is still a Danger
