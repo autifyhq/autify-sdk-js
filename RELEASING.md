@@ -29,10 +29,6 @@ runtime behaviour is unchanged. Sync first via
 review that diff on its own PR, then re-run the release with the bump it turns
 out to warrant.
 
-> Set **skip_client_sync** to skip the check. It exists to unblock an urgent
-> release when upstream churn would otherwise get in the way; the release then
-> ships against the clients already on `main`, and the PR body says so.
-
 > `build-test.yml` does **not** run on the bot-opened PR (GitHub skips workflows
 > on PRs created by `GITHUB_TOKEN`), which is why the prepare job runs lint,
 > build + test itself before opening the PR. Note this is a smoke check on Node 22 only,
