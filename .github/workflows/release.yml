@@ -136,20 +136,26 @@ jobs:
           echo "notes=$NOTES" >> "$GITHUB_OUTPUT"
 
           PREV_TAG="$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)"
-          # The compare link pins the SHA, not `main`: `main` moves on while the
-          # PR sits, and the link would then show more than the list below does.
-          HEAD_SHA="$(git rev-parse HEAD)"
           if [ -z "$PREV_TAG" ]; then
             echo "No previous \`vX.Y.Z\` tag, so there is nothing to compare against." > "$NOTES"
             exit 0
           fi
 
+          # The compare link pins the SHA, not `main`: `main` moves on while the
+          # PR sits, and the link would then show more than the list below does.
+          HEAD_SHA="$(git rev-parse HEAD)"
+
+          COMMITS="$(git log --reverse --pretty='- %s' "$PREV_TAG"..HEAD)"
           {
             echo "## What this ships"
             echo ""
-            echo "Everything merged since \`$PREV_TAG\` — [full compare](https://github.com/$REPO/compare/$PREV_TAG...$HEAD_SHA):"
-            echo ""
-            git log --reverse --pretty='- %s' "$PREV_TAG"..HEAD
+            if [ -z "$COMMITS" ]; then
+              echo "Nothing has landed since \`$PREV_TAG\` — this bump ships no changes."
+            else
+              echo "Everything merged since \`$PREV_TAG\` — [full compare](https://github.com/$REPO/compare/$PREV_TAG...$HEAD_SHA):"
+              echo ""
+              echo "$COMMITS"
+            fi
           } > "$NOTES"
 
           # Call the generated clients out separately: they are what consumers
