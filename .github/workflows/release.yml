@@ -18,10 +18,6 @@ on:
         description: "Explicit version e.g. 1.2.3 (overrides bump; no leading v)"
         type: string
         required: false
-      skip_client_sync:
-        description: "Skip the client freshness check. Only to unblock an urgent release."
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -50,7 +46,6 @@ jobs:
       # happened to be picked. Regenerate, and fail if anything moved -- the sync
       # PR then lands on its own, reviewed, and the release stays a version bump.
       - name: Check the generated clients are up to date
-        if: ${{ !inputs.skip_client_sync }}
         run: |
           set -euo pipefail
           npm run generate
@@ -131,7 +126,6 @@ jobs:
           TAG: ${{ steps.bump.outputs.tag }}
           BRANCH: ${{ steps.bump.outputs.branch }}
           REPO: ${{ github.repository }}
-          SKIP_SYNC: ${{ inputs.skip_client_sync }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -144,12 +138,6 @@ jobs:
           git commit --no-verify -m "Release $VERSION"
           git push --set-upstream origin "$BRANCH"
 
-          if [ "$SKIP_SYNC" = "true" ]; then
-            SYNC_NOTE="- \`skip_client_sync\` was set, so the generated clients were **not** checked against the published specs — this release may ship a client that is behind its API."
-          else
-            SYNC_NOTE="- The generated clients were checked against the published specs and are up to date, so this is a pure version bump."
-          fi
-
           PR_URL="$(gh pr create \
             --base main \
             --head "$BRANCH" \
@@ -158,7 +146,8 @@ jobs:
           Automated release PR opened by the \`Prepare release\` workflow.
 
           - Bumps \`package.json\` + \`package-lock.json\` to **$VERSION**.
-          $SYNC_NOTE
+          - The generated clients were checked against the published specs and
+            are up to date, so this is a pure version bump.
           - \`npm run lint\`, \`npm run build\` and \`npm test\` passed in the prepare job (the \`pull_request\` build-test checks do not run on bot-opened PRs).
 
           ## After merging
