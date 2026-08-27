@@ -46,7 +46,10 @@ repo — `main` requires linear history). That's it — the rest is automatic.
 
 The diff is the version bump and nothing else. Client changes never ride along:
 they reach `main` on their own `sync-clients.yml` PR, reviewed on their own
-merits, before the release runs at all.
+merits, before the release runs at all. What the release _carries_ is in the PR
+body instead — every commit since the previous tag, plus a diffstat of the
+generated clients whenever their surface moved. Read that before merging: it is
+what tells you whether the bump you picked at dispatch was the right one.
 
 ### 3. Publish happens automatically
 

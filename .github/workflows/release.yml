@@ -34,6 +34,9 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: main
+          # Full history and tags: the PR body lists the commits since the
+          # previous tag, and a shallow checkout has neither.
+          fetch-depth: 0
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
@@ -119,6 +122,54 @@ jobs:
             exit 1
           fi
 
+      # The PR's own diff is only the version bump, so on its own it says nothing
+      # about what the release actually carries. Spell it out: the commits since
+      # the previous tag, and whether the generated client surface moved -- the
+      # latter is what decides whether the bump picked at dispatch was right.
+      - name: Collect what this release ships
+        id: changes
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          NOTES="$RUNNER_TEMP/release-changes.md"
+          echo "notes=$NOTES" >> "$GITHUB_OUTPUT"
+
+          PREV_TAG="$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)"
+          if [ -z "$PREV_TAG" ]; then
+            echo "No previous \`vX.Y.Z\` tag, so there is nothing to compare against." > "$NOTES"
+            exit 0
+          fi
+
+          {
+            echo "## What this ships"
+            echo ""
+            echo "Everything merged since \`$PREV_TAG\` — [full compare](https://github.com/$REPO/compare/$PREV_TAG...main):"
+            echo ""
+            git log --reverse --pretty='- %s' "$PREV_TAG"..HEAD
+          } > "$NOTES"
+
+          # Call the generated clients out separately: they are what consumers
+          # compile against, so a property removed, renamed or newly made
+          # required here is the difference between a minor and a patch.
+          CLIENT_DIFF="$(git --no-pager diff --stat "$PREV_TAG"..HEAD -- swagger-web.yml swagger-mobile.yml src/generated)"
+          {
+            echo ""
+            if [ -z "$CLIENT_DIFF" ]; then
+              echo "The generated clients are untouched since \`$PREV_TAG\`."
+            else
+              echo "### The generated client surface moved"
+              echo ""
+              echo "Check the type diff before merging: a property that was removed, renamed, or"
+              echo "newly made required is a breaking change for consumers even when runtime"
+              echo "behaviour is unchanged."
+              echo ""
+              echo '```'
+              echo "$CLIENT_DIFF"
+              echo '```'
+            fi
+          } >> "$NOTES"
+
       - name: Open release PR
         env:
           GH_TOKEN: ${{ github.token }}
@@ -126,6 +177,7 @@ jobs:
           TAG: ${{ steps.bump.outputs.tag }}
           BRANCH: ${{ steps.bump.outputs.branch }}
           REPO: ${{ github.repository }}
+          CHANGES: ${{ steps.changes.outputs.notes }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -147,8 +199,10 @@ jobs:
 
           - Bumps \`package.json\` + \`package-lock.json\` to **$VERSION**.
           - The generated clients were checked against the published specs and
-            are up to date, so this is a pure version bump.
+            are up to date, so this PR's own diff is only the version bump.
           - \`npm run lint\`, \`npm run build\` and \`npm test\` passed in the prepare job (the \`pull_request\` build-test checks do not run on bot-opened PRs).
+
+          $(cat "$CHANGES")
 
           ## After merging
 
