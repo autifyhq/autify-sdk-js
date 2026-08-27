@@ -103,7 +103,7 @@ gh pr create --base main --title "Release $V" --fill
 - **Client regeneration also runs outside a release**, via
   [`sync-clients.yml`](.github/workflows/sync-clients.yml) — Actions → **Sync generated clients** →
   **Run workflow**. The default `web+mobile` syncs both; pick `web` or `mobile` to do one. Each client
-  is linted, built and tested, and gets a PR only if its published spec has moved — a service that
+  is linted, built and tested when its published spec has moved, and gets a PR — a service that
   is already in sync says so in the run summary instead. Merging those PRs as they arrive is what
   keeps the release-time freshness check green.
   > **Today that is the only way it fires.** The workflow also declares a `repository_dispatch`
