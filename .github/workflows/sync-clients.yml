@@ -108,6 +108,7 @@ jobs:
 
       - name: Report the outcome
         env:
+          CHANGED: ${{ steps.drift.outputs.changed }}
           URL: ${{ steps.pr.outputs.pull-request-url }}
           OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
         run: |
@@ -125,9 +126,15 @@ jobs:
                 echo "The web client already matches its published spec, and the sync branch no longer differed from \`main\`."
                 ;;
               *)
-                echo "## Nothing to sync"
-                echo ""
-                echo "\`npm run generate:client:web\` reproduced the checked-in web client exactly, so there is no PR to open."
+                if [ "$CHANGED" = "true" ]; then
+                  echo "## The web client is behind its published spec"
+                  echo ""
+                  echo "**PR (already open, unchanged by this run):** $URL"
+                else
+                  echo "## Nothing to sync"
+                  echo ""
+                  echo "\`npm run generate:client:web\` reproduced the checked-in web client exactly, so there is no PR to open."
+                fi
                 ;;
             esac
           } >> "$GITHUB_STEP_SUMMARY"
@@ -210,6 +217,7 @@ jobs:
 
       - name: Report the outcome
         env:
+          CHANGED: ${{ steps.drift.outputs.changed }}
           URL: ${{ steps.pr.outputs.pull-request-url }}
           OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
         run: |
@@ -227,9 +235,15 @@ jobs:
                 echo "The mobile client already matches its published spec, and the sync branch no longer differed from \`main\`."
                 ;;
               *)
-                echo "## Nothing to sync"
-                echo ""
-                echo "\`npm run generate:client:mobile\` reproduced the checked-in mobile client exactly, so there is no PR to open."
+                if [ "$CHANGED" = "true" ]; then
+                  echo "## The mobile client is behind its published spec"
+                  echo ""
+                  echo "**PR (already open, unchanged by this run):** $URL"
+                else
+                  echo "## Nothing to sync"
+                  echo ""
+                  echo "\`npm run generate:client:mobile\` reproduced the checked-in mobile client exactly, so there is no PR to open."
+                fi
                 ;;
             esac
           } >> "$GITHUB_STEP_SUMMARY"
