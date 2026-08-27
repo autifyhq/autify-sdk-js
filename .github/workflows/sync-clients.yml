@@ -51,17 +51,46 @@ jobs:
           npm run fix-html-escape
           npm run format
 
+      # create-pull-request no-ops silently when nothing moved, which reads as
+      # "the PR step ran and there is no PR". Decide it here instead: the steps
+      # below then show as skipped, and the summary says which case it was.
+      - name: Check for unsynced changes
+        id: drift
+        run: |
+          set -euo pipefail
+          # --porcelain, not `git diff`: a file the generator newly emits is
+          # untracked, and `git diff` cannot see it. Scoped to what this
+          # generator owns, since `npm run format` above is a repo-wide prettier.
+          CHANGED="$(git status --porcelain -- swagger-web.yml src/generated/web)"
+          if [ -z "$CHANGED" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Nothing to sync — the web client already matches its published spec."
+            {
+              echo "## Nothing to sync"
+              echo ""
+              echo "\`npm run generate:client:web\` reproduced the checked-in web client exactly, so there is no PR to open."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "$CHANGED"
+          git --no-pager diff --stat -- swagger-web.yml src/generated/web
+
       # build-test.yml does not run on a PR opened with GITHUB_TOKEN, so this is
       # the only gate the sync PR gets. Without it an upstream spec change that
       # breaks the build -- a newly required property, say -- opens a PR that
       # looks mergeable and reds main.
       - name: Validate the regenerated client
+        if: steps.drift.outputs.changed == 'true'
         run: |
           npm run lint
           npm run build
           npm test
 
-      - uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
+      - name: Open the sync PR
+        id: pr
+        if: steps.drift.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           base: main
           branch: chore/sync-web-client
@@ -84,6 +113,18 @@ jobs:
             Merging does not publish — cut a release afterwards if this should
             ship. See RELEASING.md.
 
+      - name: Report the sync PR
+        if: steps.drift.outputs.changed == 'true'
+        env:
+          URL: ${{ steps.pr.outputs.pull-request-url }}
+          OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
+        run: |
+          {
+            echo "## The web client is behind its published spec"
+            echo ""
+            echo "**PR ($OPERATION):** $URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
   mobile:
     name: Regenerate the mobile client
     if: >-
@@ -101,14 +142,43 @@ jobs:
           npm run fix-html-escape
           npm run format
 
+      # create-pull-request no-ops silently when nothing moved, which reads as
+      # "the PR step ran and there is no PR". Decide it here instead: the steps
+      # below then show as skipped, and the summary says which case it was.
+      - name: Check for unsynced changes
+        id: drift
+        run: |
+          set -euo pipefail
+          # --porcelain, not `git diff`: a file the generator newly emits is
+          # untracked, and `git diff` cannot see it. Scoped to what this
+          # generator owns, since `npm run format` above is a repo-wide prettier.
+          CHANGED="$(git status --porcelain -- swagger-mobile.yml src/generated/mobile)"
+          if [ -z "$CHANGED" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Nothing to sync — the mobile client already matches its published spec."
+            {
+              echo "## Nothing to sync"
+              echo ""
+              echo "\`npm run generate:client:mobile\` reproduced the checked-in mobile client exactly, so there is no PR to open."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "$CHANGED"
+          git --no-pager diff --stat -- swagger-mobile.yml src/generated/mobile
+
       # See the web job: this is the only gate a bot-opened PR gets.
       - name: Validate the regenerated client
+        if: steps.drift.outputs.changed == 'true'
         run: |
           npm run lint
           npm run build
           npm test
 
-      - uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
+      - name: Open the sync PR
+        id: pr
+        if: steps.drift.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           base: main
           branch: chore/sync-mobile-client
@@ -133,3 +203,15 @@ jobs:
 
             Merging does not publish — cut a release afterwards if this should
             ship. See RELEASING.md.
+
+      - name: Report the sync PR
+        if: steps.drift.outputs.changed == 'true'
+        env:
+          URL: ${{ steps.pr.outputs.pull-request-url }}
+          OPERATION: ${{ steps.pr.outputs.pull-request-operation }}
+        run: |
+          {
+            echo "## The mobile client is behind its published spec"
+            echo ""
+            echo "**PR ($OPERATION):** $URL"
+          } >> "$GITHUB_STEP_SUMMARY"
