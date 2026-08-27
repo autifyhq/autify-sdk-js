@@ -17,8 +17,9 @@ on:
       service:
         description: "Which client to regenerate"
         type: choice
-        default: web
+        default: web+mobile
         options:
+          - web+mobile
           - web
           - mobile
 
@@ -26,20 +27,19 @@ permissions:
   contents: write
   pull-requests: write
 
-# Keyed on the service, not the event: a dispatch and a manual run of the same
-# service would otherwise land in different groups and race to force-push the
-# same chore/sync-*-client branch, with the loser silently overwritten.
-concurrency:
-  group: sync-clients-${{ inputs.service || (github.event.action == 'web-spec-updated' && 'web' || 'mobile') }}
-  cancel-in-progress: false
-
 jobs:
   web:
     name: Regenerate the web client
     if: >-
       (github.event_name == 'repository_dispatch' && github.event.action == 'web-spec-updated') ||
-      (github.event_name == 'workflow_dispatch' && inputs.service == 'web')
+      (github.event_name == 'workflow_dispatch' && (inputs.service == 'web' || inputs.service == 'web+mobile'))
     runs-on: ubuntu-latest
+    # Grouped per service rather than per run: a "web+mobile" dispatch and a
+    # "web" one would otherwise land in different groups and race to force-push
+    # the same chore/sync-web-client branch, with the loser silently overwritten.
+    concurrency:
+      group: sync-clients-web
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
@@ -129,8 +129,12 @@ jobs:
     name: Regenerate the mobile client
     if: >-
       (github.event_name == 'repository_dispatch' && github.event.action == 'mobile-spec-updated') ||
-      (github.event_name == 'workflow_dispatch' && inputs.service == 'mobile')
+      (github.event_name == 'workflow_dispatch' && (inputs.service == 'mobile' || inputs.service == 'web+mobile'))
     runs-on: ubuntu-latest
+    # See the web job.
+    concurrency:
+      group: sync-clients-mobile
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@v6
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
