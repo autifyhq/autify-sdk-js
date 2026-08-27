@@ -19,7 +19,7 @@ on:
         type: string
         required: false
       skip_client_sync:
-        description: "Skip regenerating the clients. Only to unblock an urgent release."
+        description: "Skip the client freshness check. Only to unblock an urgent release."
         type: boolean
         default: false
 
@@ -41,20 +41,33 @@ jobs:
 
       - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
 
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "21"
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Sync the generated clients
+      # A release must not be the first place an upstream API change appears: the
+      # bump is chosen at dispatch, before any client diff exists, so a release
+      # that quietly carried one would ship a breaking change under whatever bump
+      # happened to be picked. Regenerate, and fail if anything moved -- the sync
+      # PR then lands on its own, reviewed, and the release stays a version bump.
+      - name: Check the generated clients are up to date
         if: ${{ !inputs.skip_client_sync }}
-        run: npm run generate
-
-      - name: Validate build & tests before cutting a release
         run: |
+          set -euo pipefail
+          npm run generate
+          # `npm run generate` ends in a repo-wide `prettier --write`, so scope the
+          # check to what the generators own. --porcelain, not `git diff`: a file
+          # the generator newly emits is untracked, and `git diff` cannot see it.
+          CHANGED="$(git status --porcelain -- swagger-web.yml swagger-mobile.yml src/generated)"
+          if [ -n "$CHANGED" ]; then
+            echo "$CHANGED"
+            git --no-pager diff --stat -- swagger-web.yml swagger-mobile.yml src/generated
+            echo "::error::The generated clients are behind their published specs. Run the 'Sync generated clients' workflow for each service that moved, review and merge its PR, then re-run this release with the bump that diff turns out to warrant."
+            exit 1
+          fi
+
+      - name: Validate lint, build & tests before cutting a release
+        run: |
+          npm run lint
           npm run build
           npm test
 
@@ -118,21 +131,24 @@ jobs:
           TAG: ${{ steps.bump.outputs.tag }}
           BRANCH: ${{ steps.bump.outputs.branch }}
           REPO: ${{ github.repository }}
+          SKIP_SYNC: ${{ inputs.skip_client_sync }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          if ! git diff --quiet -- swagger-web.yml swagger-mobile.yml src/generated; then
-            git add swagger-web.yml swagger-mobile.yml src/generated
-            git commit --no-verify -m "Sync the generated clients"
-          fi
           git add package.json package-lock.json
           # --no-verify: npm ci installed husky, whose pre-commit runs lint-staged
           # over the staged lockfile — pure waste (and a latent failure) on a bot
           # commit that only touches version metadata.
           git commit --no-verify -m "Release $VERSION"
           git push --set-upstream origin "$BRANCH"
+
+          if [ "$SKIP_SYNC" = "true" ]; then
+            SYNC_NOTE="- \`skip_client_sync\` was set, so the generated clients were **not** checked against the published specs — this release may ship a client that is behind its API."
+          else
+            SYNC_NOTE="- The generated clients were checked against the published specs and are up to date, so this is a pure version bump."
+          fi
 
           PR_URL="$(gh pr create \
             --base main \
@@ -142,13 +158,8 @@ jobs:
           Automated release PR opened by the \`Prepare release\` workflow.
 
           - Bumps \`package.json\` + \`package-lock.json\` to **$VERSION**.
-          - Regenerated the clients from the published specs first. If this PR
-            contains a \`Sync the generated clients\` commit, **review that diff**:
-            a property that was removed, renamed, or newly made required is a
-            breaking change for consumers even when runtime behaviour is
-            unchanged. If you see one, close this PR and re-run with a larger
-            bump — the version was chosen before this diff existed.
-          - \`npm run build\` and \`npm test\` passed in the prepare job (the \`pull_request\` build-test checks do not run on bot-opened PRs).
+          $SYNC_NOTE
+          - \`npm run lint\`, \`npm run build\` and \`npm test\` passed in the prepare job (the \`pull_request\` build-test checks do not run on bot-opened PRs).
 
           ## After merging
 

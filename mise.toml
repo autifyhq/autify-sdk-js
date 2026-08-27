@@ -1,6 +1,11 @@
 [tools]
 node = "22"
 npm = "11.16.0"
+# openapi-generator-cli is a JVM wrapper, so `npm run generate` needs a JDK.
+# Pinned here rather than with actions/setup-java so local and CI get the same
+# one, and so a contributor who runs generate without a JVM gets mise telling
+# them what is missing instead of a stack trace out of the generator.
+java = "temurin-21"
 
 [settings]
 locked = true

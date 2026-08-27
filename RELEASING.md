@@ -14,22 +14,28 @@ GitHub → **Actions** → **Prepare release** → **Run workflow**, then pick:
 - **bump**: `patch` / `minor` / `major`, **or**
 - **version**: an explicit version like `1.2.3` (overrides `bump`).
 
-[`release.yml`](.github/workflows/release.yml) checks out `main`, **regenerates
-both clients from the published API specs**, runs `npm run build` + `npm test`,
-bumps `package.json` + `package-lock.json`, and opens a **`Release X.Y.Z`** PR.
+[`release.yml`](.github/workflows/release.yml) checks out `main`, **checks both
+generated clients against the published API specs**, runs `npm run lint` +
+`npm run build` + `npm test`, bumps `package.json` + `package-lock.json`, and
+opens a **`Release X.Y.Z`** PR.
 
-Regenerating first means a release can never ship a client that has fallen behind
-its API. If anything changed, it lands as its own `Sync the generated clients`
-commit in the PR, ahead of the version bump — so the PR reads as two things: what
-changed in the API, and the version it ships under.
+If either client has fallen behind its spec, the workflow **fails instead of
+releasing**. You pick the bump when you start the workflow, before any client
+diff exists — so a release that quietly carried one would ship whatever upstream
+changed under a version chosen in ignorance of it, and a property that was
+removed, renamed, or **newly made required** is breaking for consumers even when
+runtime behaviour is unchanged. Sync first via
+[`sync-clients.yml`](.github/workflows/sync-clients.yml) (see the notes below),
+review that diff on its own PR, then re-run the release with the bump it turns
+out to warrant.
 
-> Set **skip_client_sync** to skip that step. It exists to unblock an urgent
-> release when upstream churn would otherwise get in the way; the change still
-> ships, just against the clients already on `main`.
+> Set **skip_client_sync** to skip the check. It exists to unblock an urgent
+> release when upstream churn would otherwise get in the way; the release then
+> ships against the clients already on `main`, and the PR body says so.
 
 > `build-test.yml` does **not** run on the bot-opened PR (GitHub skips workflows
-> on PRs created by `GITHUB_TOKEN`), which is why the prepare job runs build +
-> test itself before opening the PR. Note this is a smoke check on Node 22 only,
+> on PRs created by `GITHUB_TOKEN`), which is why the prepare job runs lint,
+> build + test itself before opening the PR. Note this is a smoke check on Node 22 only,
 > not the full `build-test.yml` matrix (Node 18/20/22) — that matrix already ran
 > on `main` before the release was cut.
 >
@@ -42,12 +48,9 @@ changed in the API, and the version it ships under.
 Review the diff, then **Rebase merge** (the only merge method enabled on this
 repo — `main` requires linear history). That's it — the rest is automatic.
 
-Usually the diff is only the version bump. When it also carries a `Sync the
-generated clients` commit, **read that one**: a property that was removed,
-renamed, or **newly made required** is a breaking change for consumers even when
-runtime behaviour is unchanged, and it may mean the bump you chose is too small.
-The bump is picked before that diff exists — if it turns out to be too small,
-close the PR, delete the `release/vX.Y.Z` branch, and re-run with a larger one.
+The diff is the version bump and nothing else. Client changes never ride along:
+they reach `main` on their own `sync-clients.yml` PR, reviewed on their own
+merits, before the release runs at all.
 
 ### 3. Publish happens automatically
 
@@ -104,8 +107,8 @@ gh pr create --base main --title "Release $V" --fill
 - **Client regeneration also runs outside a release**, via
   [`sync-clients.yml`](.github/workflows/sync-clients.yml) — Actions → **Sync generated clients** →
   **Run workflow**, pick `web` or `mobile`. It lints, builds and tests the regenerated client, then
-  opens a PR if the published spec has moved. Merging those as they arrive keeps the release-time
-  sync a no-op.
+  opens a PR if the published spec has moved. Merging those as they arrive is what keeps the
+  release-time freshness check green.
   > **Today that is the only way it fires.** The workflow also declares a `repository_dispatch`
   > trigger (`web-spec-updated` / `mobile-spec-updated`), but **neither core-web nor mobile-web
   > sends it yet** — nothing is wired up on their side. The upstream signal is still a Danger
