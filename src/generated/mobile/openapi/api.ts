@@ -125,7 +125,7 @@ export interface DescribeTestResult200ResponseTestCaseResultsInner {
    */
   id?: string;
   /**
-   * Possible values:                   waiting                   running                   passed                   failed                   canceled                   internal_error
+   * Possible values:                   waiting                   running                   passed                   failed                   canceled                   internal_error                   skip_passed
    * @type {string}
    * @memberof DescribeTestResult200ResponseTestCaseResultsInner
    */

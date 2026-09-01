@@ -279,6 +279,7 @@ paths:
                                               failed
                                               canceled
                                               internal_error
+                                              skip_passed
                           example: passed
                         duration:
                           type: number
