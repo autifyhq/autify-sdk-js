@@ -44,7 +44,7 @@
     "ts-jest": "^29.4.11",
     "ts-morph": "^26.0.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.2",
     "yaml": "^2.9.0"
   },
   "scripts": {
