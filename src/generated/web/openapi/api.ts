@@ -320,6 +320,37 @@ export interface CreateAccessPointResult {
 /**
  *
  * @export
+ * @interface CreateScenarioRequest
+ */
+export interface CreateScenarioRequest {
+  /**
+   * Name of the scenario, unique within the project. Omit it to have a default name generated.
+   * @type {string}
+   * @memberof CreateScenarioRequest
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateScenarioRequest
+   */
+  description?: string;
+  /**
+   * Label names to attach, matched against this project\'s labels in the same way as `labels` on `updateScenario`. A name this project does not already have is created in it, unless `on_create` is false.
+   * @type {Array<string>}
+   * @memberof CreateScenarioRequest
+   */
+  labels?: Array<string>;
+  /**
+   * Whether to create a label named in `labels` that this project does not have. Set it to false to have an unrecognised name rejected instead. Only `true` and `false` are accepted, as booleans or as the strings `"true"` and `"false"`.
+   * @type {boolean}
+   * @memberof CreateScenarioRequest
+   */
+  on_create?: boolean;
+}
+/**
+ *
+ * @export
  * @interface CreateTestPlanVariable400Response
  */
 export interface CreateTestPlanVariable400Response {
@@ -510,6 +541,38 @@ export const DeviceTypeEnum = {
 export type DeviceTypeEnum =
   (typeof DeviceTypeEnum)[keyof typeof DeviceTypeEnum];
 
+/**
+ *
+ * @export
+ * @interface DuplicateScenario402Response
+ */
+export interface DuplicateScenario402Response {
+  /**
+   *
+   * @type {Array<DuplicateScenario402ResponseErrorsInner>}
+   * @memberof DuplicateScenario402Response
+   */
+  errors?: Array<DuplicateScenario402ResponseErrorsInner>;
+}
+/**
+ *
+ * @export
+ * @interface DuplicateScenario402ResponseErrorsInner
+ */
+export interface DuplicateScenario402ResponseErrorsInner {
+  /**
+   *
+   * @type {number}
+   * @memberof DuplicateScenario402ResponseErrorsInner
+   */
+  code?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof DuplicateScenario402ResponseErrorsInner
+   */
+  message?: string;
+}
 /**
  *
  * @export
@@ -908,6 +971,25 @@ export type OsTypeEnum = (typeof OsTypeEnum)[keyof typeof OsTypeEnum];
 /**
  *
  * @export
+ * @interface Project
+ */
+export interface Project {
+  /**
+   *
+   * @type {number}
+   * @memberof Project
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof Project
+   */
+  name?: string;
+}
+/**
+ *
+ * @export
  * @interface ProjectInfo
  */
 export interface ProjectInfo {
@@ -936,6 +1018,105 @@ export interface ProjectInfo {
    */
   test_plans_count?: number;
 }
+/**
+ *
+ * @export
+ * @interface ReplaceScenarioStepsRequest
+ */
+export interface ReplaceScenarioStepsRequest {
+  /**
+   * The version of the scenario you are writing, as returned by `version_token` when you read it. The write is rejected with 412 if anyone changed the scenario\'s name, description, labels or steps in between. Running the scenario or reviewing its results does not change it. Sending an empty value is an error; omit the field entirely to write whatever is there without checking.
+   * @type {string}
+   * @memberof ReplaceScenarioStepsRequest
+   */
+  version_token?: string;
+  /**
+   * Every step of the scenario, in the order they should run. Each is an object with the fields of a `describeScenario` step:  - `id`: an existing step\'s id. Leave it out to add a step. - `action_type`: required for a new step, from `listStepKeywords`. - `name`, `memo`: strings. `null` clears them to empty. - `on_failure`: `abort`, `continue` or `ignore`. `null` resets it to `abort`. - `step_execution_type`: `scenario_step` or `cleanup_step`. - `arguments`: a list of `{"name": ..., <fields>}`, matched by name. A   `text` or `url` argument takes `value`, a string, or `true`/`false` for   the switches of `Assert File Download`. An `element` argument takes   `user_locator` and `user_locator_heals`. A `step_group` argument takes   `step_group_id`, the id of a step group in this project, and   `overrides`, described below. A function   argument of an `Execute Javascript` step takes `value`, a string,   which replaces any data table column, variable or address group the   argument read before. Where the step\'s custom action declares the   argument an integer, the string must hold one, such as `"7"`.   `"value": null` removes the function argument. A name the step lacks   adds one, after the others, on an existing step or a new one. Its   code reads the argument as a parameter of that name, so the name must   be a JavaScript identifier, not a reserved word, not a name the step   uses already, and not one of the keyword\'s argument names in any   case, such as `element`.  `user_locator` is a CSS or XPath selector with a mandatory `css:` or `xpath:` prefix, and a new element needs one. Set `user_locator_heals` to true to have Autify find the element by it on the next passing run, learn the element from that run, and match it automatically from then on, the way a recorded step is matched; the selector then only has to be unambiguous now, not survive later page changes. Left false, the selector is a pin used on every run. Sending `user_locator: null` clears it, so the step goes back to matching the element automatically. For a keyword that needs its element, that is refused with 400 while the element has learned nothing to match it by, as on a step whose `candidate_locators` are still empty because it has not passed a run yet.  Read only, and ignored when sent: `element_id`, `seed_locator`, `candidate_locators` and `assign`. A new `Execute Javascript` or `Open Window` step is given a generated `assign`; copy it from the response if another step refers to it. A `file` argument is read only, and sending a different file value is rejected. A value read back as `******` from a password field is treated as unchanged while the step keeps its keyword. Changing such a step\'s `action_type` needs the real value sent for that argument, and is rejected with 400 otherwise.  `overrides` is a merge patch like the rest: an object keyed by the id of a step inside the group, each with `arguments` in the shape `describeScenario` reads back. Send only the arguments you change. An argument\'s `value` replaces what the group passes to that step, and `null` reverts it to the group\'s own value. A step id sent as `null` reverts all of that step\'s arguments, and `overrides: null` reverts every one. An `Execute Javascript` step\'s function arguments are named as its code refers to them. Only what the scenario editor lets a call site override is writable. Anything else is rejected with 400, including an element or a file and a step whose custom action was selected at the call site. Pointing the call site at another group drops its overrides before any you send apply.  Not writable here: `Choose File` and `Open Email With Title` steps, which can only be recorded; the code of an `Execute Javascript` step that runs a custom action; the function arguments a custom action defines, beyond their values; and an element added to an existing `Execute Javascript` step that has none. To add an element, send the step without its `id`, with its function arguments, to replace it. A step sent without its `id` is new, so every value it carries is literal: an argument `describeScenario` reads as an email address group\'s identifier reaches the step as that identifier, not as an address from the group.
+   * @type {Array<object>}
+   * @memberof ReplaceScenarioStepsRequest
+   */
+  steps: Array<object>;
+}
+/**
+ *
+ * @export
+ * @interface RestoreScenarioHistoryRequest
+ */
+export interface RestoreScenarioHistoryRequest {
+  /**
+   * The version of the scenario you are restoring, as returned by `version_token` when you read it. The restore is rejected with 412 if anyone changed the scenario\'s name, description, labels or steps in between. Running the scenario or reviewing its results does not change it. Sending an empty value is an error; omit the field entirely to restore over whatever is there without checking.
+   * @type {string}
+   * @memberof RestoreScenarioHistoryRequest
+   */
+  version_token?: string;
+}
+/**
+ * An argument to a step of a run. The vocabulary matches `ScenarioStepArgument`; which fields are present depends on `type`.
+ * @export
+ * @interface ResultStepArgument
+ */
+export interface ResultStepArgument {
+  /**
+   * Name of the argument, matching the `name` `listStepKeywords` publishes for this keyword\'s argument in the same slot. Null for a value the run carried beyond the arguments the keyword declares.
+   * @type {string}
+   * @memberof ResultStepArgument
+   */
+  name?: string | null;
+  /**
+   * `text` and `url` carry `value`. `file` carries `file_name`. `element` carries `element_id`, `user_locator` and `candidate_locators`.
+   * @type {string}
+   * @memberof ResultStepArgument
+   */
+  type?: ResultStepArgumentTypeEnum;
+  /**
+   *
+   * @type {ResultStepArgumentValue}
+   * @memberof ResultStepArgument
+   */
+  value?: ResultStepArgumentValue;
+  /**
+   * The uploaded file\'s name, without the storage path it is kept under.
+   * @type {string}
+   * @memberof ResultStepArgument
+   */
+  file_name?: string | null;
+  /**
+   * ID of the Autify element targeted by the step.
+   * @type {number}
+   * @memberof ResultStepArgument
+   */
+  element_id?: number | null;
+  /**
+   * Locator explicitly specified by the user, when present. Null for a password field, whose locator can embed the value.
+   * @type {string}
+   * @memberof ResultStepArgument
+   */
+  user_locator?: string | null;
+  /**
+   * Selectors Autify had available going into this run, the same flat list `describeScenario` returns for the element. These come from what Autify learned on earlier runs, so a step that has never passed has none. They work as a set, not as alternatives. When Autify matches on them it requires every one to resolve to the same element, so a single one may be ambiguous alone and is not safe to pin on its own. Order is the order Autify generated them in, and carries no ranking. Empty for a password field, whose locators can embed the value.
+   * @type {Array<string>}
+   * @memberof ResultStepArgument
+   */
+  candidate_locators?: Array<string>;
+}
+
+export const ResultStepArgumentTypeEnum = {
+  Text: "text",
+  Url: "url",
+  File: "file",
+  Element: "element",
+} as const;
+
+export type ResultStepArgumentTypeEnum =
+  (typeof ResultStepArgumentTypeEnum)[keyof typeof ResultStepArgumentTypeEnum];
+
+/**
+ * @type ResultStepArgumentValue
+ * The value, for a `text` or `url` argument, and null for a declared slot the run did not fill. A boolean argument returns a real boolean, matching what `describeScenario` returns for the same step.
+ * @export
+ */
+export type ResultStepArgumentValue = boolean | string;
+
 /**
  *
  * @export
@@ -998,6 +1179,12 @@ export interface ScenarioDetail {
    */
   id?: number;
   /**
+   * Opaque version of the scenario as returned. Send it back as `version_token` on an update to have that update rejected if the scenario changed in between.
+   * @type {string}
+   * @memberof ScenarioDetail
+   */
+  version_token?: string;
+  /**
    *
    * @type {string}
    * @memberof ScenarioDetail
@@ -1029,10 +1216,34 @@ export interface ScenarioDetail {
   updater?: User;
   /**
    *
-   * @type {Array<ScenarioDetailStepsInner>}
+   * @type {string}
    * @memberof ScenarioDetail
    */
-  steps?: Array<ScenarioDetailStepsInner>;
+  description?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioDetail
+   */
+  project_url?: string;
+  /**
+   * The scenario\'s steps, in execution order.
+   * @type {Array<ScenarioStep>}
+   * @memberof ScenarioDetail
+   */
+  steps?: Array<ScenarioStep>;
+  /**
+   * The scenario\'s data table, one entry per row.
+   * @type {Array<object>}
+   * @memberof ScenarioDetail
+   */
+  data_table?: Array<object>;
+  /**
+   *
+   * @type {ScenarioVariables}
+   * @memberof ScenarioDetail
+   */
+  variables?: ScenarioVariables;
   /**
    *
    * @type {Array<Label>}
@@ -1043,110 +1254,711 @@ export interface ScenarioDetail {
 /**
  *
  * @export
- * @interface ScenarioDetailStepsInner
+ * @interface ScenarioHistory
  */
-export interface ScenarioDetailStepsInner {
+export interface ScenarioHistory {
   /**
    *
    * @type {number}
-   * @memberof ScenarioDetailStepsInner
+   * @memberof ScenarioHistory
    */
   id?: number;
   /**
-   *
-   * @type {number}
-   * @memberof ScenarioDetailStepsInner
+   * When this entry was recorded. For an editor save that is a moment after the save, when the entry is written.
+   * @type {string}
+   * @memberof ScenarioHistory
    */
-  row_order?: number;
+  created_at?: string;
   /**
    *
-   * @type {ScenarioDetailStepsInnerStepKeyword}
-   * @memberof ScenarioDetailStepsInner
+   * @type {ScenarioHistoryAuthor}
+   * @memberof ScenarioHistory
    */
-  step_keyword?: ScenarioDetailStepsInnerStepKeyword;
+  author?: ScenarioHistoryAuthor | null;
+  /**
+   * True on the entry recorded by the most recent save of the scenario\'s steps.
+   * @type {boolean}
+   * @memberof ScenarioHistory
+   */
+  latest?: boolean;
 }
 /**
  *
  * @export
- * @interface ScenarioDetailStepsInnerStepKeyword
+ * @interface ScenarioHistoryAuthor
  */
-export interface ScenarioDetailStepsInnerStepKeyword {
+export interface ScenarioHistoryAuthor {
   /**
    *
    * @type {number}
-   * @memberof ScenarioDetailStepsInnerStepKeyword
-   */
-  id?: number;
-  /**
-   *
-   * @type {ScenarioDetailStepsInnerStepKeywordStepArguments}
-   * @memberof ScenarioDetailStepsInnerStepKeyword
-   */
-  step_arguments?: ScenarioDetailStepsInnerStepKeywordStepArguments;
-  /**
-   *
-   * @type {ScenarioDetailStepsInnerStepKeywordTranslatedKeyword}
-   * @memberof ScenarioDetailStepsInnerStepKeyword
-   */
-  translated_keyword?: ScenarioDetailStepsInnerStepKeywordTranslatedKeyword;
-}
-/**
- *
- * @export
- * @interface ScenarioDetailStepsInnerStepKeywordStepArguments
- */
-export interface ScenarioDetailStepsInnerStepKeywordStepArguments {
-  /**
-   *
-   * @type {number}
-   * @memberof ScenarioDetailStepsInnerStepKeywordStepArguments
-   */
-  id?: number;
-  /**
-   *
-   * @type {ScenarioDetailStepsInnerStepKeywordStepArgumentsValue}
-   * @memberof ScenarioDetailStepsInnerStepKeywordStepArguments
-   */
-  value?: ScenarioDetailStepsInnerStepKeywordStepArgumentsValue;
-}
-/**
- * @type ScenarioDetailStepsInnerStepKeywordStepArgumentsValue
- * @export
- */
-export type ScenarioDetailStepsInnerStepKeywordStepArgumentsValue =
-  | boolean
-  | string;
-
-/**
- *
- * @export
- * @interface ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
- */
-export interface ScenarioDetailStepsInnerStepKeywordTranslatedKeyword {
-  /**
-   *
-   * @type {number}
-   * @memberof ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+   * @memberof ScenarioHistoryAuthor
    */
   id?: number;
   /**
    *
    * @type {string}
-   * @memberof ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+   * @memberof ScenarioHistoryAuthor
+   */
+  username?: string;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioHistoryDetail
+ */
+export interface ScenarioHistoryDetail {
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioHistoryDetail
+   */
+  id?: number;
+  /**
+   * When this entry was recorded. For an editor save that is a moment after the save, when the entry is written.
+   * @type {string}
+   * @memberof ScenarioHistoryDetail
+   */
+  created_at?: string;
+  /**
+   *
+   * @type {ScenarioHistoryAuthor}
+   * @memberof ScenarioHistoryDetail
+   */
+  author?: ScenarioHistoryAuthor | null;
+  /**
+   * True when this entry was recorded by the most recent save of the scenario\'s steps.
+   * @type {boolean}
+   * @memberof ScenarioHistoryDetail
+   */
+  latest?: boolean;
+  /**
+   * The scenario\'s name when this entry was recorded.
+   * @type {string}
+   * @memberof ScenarioHistoryDetail
+   */
+  name?: string;
+  /**
+   * The scenario\'s steps at this entry, in execution order.
+   * @type {Array<ScenarioStep>}
+   * @memberof ScenarioHistoryDetail
+   */
+  steps?: Array<ScenarioStep>;
+  /**
+   * The scenario\'s data table at this entry, one entry per row.
+   * @type {Array<object>}
+   * @memberof ScenarioHistoryDetail
+   */
+  data_table?: Array<object>;
+  /**
+   *
+   * @type {ScenarioVariables}
+   * @memberof ScenarioHistoryDetail
+   */
+  variables?: ScenarioVariables;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioStep
+ */
+export interface ScenarioStep {
+  /**
+   * Identifier of the step. `describeScenario` always fills it. Only `describeScenarioHistory` can return null, for an entry saved before late July 2024, when history entries started recording step ids.
+   * @type {number}
+   * @memberof ScenarioStep
+   */
+  id?: number | null;
+  /**
+   * The step\'s keyword in enum form, for example `INPUT_TEXT`. This is the same value the write API takes, and the `action_type` `listStepKeywords` publishes. Null for a legacy keyword that has no enum member.
+   * @type {string}
+   * @memberof ScenarioStep
+   */
+  action_type?: string | null;
+  /**
+   * The step\'s name, as shown in the scenario editor.
+   * @type {string}
+   * @memberof ScenarioStep
    */
   name?: string;
   /**
    *
    * @type {string}
-   * @memberof ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+   * @memberof ScenarioStep
+   */
+  memo?: string;
+  /**
+   * What the run does when this step fails.
+   * @type {string}
+   * @memberof ScenarioStep
+   */
+  on_failure?: ScenarioStepOnFailureEnum;
+  /**
+   * Whether the step runs as part of the scenario or as a cleanup step afterwards.
+   * @type {string}
+   * @memberof ScenarioStep
+   */
+  step_execution_type?: ScenarioStepStepExecutionTypeEnum;
+  /**
+   * The identifier this step\'s result is assigned to. Two kinds of value appear here. A step that an export variable reads from carries that variable\'s key, which you chose. A JavaScript step instead carries a generated key shaped `${<32 hex characters>}`, which is machine-owned: copy it verbatim and do not invent one. An `assign` does not imply that an export variable exists for the step.
+   * @type {string}
+   * @memberof ScenarioStep
+   */
+  assign?: string | null;
+  /**
+   * The step\'s arguments, in the order `listStepKeywords` gives them for this keyword. Optional arguments the step does not set are absent, so match an argument by its `name` rather than by position.  A run\'s steps carry the same names and types, under `ResultStepArgument`, with a different arity: this endpoint leaves out an optional argument the step never set, while a run emits every slot its keyword declares. There a `file` argument reports just `file_name`, and `step_group` appears only here. A run lists an `Execute Javascript` step\'s function arguments after its keyword\'s arguments with a null `name`, in the order the code reads them.
+   * @type {Array<ScenarioStepArgument>}
+   * @memberof ScenarioStep
+   */
+  arguments?: Array<ScenarioStepArgument>;
+}
+
+export const ScenarioStepOnFailureEnum = {
+  Abort: "abort",
+  Continue: "continue",
+  Ignore: "ignore",
+} as const;
+
+export type ScenarioStepOnFailureEnum =
+  (typeof ScenarioStepOnFailureEnum)[keyof typeof ScenarioStepOnFailureEnum];
+export const ScenarioStepStepExecutionTypeEnum = {
+  ScenarioStep: "scenario_step",
+  CleanupStep: "cleanup_step",
+} as const;
+
+export type ScenarioStepStepExecutionTypeEnum =
+  (typeof ScenarioStepStepExecutionTypeEnum)[keyof typeof ScenarioStepStepExecutionTypeEnum];
+
+/**
+ * An argument to a step. Which fields are present depends on `type`.
+ * @export
+ * @interface ScenarioStepArgument
+ */
+export interface ScenarioStepArgument {
+  /**
+   * Name of the argument, matching the `name` `listStepKeywords` publishes for this keyword\'s argument in the same slot. An `Execute Javascript` step\'s function arguments follow its keyword\'s arguments, each named as the step\'s code refers to it.
+   * @type {string}
+   * @memberof ScenarioStepArgument
+   */
+  name?: string | null;
+  /**
+   * `text` and `url` carry `value`. `file` carries `file_name`, `file_size` and `object_key`. `element` carries `element_id`, `user_locator`, `user_locator_heals`, `seed_locator` and `candidate_locators`. `step_group` carries `step_group_id` and `overrides`.
+   * @type {string}
+   * @memberof ScenarioStepArgument
+   */
+  type?: ScenarioStepArgumentTypeEnum;
+  /**
+   *
+   * @type {ScenarioStepArgumentValue}
+   * @memberof ScenarioStepArgument
+   */
+  value?: ScenarioStepArgumentValue;
+  /**
+   * Identifier of the element this step targets. Read only. `describeScenario` always fills it. `describeScenarioHistory` always returns null, because a history entry never records element ids.
+   * @type {number}
+   * @memberof ScenarioStepArgument
+   */
+  element_id?: number | null;
+  /**
+   * The CSS or XPath selector pinned to this element, if one is set. The `css:` or `xpath:` prefix is part of the value.
+   * @type {string}
+   * @memberof ScenarioStepArgument
+   */
+  user_locator?: string | null;
+  /**
+   * Whether `user_locator` is a seed rather than a pin. When true, the next run finds the element by `user_locator`, Autify learns the element from that run, and later runs match it automatically as if it had been recorded, so a page change no longer breaks the step. When false, every run uses `user_locator` and nothing else. `describeScenario` always fills it; `describeScenarioHistory` returns null, because a history entry does not record it.
+   * @type {boolean}
+   * @memberof ScenarioStepArgument
+   */
+  user_locator_heals?: boolean | null;
+  /**
+   * The `user_locator` Autify last learned the element from. Read only. It equals `user_locator` once a run has learned the element; when the two differ, the next run uses `user_locator` again and relearns from it.
+   * @type {string}
+   * @memberof ScenarioStepArgument
+   */
+  seed_locator?: string | null;
+  /**
+   * The locators Autify generated for this element on its last passing run, which is how the step is matched when no `user_locator` is set. Read only, and empty until the scenario has passed once. `null` when the step was recorded on a password field, which withholds them.
+   * @type {Array<string>}
+   * @memberof ScenarioStepArgument
+   */
+  candidate_locators?: Array<string> | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioStepArgument
+   */
+  file_name?: string | null;
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioStepArgument
+   */
+  file_size?: number | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioStepArgument
+   */
+  object_key?: string | null;
+  /**
+   * The step group this step runs. Read it with `describeScenario` using this id.
+   * @type {number}
+   * @memberof ScenarioStepArgument
+   */
+  step_group_id?: number | null;
+  /**
+   * The values this call site substitutes into the step group, keyed by the id of the step inside the group that each one applies to. An empty object means this endpoint reports no override for the group, which is not the same as the group running as authored. A custom action selected for an `Execute Javascript` step at the call site is never reported, and neither are that step\'s other overrides. `replaceScenarioSteps` writes these in the same shape.
+   * @type {{ [key: string]: ScenarioStepArgumentOverridesValue; }}
+   * @memberof ScenarioStepArgument
+   */
+  overrides?: { [key: string]: ScenarioStepArgumentOverridesValue };
+}
+
+export const ScenarioStepArgumentTypeEnum = {
+  Text: "text",
+  Url: "url",
+  File: "file",
+  Element: "element",
+  StepGroup: "step_group",
+} as const;
+
+export type ScenarioStepArgumentTypeEnum =
+  (typeof ScenarioStepArgumentTypeEnum)[keyof typeof ScenarioStepArgumentTypeEnum];
+
+/**
+ *
+ * @export
+ * @interface ScenarioStepArgumentOverridesValue
+ */
+export interface ScenarioStepArgumentOverridesValue {
+  /**
+   * Only the arguments this call site overrides, named as `listStepKeywords` names them for the overridden step\'s keyword. Match by `name`: an argument left as the group authored it is absent, as is one whose stored override repeats the authored value and so substitutes nothing. An argument that names an element is absent too, because a run locates the element the step group authored and ignores anything a call site stores against that argument. An `Execute Javascript` step\'s changed function arguments follow, named as its code refers to them.
+   * @type {Array<ScenarioStepArgumentOverridesValueArgumentsInner>}
+   * @memberof ScenarioStepArgumentOverridesValue
+   */
+  arguments?: Array<ScenarioStepArgumentOverridesValueArgumentsInner>;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioStepArgumentOverridesValueArgumentsInner
+ */
+export interface ScenarioStepArgumentOverridesValueArgumentsInner {
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioStepArgumentOverridesValueArgumentsInner
+   */
+  name?: string | null;
+  /**
+   * The kind of the substituted value: `url` where the overridden argument names a page, `text` otherwise.
+   * @type {string}
+   * @memberof ScenarioStepArgumentOverridesValueArgumentsInner
+   */
+  type?: ScenarioStepArgumentOverridesValueArgumentsInnerTypeEnum;
+  /**
+   *
+   * @type {ScenarioStepArgumentOverridesValueArgumentsInnerValue}
+   * @memberof ScenarioStepArgumentOverridesValueArgumentsInner
+   */
+  value?: ScenarioStepArgumentOverridesValueArgumentsInnerValue;
+}
+
+export const ScenarioStepArgumentOverridesValueArgumentsInnerTypeEnum = {
+  Text: "text",
+  Url: "url",
+} as const;
+
+export type ScenarioStepArgumentOverridesValueArgumentsInnerTypeEnum =
+  (typeof ScenarioStepArgumentOverridesValueArgumentsInnerTypeEnum)[keyof typeof ScenarioStepArgumentOverridesValueArgumentsInnerTypeEnum];
+
+/**
+ * @type ScenarioStepArgumentOverridesValueArgumentsInnerValue
+ * The substituted value. Where the overridden step was recorded on a password field this is `******`, as it is when the step group itself is read.
+ * @export
+ */
+export type ScenarioStepArgumentOverridesValueArgumentsInnerValue =
+  | boolean
+  | string;
+
+/**
+ * @type ScenarioStepArgumentValue
+ * The value, for a `text` or `url` argument. A value typed into a password field is returned as `******`.
+ * @export
+ */
+export type ScenarioStepArgumentValue = boolean | string;
+
+/**
+ *
+ * @export
+ * @interface ScenarioTestCaseResult
+ */
+export interface ScenarioTestCaseResult {
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioTestCaseResult
+   */
+  id?: number;
+  /**
+   *
+   * @type {TestCaseResultStatus}
+   * @memberof ScenarioTestCaseResult
+   */
+  status?: TestCaseResultStatus;
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioTestCaseResult
+   */
+  duration?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioTestCaseResult
+   */
+  started_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioTestCaseResult
+   */
+  finished_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioTestCaseResult
    */
   created_at?: string;
   /**
    *
    * @type {string}
-   * @memberof ScenarioDetailStepsInnerStepKeywordTranslatedKeyword
+   * @memberof ScenarioTestCaseResult
    */
   updated_at?: string;
+  /**
+   * ID of the scenario executed.
+   * @type {number}
+   * @memberof ScenarioTestCaseResult
+   */
+  test_case_id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioTestCaseResult
+   */
+  project_url?: string;
+  /**
+   * Number of "Review needed" flags present in the test results.
+   * @type {number}
+   * @memberof ScenarioTestCaseResult
+   */
+  review_needed?: number;
+  /**
+   * Number of credits consumed by this test result. (default 0 for test result created before credit based system)
+   * @type {number}
+   * @memberof ScenarioTestCaseResult
+   */
+  number_of_credits_consumed?: number;
+  /**
+   * THIS FEATURE IS FOR LIMITED NUMBER OF CUSTOMERS. Variables imported from previously executed test results in a test plan.
+   * @type {Array<TestCaseResultImportVariablesInner>}
+   * @memberof ScenarioTestCaseResult
+   */
+  import_variables?: Array<TestCaseResultImportVariablesInner>;
+  /**
+   * THIS FEATURE IS FOR LIMITED NUMBER OF CUSTOMERS. Variables exported from this test result.
+   * @type {Array<TestCaseResultExportVariablesInner>}
+   * @memberof ScenarioTestCaseResult
+   */
+  export_variables?: Array<TestCaseResultExportVariablesInner>;
+  /**
+   *
+   * @type {Capability}
+   * @memberof ScenarioTestCaseResult
+   */
+  capability?: Capability | null;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioTestCaseResultAllOf
+ */
+export interface ScenarioTestCaseResultAllOf {
+  /**
+   *
+   * @type {Capability}
+   * @memberof ScenarioTestCaseResultAllOf
+   */
+  capability?: Capability | null;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioVariables
+ */
+export interface ScenarioVariables {
+  /**
+   *
+   * @type {Array<ScenarioVariablesImportInner>}
+   * @memberof ScenarioVariables
+   */
+  import?: Array<ScenarioVariablesImportInner>;
+  /**
+   *
+   * @type {Array<ScenarioVariablesExportInner>}
+   * @memberof ScenarioVariables
+   */
+  export?: Array<ScenarioVariablesExportInner>;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioVariablesExportInner
+ */
+export interface ScenarioVariablesExportInner {
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioVariablesExportInner
+   */
+  key?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof ScenarioVariablesExportInner
+   */
+  step_id?: number | null;
+}
+/**
+ *
+ * @export
+ * @interface ScenarioVariablesImportInner
+ */
+export interface ScenarioVariablesImportInner {
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioVariablesImportInner
+   */
+  key?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ScenarioVariablesImportInner
+   */
+  default_value?: string;
+}
+/**
+ *
+ * @export
+ * @interface SearchSteps400Response
+ */
+export interface SearchSteps400Response {
+  /**
+   *
+   * @type {Array<SearchSteps400ResponseErrorsInner>}
+   * @memberof SearchSteps400Response
+   */
+  errors?: Array<SearchSteps400ResponseErrorsInner>;
+}
+/**
+ *
+ * @export
+ * @interface SearchSteps400ResponseErrorsInner
+ */
+export interface SearchSteps400ResponseErrorsInner {
+  /**
+   *
+   * @type {number}
+   * @memberof SearchSteps400ResponseErrorsInner
+   */
+  code?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof SearchSteps400ResponseErrorsInner
+   */
+  message?: string;
+}
+/**
+ *
+ * @export
+ * @interface StepKeyword
+ */
+export interface StepKeyword {
+  /**
+   * Canonical English name of the keyword, for example `Input Text`. This is the name the rest of the API expects, in every workspace language.
+   * @type {string}
+   * @memberof StepKeyword
+   */
+  keyword?: string;
+  /**
+   * The same keyword in enum form, for example `INPUT_TEXT`.
+   * @type {string}
+   * @memberof StepKeyword
+   */
+  action_type?: string;
+  /**
+   * Whether this workspace\'s plan includes the keyword. Writing a step whose keyword is not included is rejected with 402.
+   * @type {boolean}
+   * @memberof StepKeyword
+   */
+  included_in_plan?: boolean;
+  /**
+   * The keyword\'s arguments, in the order they must be supplied. Empty for a keyword that takes none.
+   * @type {Array<StepKeywordArgument>}
+   * @memberof StepKeyword
+   */
+  arguments?: Array<StepKeywordArgument>;
+}
+/**
+ *
+ * @export
+ * @interface StepKeywordArgument
+ */
+export interface StepKeywordArgument {
+  /**
+   * Name of the argument as the scenario editor shows it.
+   * @type {string}
+   * @memberof StepKeywordArgument
+   */
+  name?: string;
+  /**
+   * What the argument accepts. `text` is a plain string, `url` an address, `file` an uploaded file, and `element` an element on the page.
+   * @type {string}
+   * @memberof StepKeywordArgument
+   */
+  type?: StepKeywordArgumentTypeEnum;
+  /**
+   * Present only when `type` is `element` and the keyword expects a particular kind of element, for example `element_textfield` for Input Text or `element_checkbox` for Checkbox Should Be Selected.  An element is supplied as a locator string whose `css:` or `xpath:` prefix is mandatory: a `css:` selector descends into shadow DOM where `xpath:` does not, the first match wins if a selector is ambiguous, a selector resolving outside `<body>` raises, and the lookup is retried for 30 seconds before the step fails.
+   * @type {string}
+   * @memberof StepKeywordArgument
+   */
+  element_type?: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof StepKeywordArgument
+   */
+  required?: boolean;
+}
+
+export const StepKeywordArgumentTypeEnum = {
+  Text: "text",
+  Url: "url",
+  File: "file",
+  Element: "element",
+} as const;
+
+export type StepKeywordArgumentTypeEnum =
+  (typeof StepKeywordArgumentTypeEnum)[keyof typeof StepKeywordArgumentTypeEnum];
+
+/**
+ * A step whose arguments contain the searched text. Exactly one of `scenario` and `step_group` is set, naming where the step is.
+ * @export
+ * @interface StepSearchHit
+ */
+export interface StepSearchHit {
+  /**
+   * The step\'s `id`, as `describeScenario` returns it.
+   * @type {number}
+   * @memberof StepSearchHit
+   */
+  step_id?: number;
+  /**
+   * The step\'s position, counting from 0, in the `steps` that `describeScenario` returns for its scenario or step group.
+   * @type {number}
+   * @memberof StepSearchHit
+   */
+  step_index?: number;
+  /**
+   *
+   * @type {StepSearchHitScenario}
+   * @memberof StepSearchHit
+   */
+  scenario?: StepSearchHitScenario | null;
+  /**
+   *
+   * @type {StepSearchHitStepGroup}
+   * @memberof StepSearchHit
+   */
+  step_group?: StepSearchHitStepGroup | null;
+  /**
+   * The step\'s keyword in enum form, as `describeScenario` reports it.
+   * @type {string}
+   * @memberof StepSearchHit
+   */
+  action_type?: string | null;
+  /**
+   * The step\'s arguments that contain the text, as `describeScenario` returns them. An `Execute Step Group` step\'s `step_group` argument keeps only the `overrides` that contain it. This can be empty when the match is a stored override that `describeScenario` does not report, such as one against an element, or one that repeats the value the group already carries.
+   * @type {Array<ScenarioStepArgument>}
+   * @memberof StepSearchHit
+   */
+  matched_arguments?: Array<ScenarioStepArgument>;
+  /**
+   * For a step group\'s step, every scenario in the project with a live `Execute Step Group` step that runs the group, which is everything a change to the step reaches. Null for a scenario\'s step.
+   * @type {Array<StepSearchHitExecutedByInner>}
+   * @memberof StepSearchHit
+   */
+  executed_by?: Array<StepSearchHitExecutedByInner> | null;
+}
+/**
+ *
+ * @export
+ * @interface StepSearchHitExecutedByInner
+ */
+export interface StepSearchHitExecutedByInner {
+  /**
+   *
+   * @type {number}
+   * @memberof StepSearchHitExecutedByInner
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof StepSearchHitExecutedByInner
+   */
+  name?: string;
+}
+/**
+ * The scenario the step is in, or null for a step group\'s step.
+ * @export
+ * @interface StepSearchHitScenario
+ */
+export interface StepSearchHitScenario {
+  /**
+   *
+   * @type {number}
+   * @memberof StepSearchHitScenario
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof StepSearchHitScenario
+   */
+  name?: string;
+}
+/**
+ * The step group the step is in, or null for a scenario\'s step. Read it with `describeScenario` using this id.
+ * @export
+ * @interface StepSearchHitStepGroup
+ */
+export interface StepSearchHitStepGroup {
+  /**
+   *
+   * @type {number}
+   * @memberof StepSearchHitStepGroup
+   */
+  id?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof StepSearchHitStepGroup
+   */
+  name?: string;
 }
 /**
  *
@@ -1236,6 +2048,67 @@ export interface TestCaseResult {
 /**
  *
  * @export
+ * @interface TestCaseResultDetail
+ */
+export interface TestCaseResultDetail {
+  /**
+   *
+   * @type {number}
+   * @memberof TestCaseResultDetail
+   */
+  id?: number;
+  /**
+   * ID of the scenario (test case) that was executed.
+   * @type {number}
+   * @memberof TestCaseResultDetail
+   */
+  scenario_id?: number;
+  /**
+   *
+   * @type {TestCaseResultStatus}
+   * @memberof TestCaseResultDetail
+   */
+  status?: TestCaseResultStatus;
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultDetail
+   */
+  started_at?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultDetail
+   */
+  finished_at?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof TestCaseResultDetail
+   */
+  duration?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultDetail
+   */
+  project_url?: string;
+  /**
+   *
+   * @type {Capability}
+   * @memberof TestCaseResultDetail
+   */
+  capability?: Capability;
+  /**
+   *
+   * @type {Array<TestCaseResultStep>}
+   * @memberof TestCaseResultDetail
+   */
+  steps?: Array<TestCaseResultStep>;
+}
+/**
+ *
+ * @export
  * @interface TestCaseResultExportVariablesInner
  */
 export interface TestCaseResultExportVariablesInner {
@@ -1314,6 +2187,184 @@ export const TestCaseResultStatus = {
 
 export type TestCaseResultStatus =
   (typeof TestCaseResultStatus)[keyof typeof TestCaseResultStatus];
+
+/**
+ *
+ * @export
+ * @interface TestCaseResultStep
+ */
+export interface TestCaseResultStep {
+  /**
+   * Step number within the executed test case, matching the numbering shown in the result UI and returned by `describeResult` (`get_details`). Steps inside a step group collapse onto one first-level number and get a sub-number, e.g. "1", "2", "3-1", "3-2".
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  index?: string;
+  /**
+   * ID of the scenario step this ran, the same identifier `describeScenario` returns as a step\'s `id`.
+   * @type {number}
+   * @memberof TestCaseResultStep
+   */
+  id?: number;
+  /**
+   * Identifier that is unique even when the step runs inside a step group.
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  composite_id?: string;
+  /**
+   * Human-readable name of the step.
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  name?: string;
+  /**
+   * What the run does when this step fails.
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  on_failure?: TestCaseResultStepOnFailureEnum;
+  /**
+   * Whether the step runs as part of the scenario or as a cleanup step afterwards.
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  step_execution_type?: TestCaseResultStepStepExecutionTypeEnum;
+  /**
+   * The action identifier `listStepKeywords` and `describeScenario` also use, so a run\'s step and the scenario step it came from read the same way. A step whose keyword the catalog does not have is not returned at all, where `describeScenario` keeps it with a null `action_type`; the gap it leaves in `index` is the only trace of it here.
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  action_type?: string;
+  /**
+   * The step\'s arguments, in the order `listStepKeywords` gives them for this keyword, each carrying the `name` that catalog publishes. A value typed into a password field is returned as `******`.
+   * @type {Array<ResultStepArgument>}
+   * @memberof TestCaseResultStep
+   */
+  arguments?: Array<ResultStepArgument>;
+  /**
+   * Result of the step.
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  status?: TestCaseResultStepStatusEnum;
+  /**
+   * Error message when the step failed.
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  error_message?: string | null;
+  /**
+   *
+   * @type {TestCaseResultStepMatch}
+   * @memberof TestCaseResultStep
+   */
+  match?: TestCaseResultStepMatch | null;
+  /**
+   * The URL the browser was on when the step started and when it finished, so a step that navigated can be told from one that did not. Only URLs of the application under test appear: not the browser\'s own start page, so the first step usually reports just its end, and not Autify\'s email inbox, which a step that opens an email navigates to.
+   * @type {Array<TestCaseResultStepUrlEventsInner>}
+   * @memberof TestCaseResultStep
+   */
+  url_events?: Array<TestCaseResultStepUrlEventsInner>;
+  /**
+   * A link to the screenshot the worker took of the page during the step. Depending on the keyword, it shows the page before the step acted, when the step found its element, or after the step finished. Absent when the step took none. The link needs no `Authorization` header and stops working within an hour, possibly after only a few minutes. Fetch it right away, or call this endpoint again for a fresh one.
+   * @type {string}
+   * @memberof TestCaseResultStep
+   */
+  screenshot_url?: string | null;
+}
+
+export const TestCaseResultStepOnFailureEnum = {
+  Abort: "abort",
+  Continue: "continue",
+  Ignore: "ignore",
+} as const;
+
+export type TestCaseResultStepOnFailureEnum =
+  (typeof TestCaseResultStepOnFailureEnum)[keyof typeof TestCaseResultStepOnFailureEnum];
+export const TestCaseResultStepStepExecutionTypeEnum = {
+  ScenarioStep: "scenario_step",
+  CleanupStep: "cleanup_step",
+} as const;
+
+export type TestCaseResultStepStepExecutionTypeEnum =
+  (typeof TestCaseResultStepStepExecutionTypeEnum)[keyof typeof TestCaseResultStepStepExecutionTypeEnum];
+export const TestCaseResultStepStatusEnum = {
+  Passed: "passed",
+  Failed: "failed",
+  Skipped: "skipped",
+} as const;
+
+export type TestCaseResultStepStatusEnum =
+  (typeof TestCaseResultStepStatusEnum)[keyof typeof TestCaseResultStepStatusEnum];
+
+/**
+ * How this run found the element. Absent when the step targets no element, when the step failed before finding one, and for results captured before Autify recorded how it matched.
+ * @export
+ * @interface TestCaseResultStepMatch
+ */
+export interface TestCaseResultStepMatch {
+  /**
+   * How Autify found the element: `user_locator` when it matched the locator you specified on the step, `automatic` when Autify matched it for you.
+   * @type {string}
+   * @memberof TestCaseResultStepMatch
+   */
+  located_by?: TestCaseResultStepMatchLocatedByEnum;
+  /**
+   * How confident Autify was in the element it matched. Around 1 is an exact match; lower means a looser one.
+   * @type {number}
+   * @memberof TestCaseResultStepMatch
+   */
+  confidence?: number | null;
+  /**
+   * Selectors Autify generated from the element it actually found. These are what later runs will match on. They work as a set, not as alternatives. When Autify matches on them it requires every one to resolve to the same element, so a single one may be ambiguous alone and is not safe to pin on its own. Order is the order Autify generated them in, and carries no ranking.
+   * @type {Array<string>}
+   * @memberof TestCaseResultStepMatch
+   */
+  candidate_locators?: Array<string> | null;
+}
+
+export const TestCaseResultStepMatchLocatedByEnum = {
+  UserLocator: "user_locator",
+  Automatic: "automatic",
+} as const;
+
+export type TestCaseResultStepMatchLocatedByEnum =
+  (typeof TestCaseResultStepMatchLocatedByEnum)[keyof typeof TestCaseResultStepMatchLocatedByEnum];
+
+/**
+ *
+ * @export
+ * @interface TestCaseResultStepUrlEventsInner
+ */
+export interface TestCaseResultStepUrlEventsInner {
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultStepUrlEventsInner
+   */
+  timing?: TestCaseResultStepUrlEventsInnerTimingEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TestCaseResultStepUrlEventsInner
+   */
+  url?: string;
+  /**
+   * Unix timestamp in milliseconds.
+   * @type {number}
+   * @memberof TestCaseResultStepUrlEventsInner
+   */
+  at?: number;
+}
+
+export const TestCaseResultStepUrlEventsInnerTimingEnum = {
+  StepStart: "stepStart",
+  StepEnd: "stepEnd",
+} as const;
+
+export type TestCaseResultStepUrlEventsInnerTimingEnum =
+  (typeof TestCaseResultStepUrlEventsInnerTimingEnum)[keyof typeof TestCaseResultStepUrlEventsInnerTimingEnum];
 
 /**
  *
@@ -1513,9 +2564,47 @@ export type TimezoneEnum = (typeof TimezoneEnum)[keyof typeof TimezoneEnum];
 /**
  *
  * @export
+ * @interface UpdateScenario412Response
+ */
+export interface UpdateScenario412Response {
+  /**
+   *
+   * @type {Array<UpdateScenario412ResponseErrorsInner>}
+   * @memberof UpdateScenario412Response
+   */
+  errors?: Array<UpdateScenario412ResponseErrorsInner>;
+}
+/**
+ *
+ * @export
+ * @interface UpdateScenario412ResponseErrorsInner
+ */
+export interface UpdateScenario412ResponseErrorsInner {
+  /**
+   *
+   * @type {number}
+   * @memberof UpdateScenario412ResponseErrorsInner
+   */
+  code?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateScenario412ResponseErrorsInner
+   */
+  message?: string;
+}
+/**
+ *
+ * @export
  * @interface UpdateScenarioRequest
  */
 export interface UpdateScenarioRequest {
+  /**
+   * The version of the scenario you are updating, as returned by `version_token` when you read it. The update is rejected with 412 if anyone changed the scenario\'s name, description, labels or steps in between, so read it again and retry against the version you get back. Running the scenario or reviewing its results does not change it. Sending an empty value is an error; omit the field entirely to update whatever is there without checking.
+   * @type {string}
+   * @memberof UpdateScenarioRequest
+   */
+  version_token?: string;
   /**
    *
    * @type {string}
@@ -1529,11 +2618,17 @@ export interface UpdateScenarioRequest {
    */
   description?: string;
   /**
-   *
+   * Label names, replacing the scenario\'s current labels. A name this project does not already have is created in it, unless `on_create` is false.  Only this project\'s labels are matched, so a label of the same name in another project is never attached.
    * @type {Array<string>}
    * @memberof UpdateScenarioRequest
    */
   labels?: Array<string>;
+  /**
+   * Whether to create a label named in `labels` that this project does not have. Set it to false to have an unrecognised name rejected instead, which is the safer setting when a name may be a typo.  Only `true` and `false` are accepted, as booleans or as the strings `"true"` and `"false"`. Any other value is rejected with 400 rather than being read as `true`, so a typo in this flag cannot silently turn label creation back on. A repeated name in `labels` is attached once. A name the project would have to create but that the label validations reject, such as one over 50 characters, is a 400 carrying the validation message.
+   * @type {boolean}
+   * @memberof UpdateScenarioRequest
+   */
+  on_create?: boolean;
 }
 /**
  *
@@ -2606,6 +3701,48 @@ export const ProjectApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     * List the projects (workspaces) the access token\'s user is a member of, plus their partner\'s workspaces for a partner admin, ordered by id.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listProjects: async (
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      const localVarPath = `/projects`;
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -2632,6 +3769,25 @@ export const ProjectApiFp = function (configuration?: Configuration) {
         projectId,
         options,
       );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * List the projects (workspaces) the access token\'s user is a member of, plus their partner\'s workspaces for a partner admin, ordered by id.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listProjects(
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Project>>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.listProjects(options);
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -2667,6 +3823,16 @@ export const ProjectApiFactory = function (
         .getProjectInfo(projectId, options)
         .then((request) => request(axios, basePath));
     },
+    /**
+     * List the projects (workspaces) the access token\'s user is a member of, plus their partner\'s workspaces for a partner admin, ordered by id.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listProjects(options?: any): AxiosPromise<Array<Project>> {
+      return localVarFp
+        .listProjects(options)
+        .then((request) => request(axios, basePath));
+    },
   };
 };
 
@@ -2689,6 +3855,18 @@ export class ProjectApi extends BaseAPI {
       .getProjectInfo(projectId, options)
       .then((request) => request(this.axios, this.basePath));
   }
+
+  /**
+   * List the projects (workspaces) the access token\'s user is a member of, plus their partner\'s workspaces for a partner admin, ordered by id.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ProjectApi
+   */
+  public listProjects(options?: AxiosRequestConfig) {
+    return ProjectApiFp(this.configuration)
+      .listProjects(options)
+      .then((request) => request(this.axios, this.basePath));
+  }
 }
 
 /**
@@ -2705,6 +3883,7 @@ export const ResultApiAxiosParamCreator = function (
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {boolean} [getDetails] The flag to get details of the test case result.
+     * @param {Array<'failed' | 'internal_error' | 'review_needed'>} [statuses] Return only the test case results matching any of these filters, the same ones the result page offers. &#x60;failed&#x60; matches failed and internal-error test cases, &#x60;internal_error&#x60; only internal errors, and &#x60;review_needed&#x60; test cases with element warnings to review. For example &#x60;statuses&#x3D;failed,review_needed&#x60;. Omit to return every test case result.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -2712,6 +3891,7 @@ export const ResultApiAxiosParamCreator = function (
       projectId: number,
       resultId: number,
       getDetails?: boolean,
+      statuses?: Array<"failed" | "internal_error" | "review_needed">,
       options: AxiosRequestConfig = {},
     ): Promise<RequestArgs> => {
       // verify required parameter 'projectId' is not null or undefined
@@ -2743,6 +3923,73 @@ export const ResultApiAxiosParamCreator = function (
       if (getDetails !== undefined) {
         localVarQueryParameter["get_details"] = getDetails;
       }
+
+      if (statuses) {
+        localVarQueryParameter["statuses"] = statuses.join(
+          COLLECTION_FORMATS.csv,
+        );
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Get the step-by-step breakdown of a single test case result, including the element locators Autify resolved for each step.  A "test case result" is the execution of one scenario on one capability. You can obtain its ID from the `test_plan_capability_results[].test_case_results[].id` field returned by `describeResult`.  Use this to see which step failed and why, and to read back the locators Autify generated for an element, which are usually better than a selector you would write by hand.  To see what the page looked like, fetch a step\'s `screenshot_url`. On a failed step, compare its screenshot with the one from the step before it.  Note: a step reports its keyword as `action_type`, the same enum `listStepKeywords` and `describeScenario` use, rather than as a name. The localized label the UI shows appears only in `describeResult` (`get_details`).  Values typed into a password field are returned as `******`.
+     * @summary Get the steps and element locators of a test case result.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {number} testCaseResultId The ID of the test case result. Obtainable from the &#x60;test_case_results[].id&#x60; field of &#x60;describeResult&#x60;.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    describeTestCaseResult: async (
+      projectId: number,
+      testCaseResultId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("describeTestCaseResult", "projectId", projectId);
+      // verify required parameter 'testCaseResultId' is not null or undefined
+      assertParamExists(
+        "describeTestCaseResult",
+        "testCaseResultId",
+        testCaseResultId,
+      );
+      const localVarPath =
+        `/projects/{project_id}/test_case_results/{test_case_result_id}`
+          .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+          .replace(
+            `{${"test_case_result_id"}}`,
+            encodeURIComponent(String(testCaseResultId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
       let headersFromBaseOptions =
@@ -2826,6 +4073,128 @@ export const ResultApiAxiosParamCreator = function (
         options: localVarRequestOptions,
       };
     },
+    /**
+     * List the test results of a single scenario, newest first.  Each entry is one execution of that scenario on one capability, so a scenario run against three browsers contributes three entries. Use this to see how one scenario has been doing over time, which `listResults` cannot answer: that endpoint returns whole test plan executions and is filterable only by test plan.  `review_needed` is the number of "Review needed" element warnings raised by that execution. A count that climbs over recent results means the scenario\'s element locators are drifting.
+     * @summary List the test results of one scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listScenarioResults: async (
+      projectId: number,
+      scenarioId: number,
+      page?: number,
+      perPage?: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("listScenarioResults", "projectId", projectId);
+      // verify required parameter 'scenarioId' is not null or undefined
+      assertParamExists("listScenarioResults", "scenarioId", scenarioId);
+      const localVarPath =
+        `/projects/{project_id}/scenarios/{scenario_id}/results`
+          .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+          .replace(
+            `{${"scenario_id"}}`,
+            encodeURIComponent(String(scenarioId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Start a new test result that reruns every test case of this result that failed or ended in an internal error, the same rerun the "Rerun failed tests" button starts. Each test case runs with the data table row and the imported variable values it ran with originally, and the new result records this one as the result it reruns. It reruns even if someone edited a failed scenario since, so you can rerun the test cases to check your fix.  Prefer this over `executeScenarios` when you are fixing the failures of a test plan\'s result. The rerun belongs to the test plan and runs with the plan\'s capabilities and settings, so the plan\'s results record its passes. `executeScenarios` starts a result outside the test plan, and the plan\'s latest result stays failed.  To rerun only some of the failed scenarios, use `executeScenarios` instead. That starts a separate result, without the original\'s data table rows or imported values.  Poll the returned `result_id` with `describeResult` to follow the rerun.
+     * @summary Rerun the failed test cases of a test result.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    rerunFailedTestCases: async (
+      projectId: number,
+      resultId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("rerunFailedTestCases", "projectId", projectId);
+      // verify required parameter 'resultId' is not null or undefined
+      assertParamExists("rerunFailedTestCases", "resultId", resultId);
+      const localVarPath = `/projects/{project_id}/results/{result_id}/rerun`
+        .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+        .replace(`{${"result_id"}}`, encodeURIComponent(String(resultId)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
   };
 };
 
@@ -2842,6 +4211,7 @@ export const ResultApiFp = function (configuration?: Configuration) {
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {boolean} [getDetails] The flag to get details of the test case result.
+     * @param {Array<'failed' | 'internal_error' | 'review_needed'>} [statuses] Return only the test case results matching any of these filters, the same ones the result page offers. &#x60;failed&#x60; matches failed and internal-error test cases, &#x60;internal_error&#x60; only internal errors, and &#x60;review_needed&#x60; test cases with element warnings to review. For example &#x60;statuses&#x3D;failed,review_needed&#x60;. Omit to return every test case result.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -2849,6 +4219,7 @@ export const ResultApiFp = function (configuration?: Configuration) {
       projectId: number,
       resultId: number,
       getDetails?: boolean,
+      statuses?: Array<"failed" | "internal_error" | "review_needed">,
       options?: AxiosRequestConfig,
     ): Promise<
       (
@@ -2860,8 +4231,40 @@ export const ResultApiFp = function (configuration?: Configuration) {
         projectId,
         resultId,
         getDetails,
+        statuses,
         options,
       );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Get the step-by-step breakdown of a single test case result, including the element locators Autify resolved for each step.  A "test case result" is the execution of one scenario on one capability. You can obtain its ID from the `test_plan_capability_results[].test_case_results[].id` field returned by `describeResult`.  Use this to see which step failed and why, and to read back the locators Autify generated for an element, which are usually better than a selector you would write by hand.  To see what the page looked like, fetch a step\'s `screenshot_url`. On a failed step, compare its screenshot with the one from the step before it.  Note: a step reports its keyword as `action_type`, the same enum `listStepKeywords` and `describeScenario` use, rather than as a name. The localized label the UI shows appears only in `describeResult` (`get_details`).  Values typed into a password field are returned as `******`.
+     * @summary Get the steps and element locators of a test case result.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {number} testCaseResultId The ID of the test case result. Obtainable from the &#x60;test_case_results[].id&#x60; field of &#x60;describeResult&#x60;.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async describeTestCaseResult(
+      projectId: number,
+      testCaseResultId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<TestCaseResultDetail>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.describeTestCaseResult(
+          projectId,
+          testCaseResultId,
+          options,
+        );
       return createRequestFunction(
         localVarAxiosArgs,
         globalAxios,
@@ -2905,6 +4308,74 @@ export const ResultApiFp = function (configuration?: Configuration) {
         configuration,
       );
     },
+    /**
+     * List the test results of a single scenario, newest first.  Each entry is one execution of that scenario on one capability, so a scenario run against three browsers contributes three entries. Use this to see how one scenario has been doing over time, which `listResults` cannot answer: that endpoint returns whole test plan executions and is filterable only by test plan.  `review_needed` is the number of "Review needed" element warnings raised by that execution. A count that climbs over recent results means the scenario\'s element locators are drifting.
+     * @summary List the test results of one scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listScenarioResults(
+      projectId: number,
+      scenarioId: number,
+      page?: number,
+      perPage?: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<Array<ScenarioTestCaseResult>>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.listScenarioResults(
+          projectId,
+          scenarioId,
+          page,
+          perPage,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Start a new test result that reruns every test case of this result that failed or ended in an internal error, the same rerun the "Rerun failed tests" button starts. Each test case runs with the data table row and the imported variable values it ran with originally, and the new result records this one as the result it reruns. It reruns even if someone edited a failed scenario since, so you can rerun the test cases to check your fix.  Prefer this over `executeScenarios` when you are fixing the failures of a test plan\'s result. The rerun belongs to the test plan and runs with the plan\'s capabilities and settings, so the plan\'s results record its passes. `executeScenarios` starts a result outside the test plan, and the plan\'s latest result stays failed.  To rerun only some of the failed scenarios, use `executeScenarios` instead. That starts a separate result, without the original\'s data table rows or imported values.  Poll the returned `result_id` with `describeResult` to follow the rerun.
+     * @summary Rerun the failed test cases of a test result.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async rerunFailedTestCases(
+      projectId: number,
+      resultId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ExecuteScenariosResult>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.rerunFailedTestCases(
+          projectId,
+          resultId,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
   };
 };
 
@@ -2925,6 +4396,7 @@ export const ResultApiFactory = function (
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
      * @param {boolean} [getDetails] The flag to get details of the test case result.
+     * @param {Array<'failed' | 'internal_error' | 'review_needed'>} [statuses] Return only the test case results matching any of these filters, the same ones the result page offers. &#x60;failed&#x60; matches failed and internal-error test cases, &#x60;internal_error&#x60; only internal errors, and &#x60;review_needed&#x60; test cases with element warnings to review. For example &#x60;statuses&#x3D;failed,review_needed&#x60;. Omit to return every test case result.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
@@ -2932,10 +4404,28 @@ export const ResultApiFactory = function (
       projectId: number,
       resultId: number,
       getDetails?: boolean,
+      statuses?: Array<"failed" | "internal_error" | "review_needed">,
       options?: any,
     ): AxiosPromise<DescribeResult200Response> {
       return localVarFp
-        .describeResult(projectId, resultId, getDetails, options)
+        .describeResult(projectId, resultId, getDetails, statuses, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Get the step-by-step breakdown of a single test case result, including the element locators Autify resolved for each step.  A "test case result" is the execution of one scenario on one capability. You can obtain its ID from the `test_plan_capability_results[].test_case_results[].id` field returned by `describeResult`.  Use this to see which step failed and why, and to read back the locators Autify generated for an element, which are usually better than a selector you would write by hand.  To see what the page looked like, fetch a step\'s `screenshot_url`. On a failed step, compare its screenshot with the one from the step before it.  Note: a step reports its keyword as `action_type`, the same enum `listStepKeywords` and `describeScenario` use, rather than as a name. The localized label the UI shows appears only in `describeResult` (`get_details`).  Values typed into a password field are returned as `******`.
+     * @summary Get the steps and element locators of a test case result.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {number} testCaseResultId The ID of the test case result. Obtainable from the &#x60;test_case_results[].id&#x60; field of &#x60;describeResult&#x60;.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    describeTestCaseResult(
+      projectId: number,
+      testCaseResultId: number,
+      options?: any,
+    ): AxiosPromise<TestCaseResultDetail> {
+      return localVarFp
+        .describeTestCaseResult(projectId, testCaseResultId, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -2959,6 +4449,44 @@ export const ResultApiFactory = function (
         .listResults(projectId, page, perPage, testPlanId, options)
         .then((request) => request(axios, basePath));
     },
+    /**
+     * List the test results of a single scenario, newest first.  Each entry is one execution of that scenario on one capability, so a scenario run against three browsers contributes three entries. Use this to see how one scenario has been doing over time, which `listResults` cannot answer: that endpoint returns whole test plan executions and is filterable only by test plan.  `review_needed` is the number of "Review needed" element warnings raised by that execution. A count that climbs over recent results means the scenario\'s element locators are drifting.
+     * @summary List the test results of one scenario.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listScenarioResults(
+      projectId: number,
+      scenarioId: number,
+      page?: number,
+      perPage?: number,
+      options?: any,
+    ): AxiosPromise<Array<ScenarioTestCaseResult>> {
+      return localVarFp
+        .listScenarioResults(projectId, scenarioId, page, perPage, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Start a new test result that reruns every test case of this result that failed or ended in an internal error, the same rerun the "Rerun failed tests" button starts. Each test case runs with the data table row and the imported variable values it ran with originally, and the new result records this one as the result it reruns. It reruns even if someone edited a failed scenario since, so you can rerun the test cases to check your fix.  Prefer this over `executeScenarios` when you are fixing the failures of a test plan\'s result. The rerun belongs to the test plan and runs with the plan\'s capabilities and settings, so the plan\'s results record its passes. `executeScenarios` starts a result outside the test plan, and the plan\'s latest result stays failed.  To rerun only some of the failed scenarios, use `executeScenarios` instead. That starts a separate result, without the original\'s data table rows or imported values.  Poll the returned `result_id` with `describeResult` to follow the rerun.
+     * @summary Rerun the failed test cases of a test result.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    rerunFailedTestCases(
+      projectId: number,
+      resultId: number,
+      options?: any,
+    ): AxiosPromise<ExecuteScenariosResult> {
+      return localVarFp
+        .rerunFailedTestCases(projectId, resultId, options)
+        .then((request) => request(axios, basePath));
+    },
   };
 };
 
@@ -2975,6 +4503,7 @@ export class ResultApi extends BaseAPI {
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
    * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
    * @param {boolean} [getDetails] The flag to get details of the test case result.
+   * @param {Array<'failed' | 'internal_error' | 'review_needed'>} [statuses] Return only the test case results matching any of these filters, the same ones the result page offers. &#x60;failed&#x60; matches failed and internal-error test cases, &#x60;internal_error&#x60; only internal errors, and &#x60;review_needed&#x60; test cases with element warnings to review. For example &#x60;statuses&#x3D;failed,review_needed&#x60;. Omit to return every test case result.
    * @param {*} [options] Override http request option.
    * @throws {RequiredError}
    * @memberof ResultApi
@@ -2983,10 +4512,30 @@ export class ResultApi extends BaseAPI {
     projectId: number,
     resultId: number,
     getDetails?: boolean,
+    statuses?: Array<"failed" | "internal_error" | "review_needed">,
     options?: AxiosRequestConfig,
   ) {
     return ResultApiFp(this.configuration)
-      .describeResult(projectId, resultId, getDetails, options)
+      .describeResult(projectId, resultId, getDetails, statuses, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Get the step-by-step breakdown of a single test case result, including the element locators Autify resolved for each step.  A "test case result" is the execution of one scenario on one capability. You can obtain its ID from the `test_plan_capability_results[].test_case_results[].id` field returned by `describeResult`.  Use this to see which step failed and why, and to read back the locators Autify generated for an element, which are usually better than a selector you would write by hand.  To see what the page looked like, fetch a step\'s `screenshot_url`. On a failed step, compare its screenshot with the one from the step before it.  Note: a step reports its keyword as `action_type`, the same enum `listStepKeywords` and `describeScenario` use, rather than as a name. The localized label the UI shows appears only in `describeResult` (`get_details`).  Values typed into a password field are returned as `******`.
+   * @summary Get the steps and element locators of a test case result.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
+   * @param {number} testCaseResultId The ID of the test case result. Obtainable from the &#x60;test_case_results[].id&#x60; field of &#x60;describeResult&#x60;.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ResultApi
+   */
+  public describeTestCaseResult(
+    projectId: number,
+    testCaseResultId: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return ResultApiFp(this.configuration)
+      .describeTestCaseResult(projectId, testCaseResultId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -3012,6 +4561,48 @@ export class ResultApi extends BaseAPI {
       .listResults(projectId, page, perPage, testPlanId, options)
       .then((request) => request(this.axios, this.basePath));
   }
+
+  /**
+   * List the test results of a single scenario, newest first.  Each entry is one execution of that scenario on one capability, so a scenario run against three browsers contributes three entries. Use this to see how one scenario has been doing over time, which `listResults` cannot answer: that endpoint returns whole test plan executions and is filterable only by test plan.  `review_needed` is the number of "Review needed" element warnings raised by that execution. A count that climbs over recent results means the scenario\'s element locators are drifting.
+   * @summary List the test results of one scenario.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} [page] The number of page returns.
+   * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ResultApi
+   */
+  public listScenarioResults(
+    projectId: number,
+    scenarioId: number,
+    page?: number,
+    perPage?: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return ResultApiFp(this.configuration)
+      .listScenarioResults(projectId, scenarioId, page, perPage, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Start a new test result that reruns every test case of this result that failed or ended in an internal error, the same rerun the "Rerun failed tests" button starts. Each test case runs with the data table row and the imported variable values it ran with originally, and the new result records this one as the result it reruns. It reruns even if someone edited a failed scenario since, so you can rerun the test cases to check your fix.  Prefer this over `executeScenarios` when you are fixing the failures of a test plan\'s result. The rerun belongs to the test plan and runs with the plan\'s capabilities and settings, so the plan\'s results record its passes. `executeScenarios` starts a result outside the test plan, and the plan\'s latest result stays failed.  To rerun only some of the failed scenarios, use `executeScenarios` instead. That starts a separate result, without the original\'s data table rows or imported values.  Poll the returned `result_id` with `describeResult` to follow the rerun.
+   * @summary Rerun the failed test cases of a test result.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/results/4
+   * @param {number} resultId For example, 4 for the following URL: https://app.autify.com/projects/1/results/4
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ResultApi
+   */
+  public rerunFailedTestCases(
+    projectId: number,
+    resultId: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return ResultApiFp(this.configuration)
+      .rerunFailedTestCases(projectId, resultId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
 }
 
 /**
@@ -3023,7 +4614,123 @@ export const ScenarioApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * Get a scenario.
+     * Create an empty scenario, ready to be given steps.  The scenario is created with no steps. Add them with `replaceScenarioSteps`, sending the `version_token` this call returns.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {CreateScenarioRequest} [createScenarioRequest] The scenario to create
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createScenario: async (
+      projectId: number,
+      createScenarioRequest?: CreateScenarioRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("createScenario", "projectId", projectId);
+      const localVarPath = `/projects/{project_id}/scenarios`.replace(
+        `{${"project_id"}}`,
+        encodeURIComponent(String(projectId)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        createScenarioRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Delete a scenario and remove it from every test plan that includes it.  This can\'t be undone through the API. Autify support can restore a deleted scenario, but it won\'t rejoin its test plans. Confirm with the user before deleting.  Step groups can\'t be deleted here. A step group\'s id gets 404.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {string} [versionToken] The version of the scenario you are deleting, as returned by &#x60;version_token&#x60; when you read it. If anyone changed the scenario's name, description, labels or steps since then, you get 412 and the scenario stays. Sending an empty value is an error.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteScenario: async (
+      projectId: number,
+      scenarioId: number,
+      versionToken?: string,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("deleteScenario", "projectId", projectId);
+      // verify required parameter 'scenarioId' is not null or undefined
+      assertParamExists("deleteScenario", "scenarioId", scenarioId);
+      const localVarPath = `/projects/{project_id}/scenarios/{scenario_id}`
+        .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+        .replace(`{${"scenario_id"}}`, encodeURIComponent(String(scenarioId)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "DELETE",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (versionToken !== undefined) {
+        localVarQueryParameter["version_token"] = versionToken;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Get a scenario, with its steps, data table and variables.  Each step names its keyword by the canonical English name that `listStepKeywords` publishes, and lists its arguments in that keyword\'s argument order. An argument that targets an element carries the locators Autify matches it by, rather than a placeholder.  An `Execute Javascript` step lists its function arguments after its keyword\'s arguments, as `text` arguments named the way its code refers to them. A function argument that shares a name with one of the keyword\'s arguments is left out.  An element whose `user_locator_heals` is true treats `user_locator` as a seed: Autify learns the element from it on the next passing run and matches it automatically after that. Its `seed_locator` is the selector Autify last learned from, and equals `user_locator` once that has happened. An element whose `user_locator_heals` is false uses `user_locator` as a pin on every run. `replaceScenarioSteps` sets it.  An `Execute Step Group` step is reported as a reference to its step group rather than expanded in place; read the group itself with this endpoint, using the `step_group_id` from the step\'s argument. The values this call site substitutes into the group come back beside it, in `overrides`.  A step recorded on a password field is masked: values typed into it are returned as `******` and the element\'s `candidate_locators` are withheld, as on `describeTestCaseResult`.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
      * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
      * @param {*} [options] Override http request option.
@@ -3041,6 +4748,64 @@ export const ScenarioApiAxiosParamCreator = function (
       const localVarPath = `/projects/{project_id}/scenarios/{scenario_id}`
         .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
         .replace(`{${"scenario_id"}}`, encodeURIComponent(String(scenarioId)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Get the steps, data table and variables a scenario held at one entry of its history, as listed by `listScenarioHistories`.  They come back in the same shape `describeScenario` returns, so an entry can be compared field by field with the scenario as it is now or with another entry. Password masking applies as it does there. Five things differ, because an entry records values rather than the rows they lived in:  - An element argument\'s `element_id`, `user_locator_heals` and   `seed_locator` are always null, because an entry records none of them.   Its `user_locator` and `candidate_locators` are the ones the element had   at that save. - A step\'s `id` is the id it had at that save, which may no longer exist   in the scenario. It is null on entries saved before late July 2024,   when entries started recording step ids. - An `Execute Step Group` step\'s `overrides` are read against the step   group as it is now, so an override on a step since removed from the   group is not reported. - An export variable set by a step inside a step group resolves its   `step_id` against that group as it is now. When more than one called   group assigns the same identifier, the step with the lowest id wins. - An entry records the scenario\'s name at that save but not its   description or labels, and a later rename does not move it.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} historyId The &#x60;id&#x60; of an entry &#x60;listScenarioHistories&#x60; returned for this scenario.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    describeScenarioHistory: async (
+      projectId: number,
+      scenarioId: number,
+      historyId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("describeScenarioHistory", "projectId", projectId);
+      // verify required parameter 'scenarioId' is not null or undefined
+      assertParamExists("describeScenarioHistory", "scenarioId", scenarioId);
+      // verify required parameter 'historyId' is not null or undefined
+      assertParamExists("describeScenarioHistory", "historyId", historyId);
+      const localVarPath =
+        `/projects/{project_id}/scenarios/{scenario_id}/histories/{history_id}`
+          .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+          .replace(`{${"scenario_id"}}`, encodeURIComponent(String(scenarioId)))
+          .replace(`{${"history_id"}}`, encodeURIComponent(String(historyId)));
       // use dummy base URL string because the URL constructor only accepts absolute URLs.
       const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
       let baseOptions;
@@ -3195,6 +4960,74 @@ export const ScenarioApiAxiosParamCreator = function (
       };
     },
     /**
+     * List a scenario\'s history, newest first.  Each save of the scenario\'s steps in the scenario editor records the whole scenario as it stood after that save, as one entry, and so does creating it by import, copy or `duplicateScenario`. An editor save\'s entry is written a moment after the save, not with it; the others are written with it. Changing only the name, description or labels, which is all `updateScenario` changes, records no entry.  Use this to see when a scenario\'s steps changed and who changed them, then read an entry with `describeScenarioHistory` to see what it held. Comparing two entries shows what a save changed.  `latest` is true on the entry recorded by the most recent save of the steps, and holds the steps as last saved. The entry listed after it is the version before that save. A passing run, or a locator update made from a test result, changes an element\'s candidate locators without recording an entry, so `describeScenario` can differ from `latest` there.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listScenarioHistories: async (
+      projectId: number,
+      scenarioId: number,
+      page?: number,
+      perPage?: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("listScenarioHistories", "projectId", projectId);
+      // verify required parameter 'scenarioId' is not null or undefined
+      assertParamExists("listScenarioHistories", "scenarioId", scenarioId);
+      const localVarPath =
+        `/projects/{project_id}/scenarios/{scenario_id}/histories`
+          .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+          .replace(
+            `{${"scenario_id"}}`,
+            encodeURIComponent(String(scenarioId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
      * List scenarios.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
      * @param {number} [page] The number of page returns.
@@ -3233,6 +5066,268 @@ export const ScenarioApiAxiosParamCreator = function (
 
       if (page !== undefined) {
         localVarQueryParameter["page"] = page;
+      }
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * List every step keyword an Autify NoCode Web scenario can be built from, with the ordered argument signature of each.  Supply a step\'s arguments in the order `arguments` gives them. A keyword whose `included_in_plan` is false is not part of this workspace\'s plan, and writing a step that uses it is rejected; every keyword is listed either way, so the whole vocabulary is visible.  `keyword` is the canonical English name and is what the rest of the API expects, whatever language the workspace is set to.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listStepKeywords: async (
+      projectId: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("listStepKeywords", "projectId", projectId);
+      const localVarPath = `/projects/{project_id}/step_keywords`.replace(
+        `{${"project_id"}}`,
+        encodeURIComponent(String(projectId)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Replace a scenario\'s steps. Send the whole list in the order the steps should run; one call adds, edits, removes and reorders steps.  A step that carries an `id` from `describeScenario` is that existing step. A step without an `id` is added. An existing step whose `id` is not in the list is removed, so send `[]` to remove every step.  Each step and each of its arguments is a JSON merge patch against what `describeScenario` returned. A field you send that differs from the current value is changed, a field you leave out is kept, and `null` clears it. So `{"id": 12}` keeps step 12 exactly as it is, at its new position, and sending the read back unchanged changes nothing. Arguments are matched by `name`, as `listStepKeywords` names them, so send only the arguments you change. An `Execute Javascript` step\'s function arguments are matched by the names `describeScenario` reports for them. Send a name the step lacks to add a function argument, and `"value": null` to remove one. To rename one, remove the old name and add the new one in the same request.  A new step needs an `action_type` from `listStepKeywords` and that keyword\'s required arguments. Sending a different `action_type` for an existing step rewrites it for the new keyword, keeping its `id` and carrying over the arguments whose names the two keywords share.  When you write a `user_locator`, send `user_locator_heals: true` with it unless the step must use that exact selector on every run. Autify then finds the element by your selector on the next passing run, learns the element from that run and matches it from then on the way it matches a recorded step, so a later page change does not break the step. Your selector only has to pick out the element on the page as it is now. Left false, the selector is a pin, and the step fails once the selector stops matching.  Read the scenario again from the response: it has the new steps\' ids and the `version_token` for your next write.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {ReplaceScenarioStepsRequest} replaceScenarioStepsRequest The scenario's steps, in the order they should run
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    replaceScenarioSteps: async (
+      projectId: number,
+      scenarioId: number,
+      replaceScenarioStepsRequest: ReplaceScenarioStepsRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("replaceScenarioSteps", "projectId", projectId);
+      // verify required parameter 'scenarioId' is not null or undefined
+      assertParamExists("replaceScenarioSteps", "scenarioId", scenarioId);
+      // verify required parameter 'replaceScenarioStepsRequest' is not null or undefined
+      assertParamExists(
+        "replaceScenarioSteps",
+        "replaceScenarioStepsRequest",
+        replaceScenarioStepsRequest,
+      );
+      const localVarPath =
+        `/projects/{project_id}/scenarios/{scenario_id}/steps`
+          .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+          .replace(
+            `{${"scenario_id"}}`,
+            encodeURIComponent(String(scenarioId)),
+          );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "PUT",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        replaceScenarioStepsRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Restore a scenario to one entry of its history, as listed by `listScenarioHistories`. The scenario is overwritten with what the entry holds: its name, steps, data table, variables, options and resolution. Its description and labels are kept, because an entry does not record them.  Steps come back as they were at that save, recorded steps included:  - A step still in the scenario keeps its `id`. A step removed since comes   back under the `id` it had. A step added since is removed. Entries saved   before late July 2024 record no step ids, so their steps get new ones. - An element comes back with the `candidate_locators` it had at that save,   so whatever Autify learned about it from runs since then is lost. Its   `user_locator_heals` goes back to false and its `seed_locator` is   cleared, because an entry records neither.  Restoring an entry that already matches the scenario changes nothing and returns the same `version_token`. Any other restore records a new entry in `listScenarioHistories`, so it can be undone by restoring the entry listed after it. When the scenario as it stands has no entry yet, because the entry for a recent write is still being saved, the restore records that state first.  Read the scenario from the response: it has the restored steps and the `version_token` for your next write.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} historyId The &#x60;id&#x60; of an entry &#x60;listScenarioHistories&#x60; returned for this scenario.
+     * @param {RestoreScenarioHistoryRequest} [restoreScenarioHistoryRequest]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    restoreScenarioHistory: async (
+      projectId: number,
+      scenarioId: number,
+      historyId: number,
+      restoreScenarioHistoryRequest?: RestoreScenarioHistoryRequest,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("restoreScenarioHistory", "projectId", projectId);
+      // verify required parameter 'scenarioId' is not null or undefined
+      assertParamExists("restoreScenarioHistory", "scenarioId", scenarioId);
+      // verify required parameter 'historyId' is not null or undefined
+      assertParamExists("restoreScenarioHistory", "historyId", historyId);
+      const localVarPath =
+        `/projects/{project_id}/scenarios/{scenario_id}/histories/{history_id}/restore`
+          .replace(`{${"project_id"}}`, encodeURIComponent(String(projectId)))
+          .replace(`{${"scenario_id"}}`, encodeURIComponent(String(scenarioId)))
+          .replace(`{${"history_id"}}`, encodeURIComponent(String(historyId)));
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "POST",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      localVarHeaderParameter["Content-Type"] = "application/json";
+
+      setSearchParams(localVarUrlObj, localVarQueryParameter);
+      let headersFromBaseOptions =
+        baseOptions && baseOptions.headers ? baseOptions.headers : {};
+      localVarRequestOptions.headers = {
+        ...localVarHeaderParameter,
+        ...headersFromBaseOptions,
+        ...options.headers,
+      };
+      localVarRequestOptions.data = serializeDataIfNeeded(
+        restoreScenarioHistoryRequest,
+        localVarRequestOptions,
+        configuration,
+      );
+
+      return {
+        url: toPathString(localVarUrlObj),
+        options: localVarRequestOptions,
+      };
+    },
+    /**
+     * Find the steps in a project whose arguments contain some text, without reading every scenario.  The search covers every live step of every scenario and step group in the project, ignoring case. It matches the value of a `text` or `url` argument, including an `Execute Javascript` step\'s function arguments, and a value an `Execute Step Group` step substitutes into its group, as `describeScenario` reports it in `overrides`. With `match_on=locators` it matches an element\'s `user_locator` instead; with no `match_on` it matches both. Step names, memos, `seed_locator`, `candidate_locators`, file names, data tables and variables are not searched.  A step recorded on a password field is never matched, by its value or its locator, and neither is a value a call site substitutes into one.  Each result is one step, in the order of its scenario or step group and then of its position there. A match inside a step group lists the scenarios that run the group in `executed_by`, so a change to the group reaches all of them. To change a scenario\'s step, read the scenario with `describeScenario` for its `version_token`, then send the steps with `replaceScenarioSteps`.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {string} q The text to find. It matches anywhere in a value, ignoring case; &#x60;%&#x60; and &#x60;_&#x60; are matched literally.
+     * @param {'values' | 'locators'} [matchOn] &#x60;values&#x60; matches argument values only and &#x60;locators&#x60; matches &#x60;user_locator&#x60; only. Leave it out to match both.
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    searchSteps: async (
+      projectId: number,
+      q: string,
+      matchOn?: "values" | "locators",
+      page?: number,
+      perPage?: number,
+      options: AxiosRequestConfig = {},
+    ): Promise<RequestArgs> => {
+      // verify required parameter 'projectId' is not null or undefined
+      assertParamExists("searchSteps", "projectId", projectId);
+      // verify required parameter 'q' is not null or undefined
+      assertParamExists("searchSteps", "q", q);
+      const localVarPath = `/projects/{project_id}/steps/search`.replace(
+        `{${"project_id"}}`,
+        encodeURIComponent(String(projectId)),
+      );
+      // use dummy base URL string because the URL constructor only accepts absolute URLs.
+      const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+      let baseOptions;
+      if (configuration) {
+        baseOptions = configuration.baseOptions;
+      }
+
+      const localVarRequestOptions = {
+        method: "GET",
+        ...baseOptions,
+        ...options,
+      };
+      const localVarHeaderParameter = {} as any;
+      const localVarQueryParameter = {} as any;
+
+      // authentication bearerAuth required
+      // http bearer authentication required
+      await setBearerAuthToObject(localVarHeaderParameter, configuration);
+
+      if (q !== undefined) {
+        localVarQueryParameter["q"] = q;
+      }
+
+      if (matchOn !== undefined) {
+        localVarQueryParameter["match_on"] = matchOn;
+      }
+
+      if (page !== undefined) {
+        localVarQueryParameter["page"] = page;
+      }
+
+      if (perPage !== undefined) {
+        localVarQueryParameter["per_page"] = perPage;
       }
 
       setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -3327,7 +5422,62 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = ScenarioApiAxiosParamCreator(configuration);
   return {
     /**
-     * Get a scenario.
+     * Create an empty scenario, ready to be given steps.  The scenario is created with no steps. Add them with `replaceScenarioSteps`, sending the `version_token` this call returns.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {CreateScenarioRequest} [createScenarioRequest] The scenario to create
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async createScenario(
+      projectId: number,
+      createScenarioRequest?: CreateScenarioRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ScenarioDetail>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.createScenario(
+        projectId,
+        createScenarioRequest,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Delete a scenario and remove it from every test plan that includes it.  This can\'t be undone through the API. Autify support can restore a deleted scenario, but it won\'t rejoin its test plans. Confirm with the user before deleting.  Step groups can\'t be deleted here. A step group\'s id gets 404.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {string} [versionToken] The version of the scenario you are deleting, as returned by &#x60;version_token&#x60; when you read it. If anyone changed the scenario's name, description, labels or steps since then, you get 412 and the scenario stays. Sending an empty value is an error.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async deleteScenario(
+      projectId: number,
+      scenarioId: number,
+      versionToken?: string,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.deleteScenario(
+        projectId,
+        scenarioId,
+        versionToken,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Get a scenario, with its steps, data table and variables.  Each step names its keyword by the canonical English name that `listStepKeywords` publishes, and lists its arguments in that keyword\'s argument order. An argument that targets an element carries the locators Autify matches it by, rather than a placeholder.  An `Execute Javascript` step lists its function arguments after its keyword\'s arguments, as `text` arguments named the way its code refers to them. A function argument that shares a name with one of the keyword\'s arguments is left out.  An element whose `user_locator_heals` is true treats `user_locator` as a seed: Autify learns the element from it on the next passing run and matches it automatically after that. Its `seed_locator` is the selector Autify last learned from, and equals `user_locator` once that has happened. An element whose `user_locator_heals` is false uses `user_locator` as a pin on every run. `replaceScenarioSteps` sets it.  An `Execute Step Group` step is reported as a reference to its step group rather than expanded in place; read the group itself with this endpoint, using the `step_group_id` from the step\'s argument. The values this call site substitutes into the group come back beside it, in `overrides`.  A step recorded on a password field is masked: values typed into it are returned as `******` and the element\'s `candidate_locators` are withheld, as on `describeTestCaseResult`.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
      * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
      * @param {*} [options] Override http request option.
@@ -3344,6 +5494,39 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
         await localVarAxiosParamCreator.describeScenario(
           projectId,
           scenarioId,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Get the steps, data table and variables a scenario held at one entry of its history, as listed by `listScenarioHistories`.  They come back in the same shape `describeScenario` returns, so an entry can be compared field by field with the scenario as it is now or with another entry. Password masking applies as it does there. Five things differ, because an entry records values rather than the rows they lived in:  - An element argument\'s `element_id`, `user_locator_heals` and   `seed_locator` are always null, because an entry records none of them.   Its `user_locator` and `candidate_locators` are the ones the element had   at that save. - A step\'s `id` is the id it had at that save, which may no longer exist   in the scenario. It is null on entries saved before late July 2024,   when entries started recording step ids. - An `Execute Step Group` step\'s `overrides` are read against the step   group as it is now, so an override on a step since removed from the   group is not reported. - An export variable set by a step inside a step group resolves its   `step_id` against that group as it is now. When more than one called   group assigns the same identifier, the step with the lowest id wins. - An entry records the scenario\'s name at that save but not its   description or labels, and a later rename does not move it.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} historyId The &#x60;id&#x60; of an entry &#x60;listScenarioHistories&#x60; returned for this scenario.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async describeScenarioHistory(
+      projectId: number,
+      scenarioId: number,
+      historyId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<ScenarioHistoryDetail>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.describeScenarioHistory(
+          projectId,
+          scenarioId,
+          historyId,
           options,
         );
       return createRequestFunction(
@@ -3411,6 +5594,42 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
       );
     },
     /**
+     * List a scenario\'s history, newest first.  Each save of the scenario\'s steps in the scenario editor records the whole scenario as it stood after that save, as one entry, and so does creating it by import, copy or `duplicateScenario`. An editor save\'s entry is written a moment after the save, not with it; the others are written with it. Changing only the name, description or labels, which is all `updateScenario` changes, records no entry.  Use this to see when a scenario\'s steps changed and who changed them, then read an entry with `describeScenarioHistory` to see what it held. Comparing two entries shows what a save changed.  `latest` is true on the entry recorded by the most recent save of the steps, and holds the steps as last saved. The entry listed after it is the version before that save. A passing run, or a locator update made from a test result, changes an element\'s candidate locators without recording an entry, so `describeScenario` can differ from `latest` there.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listScenarioHistories(
+      projectId: number,
+      scenarioId: number,
+      page?: number,
+      perPage?: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<Array<ScenarioHistory>>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.listScenarioHistories(
+          projectId,
+          scenarioId,
+          page,
+          perPage,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
      * List scenarios.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
      * @param {number} [page] The number of page returns.
@@ -3430,6 +5649,131 @@ export const ScenarioApiFp = function (configuration?: Configuration) {
       const localVarAxiosArgs = await localVarAxiosParamCreator.listScenarios(
         projectId,
         page,
+        options,
+      );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * List every step keyword an Autify NoCode Web scenario can be built from, with the ordered argument signature of each.  Supply a step\'s arguments in the order `arguments` gives them. A keyword whose `included_in_plan` is false is not part of this workspace\'s plan, and writing a step that uses it is rejected; every keyword is listed either way, so the whole vocabulary is visible.  `keyword` is the canonical English name and is what the rest of the API expects, whatever language the workspace is set to.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async listStepKeywords(
+      projectId: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<Array<StepKeyword>>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.listStepKeywords(projectId, options);
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Replace a scenario\'s steps. Send the whole list in the order the steps should run; one call adds, edits, removes and reorders steps.  A step that carries an `id` from `describeScenario` is that existing step. A step without an `id` is added. An existing step whose `id` is not in the list is removed, so send `[]` to remove every step.  Each step and each of its arguments is a JSON merge patch against what `describeScenario` returned. A field you send that differs from the current value is changed, a field you leave out is kept, and `null` clears it. So `{"id": 12}` keeps step 12 exactly as it is, at its new position, and sending the read back unchanged changes nothing. Arguments are matched by `name`, as `listStepKeywords` names them, so send only the arguments you change. An `Execute Javascript` step\'s function arguments are matched by the names `describeScenario` reports for them. Send a name the step lacks to add a function argument, and `"value": null` to remove one. To rename one, remove the old name and add the new one in the same request.  A new step needs an `action_type` from `listStepKeywords` and that keyword\'s required arguments. Sending a different `action_type` for an existing step rewrites it for the new keyword, keeping its `id` and carrying over the arguments whose names the two keywords share.  When you write a `user_locator`, send `user_locator_heals: true` with it unless the step must use that exact selector on every run. Autify then finds the element by your selector on the next passing run, learns the element from that run and matches it from then on the way it matches a recorded step, so a later page change does not break the step. Your selector only has to pick out the element on the page as it is now. Left false, the selector is a pin, and the step fails once the selector stops matching.  Read the scenario again from the response: it has the new steps\' ids and the `version_token` for your next write.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {ReplaceScenarioStepsRequest} replaceScenarioStepsRequest The scenario's steps, in the order they should run
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async replaceScenarioSteps(
+      projectId: number,
+      scenarioId: number,
+      replaceScenarioStepsRequest: ReplaceScenarioStepsRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ScenarioDetail>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.replaceScenarioSteps(
+          projectId,
+          scenarioId,
+          replaceScenarioStepsRequest,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Restore a scenario to one entry of its history, as listed by `listScenarioHistories`. The scenario is overwritten with what the entry holds: its name, steps, data table, variables, options and resolution. Its description and labels are kept, because an entry does not record them.  Steps come back as they were at that save, recorded steps included:  - A step still in the scenario keeps its `id`. A step removed since comes   back under the `id` it had. A step added since is removed. Entries saved   before late July 2024 record no step ids, so their steps get new ones. - An element comes back with the `candidate_locators` it had at that save,   so whatever Autify learned about it from runs since then is lost. Its   `user_locator_heals` goes back to false and its `seed_locator` is   cleared, because an entry records neither.  Restoring an entry that already matches the scenario changes nothing and returns the same `version_token`. Any other restore records a new entry in `listScenarioHistories`, so it can be undone by restoring the entry listed after it. When the scenario as it stands has no entry yet, because the entry for a recent write is still being saved, the restore records that state first.  Read the scenario from the response: it has the restored steps and the `version_token` for your next write.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} historyId The &#x60;id&#x60; of an entry &#x60;listScenarioHistories&#x60; returned for this scenario.
+     * @param {RestoreScenarioHistoryRequest} [restoreScenarioHistoryRequest]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async restoreScenarioHistory(
+      projectId: number,
+      scenarioId: number,
+      historyId: number,
+      restoreScenarioHistoryRequest?: RestoreScenarioHistoryRequest,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (axios?: AxiosInstance, basePath?: string) => AxiosPromise<ScenarioDetail>
+    > {
+      const localVarAxiosArgs =
+        await localVarAxiosParamCreator.restoreScenarioHistory(
+          projectId,
+          scenarioId,
+          historyId,
+          restoreScenarioHistoryRequest,
+          options,
+        );
+      return createRequestFunction(
+        localVarAxiosArgs,
+        globalAxios,
+        BASE_PATH,
+        configuration,
+      );
+    },
+    /**
+     * Find the steps in a project whose arguments contain some text, without reading every scenario.  The search covers every live step of every scenario and step group in the project, ignoring case. It matches the value of a `text` or `url` argument, including an `Execute Javascript` step\'s function arguments, and a value an `Execute Step Group` step substitutes into its group, as `describeScenario` reports it in `overrides`. With `match_on=locators` it matches an element\'s `user_locator` instead; with no `match_on` it matches both. Step names, memos, `seed_locator`, `candidate_locators`, file names, data tables and variables are not searched.  A step recorded on a password field is never matched, by its value or its locator, and neither is a value a call site substitutes into one.  Each result is one step, in the order of its scenario or step group and then of its position there. A match inside a step group lists the scenarios that run the group in `executed_by`, so a change to the group reaches all of them. To change a scenario\'s step, read the scenario with `describeScenario` for its `version_token`, then send the steps with `replaceScenarioSteps`.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {string} q The text to find. It matches anywhere in a value, ignoring case; &#x60;%&#x60; and &#x60;_&#x60; are matched literally.
+     * @param {'values' | 'locators'} [matchOn] &#x60;values&#x60; matches argument values only and &#x60;locators&#x60; matches &#x60;user_locator&#x60; only. Leave it out to match both.
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    async searchSteps(
+      projectId: number,
+      q: string,
+      matchOn?: "values" | "locators",
+      page?: number,
+      perPage?: number,
+      options?: AxiosRequestConfig,
+    ): Promise<
+      (
+        axios?: AxiosInstance,
+        basePath?: string,
+      ) => AxiosPromise<Array<StepSearchHit>>
+    > {
+      const localVarAxiosArgs = await localVarAxiosParamCreator.searchSteps(
+        projectId,
+        q,
+        matchOn,
+        page,
+        perPage,
         options,
       );
       return createRequestFunction(
@@ -3483,7 +5827,41 @@ export const ScenarioApiFactory = function (
   const localVarFp = ScenarioApiFp(configuration);
   return {
     /**
-     * Get a scenario.
+     * Create an empty scenario, ready to be given steps.  The scenario is created with no steps. Add them with `replaceScenarioSteps`, sending the `version_token` this call returns.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {CreateScenarioRequest} [createScenarioRequest] The scenario to create
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    createScenario(
+      projectId: number,
+      createScenarioRequest?: CreateScenarioRequest,
+      options?: any,
+    ): AxiosPromise<ScenarioDetail> {
+      return localVarFp
+        .createScenario(projectId, createScenarioRequest, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Delete a scenario and remove it from every test plan that includes it.  This can\'t be undone through the API. Autify support can restore a deleted scenario, but it won\'t rejoin its test plans. Confirm with the user before deleting.  Step groups can\'t be deleted here. A step group\'s id gets 404.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {string} [versionToken] The version of the scenario you are deleting, as returned by &#x60;version_token&#x60; when you read it. If anyone changed the scenario's name, description, labels or steps since then, you get 412 and the scenario stays. Sending an empty value is an error.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    deleteScenario(
+      projectId: number,
+      scenarioId: number,
+      versionToken?: string,
+      options?: any,
+    ): AxiosPromise<string> {
+      return localVarFp
+        .deleteScenario(projectId, scenarioId, versionToken, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Get a scenario, with its steps, data table and variables.  Each step names its keyword by the canonical English name that `listStepKeywords` publishes, and lists its arguments in that keyword\'s argument order. An argument that targets an element carries the locators Autify matches it by, rather than a placeholder.  An `Execute Javascript` step lists its function arguments after its keyword\'s arguments, as `text` arguments named the way its code refers to them. A function argument that shares a name with one of the keyword\'s arguments is left out.  An element whose `user_locator_heals` is true treats `user_locator` as a seed: Autify learns the element from it on the next passing run and matches it automatically after that. Its `seed_locator` is the selector Autify last learned from, and equals `user_locator` once that has happened. An element whose `user_locator_heals` is false uses `user_locator` as a pin on every run. `replaceScenarioSteps` sets it.  An `Execute Step Group` step is reported as a reference to its step group rather than expanded in place; read the group itself with this endpoint, using the `step_group_id` from the step\'s argument. The values this call site substitutes into the group come back beside it, in `overrides`.  A step recorded on a password field is masked: values typed into it are returned as `******` and the element\'s `candidate_locators` are withheld, as on `describeTestCaseResult`.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
      * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
      * @param {*} [options] Override http request option.
@@ -3496,6 +5874,24 @@ export const ScenarioApiFactory = function (
     ): AxiosPromise<ScenarioDetail> {
       return localVarFp
         .describeScenario(projectId, scenarioId, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Get the steps, data table and variables a scenario held at one entry of its history, as listed by `listScenarioHistories`.  They come back in the same shape `describeScenario` returns, so an entry can be compared field by field with the scenario as it is now or with another entry. Password masking applies as it does there. Five things differ, because an entry records values rather than the rows they lived in:  - An element argument\'s `element_id`, `user_locator_heals` and   `seed_locator` are always null, because an entry records none of them.   Its `user_locator` and `candidate_locators` are the ones the element had   at that save. - A step\'s `id` is the id it had at that save, which may no longer exist   in the scenario. It is null on entries saved before late July 2024,   when entries started recording step ids. - An `Execute Step Group` step\'s `overrides` are read against the step   group as it is now, so an override on a step since removed from the   group is not reported. - An export variable set by a step inside a step group resolves its   `step_id` against that group as it is now. When more than one called   group assigns the same identifier, the step with the lowest id wins. - An entry records the scenario\'s name at that save but not its   description or labels, and a later rename does not move it.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} historyId The &#x60;id&#x60; of an entry &#x60;listScenarioHistories&#x60; returned for this scenario.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    describeScenarioHistory(
+      projectId: number,
+      scenarioId: number,
+      historyId: number,
+      options?: any,
+    ): AxiosPromise<ScenarioHistoryDetail> {
+      return localVarFp
+        .describeScenarioHistory(projectId, scenarioId, historyId, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -3531,6 +5927,26 @@ export const ScenarioApiFactory = function (
         .then((request) => request(axios, basePath));
     },
     /**
+     * List a scenario\'s history, newest first.  Each save of the scenario\'s steps in the scenario editor records the whole scenario as it stood after that save, as one entry, and so does creating it by import, copy or `duplicateScenario`. An editor save\'s entry is written a moment after the save, not with it; the others are written with it. Changing only the name, description or labels, which is all `updateScenario` changes, records no entry.  Use this to see when a scenario\'s steps changed and who changed them, then read an entry with `describeScenarioHistory` to see what it held. Comparing two entries shows what a save changed.  `latest` is true on the entry recorded by the most recent save of the steps, and holds the steps as last saved. The entry listed after it is the version before that save. A passing run, or a locator update made from a test result, changes an element\'s candidate locators without recording an entry, so `describeScenario` can differ from `latest` there.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listScenarioHistories(
+      projectId: number,
+      scenarioId: number,
+      page?: number,
+      perPage?: number,
+      options?: any,
+    ): AxiosPromise<Array<ScenarioHistory>> {
+      return localVarFp
+        .listScenarioHistories(projectId, scenarioId, page, perPage, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
      * List scenarios.
      * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
      * @param {number} [page] The number of page returns.
@@ -3544,6 +5960,91 @@ export const ScenarioApiFactory = function (
     ): AxiosPromise<Array<Scenario>> {
       return localVarFp
         .listScenarios(projectId, page, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * List every step keyword an Autify NoCode Web scenario can be built from, with the ordered argument signature of each.  Supply a step\'s arguments in the order `arguments` gives them. A keyword whose `included_in_plan` is false is not part of this workspace\'s plan, and writing a step that uses it is rejected; every keyword is listed either way, so the whole vocabulary is visible.  `keyword` is the canonical English name and is what the rest of the API expects, whatever language the workspace is set to.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    listStepKeywords(
+      projectId: number,
+      options?: any,
+    ): AxiosPromise<Array<StepKeyword>> {
+      return localVarFp
+        .listStepKeywords(projectId, options)
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Replace a scenario\'s steps. Send the whole list in the order the steps should run; one call adds, edits, removes and reorders steps.  A step that carries an `id` from `describeScenario` is that existing step. A step without an `id` is added. An existing step whose `id` is not in the list is removed, so send `[]` to remove every step.  Each step and each of its arguments is a JSON merge patch against what `describeScenario` returned. A field you send that differs from the current value is changed, a field you leave out is kept, and `null` clears it. So `{"id": 12}` keeps step 12 exactly as it is, at its new position, and sending the read back unchanged changes nothing. Arguments are matched by `name`, as `listStepKeywords` names them, so send only the arguments you change. An `Execute Javascript` step\'s function arguments are matched by the names `describeScenario` reports for them. Send a name the step lacks to add a function argument, and `"value": null` to remove one. To rename one, remove the old name and add the new one in the same request.  A new step needs an `action_type` from `listStepKeywords` and that keyword\'s required arguments. Sending a different `action_type` for an existing step rewrites it for the new keyword, keeping its `id` and carrying over the arguments whose names the two keywords share.  When you write a `user_locator`, send `user_locator_heals: true` with it unless the step must use that exact selector on every run. Autify then finds the element by your selector on the next passing run, learns the element from that run and matches it from then on the way it matches a recorded step, so a later page change does not break the step. Your selector only has to pick out the element on the page as it is now. Left false, the selector is a pin, and the step fails once the selector stops matching.  Read the scenario again from the response: it has the new steps\' ids and the `version_token` for your next write.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {ReplaceScenarioStepsRequest} replaceScenarioStepsRequest The scenario's steps, in the order they should run
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    replaceScenarioSteps(
+      projectId: number,
+      scenarioId: number,
+      replaceScenarioStepsRequest: ReplaceScenarioStepsRequest,
+      options?: any,
+    ): AxiosPromise<ScenarioDetail> {
+      return localVarFp
+        .replaceScenarioSteps(
+          projectId,
+          scenarioId,
+          replaceScenarioStepsRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Restore a scenario to one entry of its history, as listed by `listScenarioHistories`. The scenario is overwritten with what the entry holds: its name, steps, data table, variables, options and resolution. Its description and labels are kept, because an entry does not record them.  Steps come back as they were at that save, recorded steps included:  - A step still in the scenario keeps its `id`. A step removed since comes   back under the `id` it had. A step added since is removed. Entries saved   before late July 2024 record no step ids, so their steps get new ones. - An element comes back with the `candidate_locators` it had at that save,   so whatever Autify learned about it from runs since then is lost. Its   `user_locator_heals` goes back to false and its `seed_locator` is   cleared, because an entry records neither.  Restoring an entry that already matches the scenario changes nothing and returns the same `version_token`. Any other restore records a new entry in `listScenarioHistories`, so it can be undone by restoring the entry listed after it. When the scenario as it stands has no entry yet, because the entry for a recent write is still being saved, the restore records that state first.  Read the scenario from the response: it has the restored steps and the `version_token` for your next write.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+     * @param {number} historyId The &#x60;id&#x60; of an entry &#x60;listScenarioHistories&#x60; returned for this scenario.
+     * @param {RestoreScenarioHistoryRequest} [restoreScenarioHistoryRequest]
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    restoreScenarioHistory(
+      projectId: number,
+      scenarioId: number,
+      historyId: number,
+      restoreScenarioHistoryRequest?: RestoreScenarioHistoryRequest,
+      options?: any,
+    ): AxiosPromise<ScenarioDetail> {
+      return localVarFp
+        .restoreScenarioHistory(
+          projectId,
+          scenarioId,
+          historyId,
+          restoreScenarioHistoryRequest,
+          options,
+        )
+        .then((request) => request(axios, basePath));
+    },
+    /**
+     * Find the steps in a project whose arguments contain some text, without reading every scenario.  The search covers every live step of every scenario and step group in the project, ignoring case. It matches the value of a `text` or `url` argument, including an `Execute Javascript` step\'s function arguments, and a value an `Execute Step Group` step substitutes into its group, as `describeScenario` reports it in `overrides`. With `match_on=locators` it matches an element\'s `user_locator` instead; with no `match_on` it matches both. Step names, memos, `seed_locator`, `candidate_locators`, file names, data tables and variables are not searched.  A step recorded on a password field is never matched, by its value or its locator, and neither is a value a call site substitutes into one.  Each result is one step, in the order of its scenario or step group and then of its position there. A match inside a step group lists the scenarios that run the group in `executed_by`, so a change to the group reaches all of them. To change a scenario\'s step, read the scenario with `describeScenario` for its `version_token`, then send the steps with `replaceScenarioSteps`.
+     * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+     * @param {string} q The text to find. It matches anywhere in a value, ignoring case; &#x60;%&#x60; and &#x60;_&#x60; are matched literally.
+     * @param {'values' | 'locators'} [matchOn] &#x60;values&#x60; matches argument values only and &#x60;locators&#x60; matches &#x60;user_locator&#x60; only. Leave it out to match both.
+     * @param {number} [page] The number of page returns.
+     * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    searchSteps(
+      projectId: number,
+      q: string,
+      matchOn?: "values" | "locators",
+      page?: number,
+      perPage?: number,
+      options?: any,
+    ): AxiosPromise<Array<StepSearchHit>> {
+      return localVarFp
+        .searchSteps(projectId, q, matchOn, page, perPage, options)
         .then((request) => request(axios, basePath));
     },
     /**
@@ -3575,7 +6076,45 @@ export const ScenarioApiFactory = function (
  */
 export class ScenarioApi extends BaseAPI {
   /**
-   * Get a scenario.
+   * Create an empty scenario, ready to be given steps.  The scenario is created with no steps. Add them with `replaceScenarioSteps`, sending the `version_token` this call returns.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {CreateScenarioRequest} [createScenarioRequest] The scenario to create
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public createScenario(
+    projectId: number,
+    createScenarioRequest?: CreateScenarioRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .createScenario(projectId, createScenarioRequest, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Delete a scenario and remove it from every test plan that includes it.  This can\'t be undone through the API. Autify support can restore a deleted scenario, but it won\'t rejoin its test plans. Confirm with the user before deleting.  Step groups can\'t be deleted here. A step group\'s id gets 404.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {string} [versionToken] The version of the scenario you are deleting, as returned by &#x60;version_token&#x60; when you read it. If anyone changed the scenario's name, description, labels or steps since then, you get 412 and the scenario stays. Sending an empty value is an error.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public deleteScenario(
+    projectId: number,
+    scenarioId: number,
+    versionToken?: string,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .deleteScenario(projectId, scenarioId, versionToken, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Get a scenario, with its steps, data table and variables.  Each step names its keyword by the canonical English name that `listStepKeywords` publishes, and lists its arguments in that keyword\'s argument order. An argument that targets an element carries the locators Autify matches it by, rather than a placeholder.  An `Execute Javascript` step lists its function arguments after its keyword\'s arguments, as `text` arguments named the way its code refers to them. A function argument that shares a name with one of the keyword\'s arguments is left out.  An element whose `user_locator_heals` is true treats `user_locator` as a seed: Autify learns the element from it on the next passing run and matches it automatically after that. Its `seed_locator` is the selector Autify last learned from, and equals `user_locator` once that has happened. An element whose `user_locator_heals` is false uses `user_locator` as a pin on every run. `replaceScenarioSteps` sets it.  An `Execute Step Group` step is reported as a reference to its step group rather than expanded in place; read the group itself with this endpoint, using the `step_group_id` from the step\'s argument. The values this call site substitutes into the group come back beside it, in `overrides`.  A step recorded on a password field is masked: values typed into it are returned as `******` and the element\'s `candidate_locators` are withheld, as on `describeTestCaseResult`.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
    * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
    * @param {*} [options] Override http request option.
@@ -3589,6 +6128,26 @@ export class ScenarioApi extends BaseAPI {
   ) {
     return ScenarioApiFp(this.configuration)
       .describeScenario(projectId, scenarioId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Get the steps, data table and variables a scenario held at one entry of its history, as listed by `listScenarioHistories`.  They come back in the same shape `describeScenario` returns, so an entry can be compared field by field with the scenario as it is now or with another entry. Password masking applies as it does there. Five things differ, because an entry records values rather than the rows they lived in:  - An element argument\'s `element_id`, `user_locator_heals` and   `seed_locator` are always null, because an entry records none of them.   Its `user_locator` and `candidate_locators` are the ones the element had   at that save. - A step\'s `id` is the id it had at that save, which may no longer exist   in the scenario. It is null on entries saved before late July 2024,   when entries started recording step ids. - An `Execute Step Group` step\'s `overrides` are read against the step   group as it is now, so an override on a step since removed from the   group is not reported. - An export variable set by a step inside a step group resolves its   `step_id` against that group as it is now. When more than one called   group assigns the same identifier, the step with the lowest id wins. - An entry records the scenario\'s name at that save but not its   description or labels, and a later rename does not move it.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} historyId The &#x60;id&#x60; of an entry &#x60;listScenarioHistories&#x60; returned for this scenario.
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public describeScenarioHistory(
+    projectId: number,
+    scenarioId: number,
+    historyId: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .describeScenarioHistory(projectId, scenarioId, historyId, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -3629,6 +6188,28 @@ export class ScenarioApi extends BaseAPI {
   }
 
   /**
+   * List a scenario\'s history, newest first.  Each save of the scenario\'s steps in the scenario editor records the whole scenario as it stood after that save, as one entry, and so does creating it by import, copy or `duplicateScenario`. An editor save\'s entry is written a moment after the save, not with it; the others are written with it. Changing only the name, description or labels, which is all `updateScenario` changes, records no entry.  Use this to see when a scenario\'s steps changed and who changed them, then read an entry with `describeScenarioHistory` to see what it held. Comparing two entries shows what a save changed.  `latest` is true on the entry recorded by the most recent save of the steps, and holds the steps as last saved. The entry listed after it is the version before that save. A passing run, or a locator update made from a test result, changes an element\'s candidate locators without recording an entry, so `describeScenario` can differ from `latest` there.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} [page] The number of page returns.
+   * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public listScenarioHistories(
+    projectId: number,
+    scenarioId: number,
+    page?: number,
+    perPage?: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .listScenarioHistories(projectId, scenarioId, page, perPage, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
    * List scenarios.
    * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
    * @param {number} [page] The number of page returns.
@@ -3643,6 +6224,96 @@ export class ScenarioApi extends BaseAPI {
   ) {
     return ScenarioApiFp(this.configuration)
       .listScenarios(projectId, page, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * List every step keyword an Autify NoCode Web scenario can be built from, with the ordered argument signature of each.  Supply a step\'s arguments in the order `arguments` gives them. A keyword whose `included_in_plan` is false is not part of this workspace\'s plan, and writing a step that uses it is rejected; every keyword is listed either way, so the whole vocabulary is visible.  `keyword` is the canonical English name and is what the rest of the API expects, whatever language the workspace is set to.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public listStepKeywords(projectId: number, options?: AxiosRequestConfig) {
+    return ScenarioApiFp(this.configuration)
+      .listStepKeywords(projectId, options)
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Replace a scenario\'s steps. Send the whole list in the order the steps should run; one call adds, edits, removes and reorders steps.  A step that carries an `id` from `describeScenario` is that existing step. A step without an `id` is added. An existing step whose `id` is not in the list is removed, so send `[]` to remove every step.  Each step and each of its arguments is a JSON merge patch against what `describeScenario` returned. A field you send that differs from the current value is changed, a field you leave out is kept, and `null` clears it. So `{"id": 12}` keeps step 12 exactly as it is, at its new position, and sending the read back unchanged changes nothing. Arguments are matched by `name`, as `listStepKeywords` names them, so send only the arguments you change. An `Execute Javascript` step\'s function arguments are matched by the names `describeScenario` reports for them. Send a name the step lacks to add a function argument, and `"value": null` to remove one. To rename one, remove the old name and add the new one in the same request.  A new step needs an `action_type` from `listStepKeywords` and that keyword\'s required arguments. Sending a different `action_type` for an existing step rewrites it for the new keyword, keeping its `id` and carrying over the arguments whose names the two keywords share.  When you write a `user_locator`, send `user_locator_heals: true` with it unless the step must use that exact selector on every run. Autify then finds the element by your selector on the next passing run, learns the element from that run and matches it from then on the way it matches a recorded step, so a later page change does not break the step. Your selector only has to pick out the element on the page as it is now. Left false, the selector is a pin, and the step fails once the selector stops matching.  Read the scenario again from the response: it has the new steps\' ids and the `version_token` for your next write.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {ReplaceScenarioStepsRequest} replaceScenarioStepsRequest The scenario's steps, in the order they should run
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public replaceScenarioSteps(
+    projectId: number,
+    scenarioId: number,
+    replaceScenarioStepsRequest: ReplaceScenarioStepsRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .replaceScenarioSteps(
+        projectId,
+        scenarioId,
+        replaceScenarioStepsRequest,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Restore a scenario to one entry of its history, as listed by `listScenarioHistories`. The scenario is overwritten with what the entry holds: its name, steps, data table, variables, options and resolution. Its description and labels are kept, because an entry does not record them.  Steps come back as they were at that save, recorded steps included:  - A step still in the scenario keeps its `id`. A step removed since comes   back under the `id` it had. A step added since is removed. Entries saved   before late July 2024 record no step ids, so their steps get new ones. - An element comes back with the `candidate_locators` it had at that save,   so whatever Autify learned about it from runs since then is lost. Its   `user_locator_heals` goes back to false and its `seed_locator` is   cleared, because an entry records neither.  Restoring an entry that already matches the scenario changes nothing and returns the same `version_token`. Any other restore records a new entry in `listScenarioHistories`, so it can be undone by restoring the entry listed after it. When the scenario as it stands has no entry yet, because the entry for a recent write is still being saved, the restore records that state first.  Read the scenario from the response: it has the restored steps and the `version_token` for your next write.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} scenarioId For example, 2 for the following URL: https://app.autify.com/projects/1/scenarios/2
+   * @param {number} historyId The &#x60;id&#x60; of an entry &#x60;listScenarioHistories&#x60; returned for this scenario.
+   * @param {RestoreScenarioHistoryRequest} [restoreScenarioHistoryRequest]
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public restoreScenarioHistory(
+    projectId: number,
+    scenarioId: number,
+    historyId: number,
+    restoreScenarioHistoryRequest?: RestoreScenarioHistoryRequest,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .restoreScenarioHistory(
+        projectId,
+        scenarioId,
+        historyId,
+        restoreScenarioHistoryRequest,
+        options,
+      )
+      .then((request) => request(this.axios, this.basePath));
+  }
+
+  /**
+   * Find the steps in a project whose arguments contain some text, without reading every scenario.  The search covers every live step of every scenario and step group in the project, ignoring case. It matches the value of a `text` or `url` argument, including an `Execute Javascript` step\'s function arguments, and a value an `Execute Step Group` step substitutes into its group, as `describeScenario` reports it in `overrides`. With `match_on=locators` it matches an element\'s `user_locator` instead; with no `match_on` it matches both. Step names, memos, `seed_locator`, `candidate_locators`, file names, data tables and variables are not searched.  A step recorded on a password field is never matched, by its value or its locator, and neither is a value a call site substitutes into one.  Each result is one step, in the order of its scenario or step group and then of its position there. A match inside a step group lists the scenarios that run the group in `executed_by`, so a change to the group reaches all of them. To change a scenario\'s step, read the scenario with `describeScenario` for its `version_token`, then send the steps with `replaceScenarioSteps`.
+   * @param {number} projectId For example, 1 for the following URL: https://app.autify.com/projects/1/scenarios
+   * @param {string} q The text to find. It matches anywhere in a value, ignoring case; &#x60;%&#x60; and &#x60;_&#x60; are matched literally.
+   * @param {'values' | 'locators'} [matchOn] &#x60;values&#x60; matches argument values only and &#x60;locators&#x60; matches &#x60;user_locator&#x60; only. Leave it out to match both.
+   * @param {number} [page] The number of page returns.
+   * @param {number} [perPage] The number of items returns. Default number is 30 and up to a maximum of 100
+   * @param {*} [options] Override http request option.
+   * @throws {RequiredError}
+   * @memberof ScenarioApi
+   */
+  public searchSteps(
+    projectId: number,
+    q: string,
+    matchOn?: "values" | "locators",
+    page?: number,
+    perPage?: number,
+    options?: AxiosRequestConfig,
+  ) {
+    return ScenarioApiFp(this.configuration)
+      .searchSteps(projectId, q, matchOn, page, perPage, options)
       .then((request) => request(this.axios, this.basePath));
   }
 
@@ -3676,7 +6347,7 @@ export const ScheduleApiAxiosParamCreator = function (
 ) {
   return {
     /**
-     * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
+     * "Schedule" is the old name for "Test Plan", so `schedule_id` is the test plan\'s ID.
      * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
@@ -3745,7 +6416,7 @@ export const ScheduleApiFp = function (configuration?: Configuration) {
   const localVarAxiosParamCreator = ScheduleApiAxiosParamCreator(configuration);
   return {
     /**
-     * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
+     * "Schedule" is the old name for "Test Plan", so `schedule_id` is the test plan\'s ID.
      * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
@@ -3789,7 +6460,7 @@ export const ScheduleApiFactory = function (
   const localVarFp = ScheduleApiFp(configuration);
   return {
     /**
-     * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
+     * "Schedule" is the old name for "Test Plan", so `schedule_id` is the test plan\'s ID.
      * @summary Run a test plan.
      * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
      * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
@@ -3816,7 +6487,7 @@ export const ScheduleApiFactory = function (
  */
 export class ScheduleApi extends BaseAPI {
   /**
-   * "Schedule" is called as "Test Plan" now. If you want to run a test plan, use this endpoint.
+   * "Schedule" is the old name for "Test Plan", so `schedule_id` is the test plan\'s ID.
    * @summary Run a test plan.
    * @param {number} scheduleId For example, 3 for the following URL: https://app.autify.com/projects/1/test_plans/3
    * @param {ExecuteScheduleRequest} [executeScheduleRequest] The options to execute a test plan.
