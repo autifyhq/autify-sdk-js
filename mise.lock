@@ -49,17 +49,21 @@ checksum = "sha256:7c93e9d92bf68c07182b471aa187e35ee6cd08ef0f24ab060dfff605fcc1c
 url = "https://nodejs.org/dist/v22.22.2/node-v22.22.2-win-x64.zip"
 
 [[tools.npm]]
-version = "11.16.0"
+version = "11.21.1"
 backend = "aqua:npm/cli"
 
 [tools.npm."platforms.linux-arm64"]
-url = "https://registry.npmjs.org/npm/-/npm-11.16.0.tgz"
+checksum = "sha256:dd77c48eb845f4856c2cdba347cfb52bd877a2655a1ea48ff0c4796e3df9dd7b"
+url = "https://registry.npmjs.org/npm/-/npm-11.21.1.tgz"
 
 [tools.npm."platforms.linux-x64"]
-url = "https://registry.npmjs.org/npm/-/npm-11.16.0.tgz"
+checksum = "sha256:dd77c48eb845f4856c2cdba347cfb52bd877a2655a1ea48ff0c4796e3df9dd7b"
+url = "https://registry.npmjs.org/npm/-/npm-11.21.1.tgz"
 
 [tools.npm."platforms.macos-arm64"]
-url = "https://registry.npmjs.org/npm/-/npm-11.16.0.tgz"
+checksum = "sha256:dd77c48eb845f4856c2cdba347cfb52bd877a2655a1ea48ff0c4796e3df9dd7b"
+url = "https://registry.npmjs.org/npm/-/npm-11.21.1.tgz"
 
 [tools.npm."platforms.macos-x64"]
-url = "https://registry.npmjs.org/npm/-/npm-11.16.0.tgz"
+checksum = "sha256:dd77c48eb845f4856c2cdba347cfb52bd877a2655a1ea48ff0c4796e3df9dd7b"
+url = "https://registry.npmjs.org/npm/-/npm-11.21.1.tgz"
