@@ -16,7 +16,7 @@
     "node": ">=22.16.0"
   },
   "dependencies": {
-    "axios": "^1.13.2",
+    "axios": "^1.21.0",
     "axios-logger": "^2.8.1",
     "debug": "^4.4.3",
     "form-data": "^4.0.5",
@@ -41,7 +41,7 @@
     "prettier": "^3.8.3",
     "shx": "^0.4.0",
     "swagger2openapi": "^7.0.8",
-    "ts-jest": "^29.4.11",
+    "ts-jest": "^29.4.15",
     "ts-morph": "^26.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
