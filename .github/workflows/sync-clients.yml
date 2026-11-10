@@ -42,7 +42,7 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v6
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
       - run: npm ci
 
       - name: Regenerate
@@ -151,7 +151,7 @@ jobs:
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v6
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
       - run: npm ci
 
       - name: Regenerate
