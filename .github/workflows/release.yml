@@ -38,7 +38,7 @@ jobs:
           # previous tag, and a shallow checkout has neither.
           fetch-depth: 0
 
-      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      - uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
 
       - name: Install dependencies
         run: npm ci
