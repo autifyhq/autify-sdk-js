@@ -25,28 +25,28 @@ checksum = "sha256:f9d6e191ab098c0d416e7d588a24420a8621cd2f4720dab2459b8b7b2d2d8
 url = "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.12.1%2B1/OpenJDK21U-jdk_x64_windows_hotspot_21.0.12.1_1.zip"
 
 [[tools.node]]
-version = "22.22.2"
+version = "22.23.5"
 backend = "core:node"
 
 [tools.node."platforms.linux-arm64"]
-checksum = "sha256:b2f3a96f31486bfc365192ad65ced14833ad2a3c2e1bcefec4846902f264fa28"
-url = "https://nodejs.org/dist/v22.22.2/node-v22.22.2-linux-arm64.tar.gz"
+checksum = "sha256:8bd3dc69eee8f3f226315a80d7d1d4faccf217a4c8fae500168ac2e38f3bdba3"
+url = "https://nodejs.org/dist/v22.23.5/node-v22.23.5-linux-arm64.tar.gz"
 
 [tools.node."platforms.linux-x64"]
-checksum = "sha256:978978a635eef872fa68beae09f0aad0bbbae6757e444da80b570964a97e62a3"
-url = "https://nodejs.org/dist/v22.22.2/node-v22.22.2-linux-x64.tar.gz"
+checksum = "sha256:c54118104acc524633b5abe106bbf44a53126ec8b4e5fa105cb92b5d7de8a1a1"
+url = "https://nodejs.org/dist/v22.23.5/node-v22.23.5-linux-x64.tar.gz"
 
 [tools.node."platforms.macos-arm64"]
-checksum = "sha256:db4b275b83736df67533529a18cc55de2549a8329ace6c7bcc68f8d22d3c9000"
-url = "https://nodejs.org/dist/v22.22.2/node-v22.22.2-darwin-arm64.tar.gz"
+checksum = "sha256:e7131995759b61a0170b646010d2ad35a5d37b4cb0d471f3e8317eac6f742f3d"
+url = "https://nodejs.org/dist/v22.23.5/node-v22.23.5-darwin-arm64.tar.gz"
 
 [tools.node."platforms.macos-x64"]
-checksum = "sha256:12a6abb9c2902cf48a21120da13f87fde1ed1b71a13330712949e8db818708ba"
-url = "https://nodejs.org/dist/v22.22.2/node-v22.22.2-darwin-x64.tar.gz"
+checksum = "sha256:c53383238206b9ae4db23c5d8a63645e2e753bec8ab51a49cc81939aa64e9422"
+url = "https://nodejs.org/dist/v22.23.5/node-v22.23.5-darwin-x64.tar.gz"
 
 [tools.node."platforms.windows-x64"]
-checksum = "sha256:7c93e9d92bf68c07182b471aa187e35ee6cd08ef0f24ab060dfff605fcc1c57c"
-url = "https://nodejs.org/dist/v22.22.2/node-v22.22.2-win-x64.zip"
+checksum = "sha256:4a191082e9706866830379d577d2cc8a50c776fcd9436a8d061b063ed0d9a0e3"
+url = "https://nodejs.org/dist/v22.23.5/node-v22.23.5-win-x64.zip"
 
 [[tools.npm]]
 version = "11.16.0"
